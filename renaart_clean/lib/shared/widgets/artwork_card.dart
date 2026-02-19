@@ -19,11 +19,13 @@ class ArtworkCard extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isFav = ref.watch(favoritesProvider
-        .select((_) => ref.read(favoritesProvider.notifier).isFavorited(artwork.objectId)));
-    final isOffline = ref.watch(offlineProvider
-        .select((_) => ref.read(offlineProvider.notifier).isOfflineSaved(artwork.objectId)));
+  final isFav = ref.watch(favoritesProvider.select(
+        (favorites) => favorites.any((fav) => fav.objectId == artwork.objectId)
+    ));
+    
+    final isOffline = ref.watch(offlineProvider.select(
+        (offlines) => offlines.any((off) => off.objectId == artwork.objectId)
+    ));
 
     return GestureDetector(
       onTap: () => context.push(RouteNames.artworkDetailPath(artwork.objectId)),
