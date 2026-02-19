@@ -34,41 +34,6 @@ lib/
     └── profile/screens/profile_screen.dart
 ```
 
----
-
-## 🚀 Setup Steps (VS Code)
-
-### Step 1 — Copy the project into VS Code
-
-1. สร้าง Flutter project ใหม่ใน Terminal:
-   ```bash
-   flutter create renaart
-   cd renaart
-   ```
-
-2. **แทนที่ไฟล์ทั้งหมด** ด้วยไฟล์ที่ดาวน์โหลดมา:
-   - ลบ `lib/main.dart` เดิม แล้วแทนด้วยไฟล์ใหม่
-   - วางไฟล์ทั้งหมดตาม folder structure ด้านบน
-   - แทน `pubspec.yaml` ด้วยไฟล์ใหม่
-   - แทน `android/app/src/main/AndroidManifest.xml`
-
-### Step 2 — Install dependencies
-
-```bash
-flutter pub get
-```
-
-### Step 3 — Run on Android
-
-```bash
-# ตรวจสอบ device/emulator
-flutter devices
-
-# Run (เลือก Android device หรือ emulator)
-flutter run
-```
-
----
 
 ## 📦 Dependencies ที่ใช้
 
