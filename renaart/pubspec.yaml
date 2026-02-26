@@ -1,0 +1,65 @@
+name: renaart
+description: "RenaArt - The Digital Museum of the Renaissance"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.4.9
+
+  # Navigation
+  go_router: ^13.2.0
+
+  # UI Components
+  flutter_staggered_grid_view: ^0.7.0
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+
+  # Local Storage (Week 3 Data Model spec)
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  shared_preferences: ^2.2.2
+
+  # HTTP / API (Week 3: Met Museum REST API)
+  dio: ^5.4.0
+  connectivity_plus: ^6.0.3
+
+  # Utils
+  uuid: ^4.3.3
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.8
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Cormorant
+      fonts:
+        - asset: assets/fonts/Cormorant-Regular.ttf
+        - asset: assets/fonts/Cormorant-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Cormorant-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Cormorant-Bold.ttf
+          weight: 700
+    - family: Jost
+      fonts:
+        - asset: assets/fonts/Jost-Regular.ttf
+        - asset: assets/fonts/Jost-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Jost-Light.ttf
+          weight: 300
+  assets:
+    - assets/fonts/
+    - assets/images/
