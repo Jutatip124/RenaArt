@@ -82,6 +82,11 @@ class Artwork extends HiveObject {
 
   /// Factory: parse from Met Museum API response (Week 3: Part 3)
   factory Artwork.fromMetApi(Map<String, dynamic> json) {
+    final primaryImage = _sanitizeImageUrl(json['primaryImage'] as String?);
+    final primaryImageSmall = _sanitizeImageUrl(
+      json['primaryImageSmall'] as String?,
+    );
+
     return Artwork(
       id: json['objectID'].toString(),
       title: (json['title'] as String?)?.trim().isEmpty == true
@@ -98,10 +103,10 @@ class Artwork extends HiveObject {
       medium: json['medium'] as String? ?? '',
       dimensions: json['dimensions'] as String? ?? '',
       location: json['repository'] as String? ?? '',
-      imageUrl: json['primaryImage'] as String? ?? '',
-      thumbnailUrl: json['primaryImageSmall'] as String? ??
-          json['primaryImage'] as String? ??
-          '',
+      imageUrl: primaryImage.isNotEmpty ? primaryImage : primaryImageSmall,
+      thumbnailUrl: primaryImageSmall.isNotEmpty
+          ? primaryImageSmall
+          : primaryImage,
       description: _buildDescription(json),
       historicalContext: json['period'] as String? ?? json['culture'] as String? ?? '',
       department: json['department'] as String? ?? 'European Paintings',
@@ -111,6 +116,14 @@ class Artwork extends HiveObject {
               .toList() ??
           [],
     );
+  }
+
+  static String _sanitizeImageUrl(String? rawUrl) {
+    final url = (rawUrl ?? '').trim();
+    if (url.isEmpty) return '';
+    return url.startsWith('http://')
+        ? url.replaceFirst('http://', 'https://')
+        : url;
   }
 
   static String _buildDescription(Map<String, dynamic> json) {
@@ -136,12 +149,27 @@ class Artwork extends HiveObject {
     if (raw.contains('manner')) return 'Mannerism';
     if (raw.contains('high')) return 'High Renaissance';
     if (raw.contains('early')) return 'Early Renaissance';
-    // Guess from century
-    if (raw.contains('15th') || raw.contains('1400') || raw.contains('1480') ||
-        raw.contains('1490')) return 'Early Renaissance';
-    if (raw.contains('16th') || raw.contains('1500') || raw.contains('1510') ||
-        raw.contains('1520')) return 'High Renaissance';
-    return 'Renaissance';
+
+    final year = _extractYear(raw);
+    if (year != null) {
+      if (year >= 1400 && year <= 1499) return 'Early Renaissance';
+      if (year >= 1500 && year <= 1529) return 'High Renaissance';
+      if (year >= 1530 && year <= 1625) return 'Mannerism';
+    }
+
+    if (raw.contains('renaissance')) return 'Renaissance';
+    return 'Other';
+  }
+
+  static int? _extractYear(String raw) {
+    final matches = RegExp(r'(\d{4})').allMatches(raw);
+    for (final match in matches) {
+      final year = int.tryParse(match.group(1)!);
+      if (year != null && year > 1000 && year < 2100) {
+        return year;
+      }
+    }
+    return null;
   }
 
   @override

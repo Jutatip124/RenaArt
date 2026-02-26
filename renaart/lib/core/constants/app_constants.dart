@@ -2,6 +2,9 @@
 class AppConstants {
   AppConstants._();
 
+  // Data source toggle
+  static const bool useMockData = true;
+
   // ─── App Info ─────────────────────────────────────────────────────────────
   static const String appName = 'RenaArt';
   static const String appTagline = 'The Digital Museum of the Renaissance';

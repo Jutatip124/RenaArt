@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../home/providers/app_providers.dart';
 import '../../home/widgets/artwork_card.dart';
 
@@ -186,6 +185,9 @@ class _FilterPanel extends ConsumerWidget {
     final artistF = ref.watch(searchArtistFilterProvider);
     final periodF = ref.watch(searchPeriodFilterProvider);
     final mediumF = ref.watch(searchMediumFilterProvider);
+    final artistOptions = ref.watch(availableSearchArtistsProvider);
+    final periodOptions = ref.watch(availableSearchPeriodsProvider);
+    final mediumOptions = ref.watch(availableSearchMediumsProvider);
     final faint = isDark ? AppColors.darkTextFaint : AppColors.inkFaint;
 
     return Container(
@@ -202,7 +204,7 @@ class _FilterPanel extends ConsumerWidget {
         _FilterSection(
           label: 'Creator',
           faint: faint,
-          chips: AppStrings.popularArtists.take(6).map((a) => _FilterChip(
+          chips: artistOptions.map((a) => _FilterChip(
             label: a, isDark: isDark, selected: artistF == a,
             onTap: () => ref.read(searchArtistFilterProvider.notifier).state =
                 artistF == a ? null : a,
@@ -212,7 +214,7 @@ class _FilterPanel extends ConsumerWidget {
         _FilterSection(
           label: 'Period',
           faint: faint,
-          chips: AppStrings.periods.skip(1).map((p) => _FilterChip(
+          chips: periodOptions.map((p) => _FilterChip(
             label: p, isDark: isDark, selected: periodF == p,
             onTap: () => ref.read(searchPeriodFilterProvider.notifier).state =
                 periodF == p ? null : p,
@@ -222,7 +224,7 @@ class _FilterPanel extends ConsumerWidget {
         _FilterSection(
           label: 'Medium',
           faint: faint,
-          chips: AppStrings.mediums.map((m) => _FilterChip(
+          chips: mediumOptions.map((m) => _FilterChip(
             label: m, isDark: isDark, selected: mediumF == m,
             onTap: () => ref.read(searchMediumFilterProvider.notifier).state =
                 mediumF == m ? null : m,

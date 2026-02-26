@@ -58,7 +58,11 @@ class MetApiService {
 
       // Week 3: Only use public domain artworks with images
       if (!(data['isPublicDomain'] as bool? ?? false)) return null;
-      if ((data['primaryImage'] as String?)?.isEmpty ?? true) return null;
+      final primaryImage = (data['primaryImage'] as String?)?.trim() ?? '';
+      final primaryImageSmall = (data['primaryImageSmall'] as String?)?.trim() ?? '';
+      if (primaryImage.isEmpty && primaryImageSmall.isEmpty) return null;
+      if (!_hasNamedArtist(data)) return null;
+      if (!_isLikelyRenaissance(data)) return null;
 
       return Artwork.fromMetApi(data);
     } on DioException catch (e) {
@@ -74,15 +78,24 @@ class MetApiService {
     int maxCount = 20,
   }) async {
     final results = <Artwork>[];
-    final limited = ids.take(maxCount * 3).toList(); // over-fetch to account for nulls
+    final limited = ids.take(maxCount * 3).toList();
+    const concurrency = 8;
 
-    for (final id in limited) {
-      if (results.length >= maxCount) break;
-      final artwork = await getArtwork(id);
-      if (artwork != null) results.add(artwork);
-      // Week 3 Security: Client-side rate limiting
-      await Future.delayed(const Duration(milliseconds: 100));
+    for (var i = 0; i < limited.length && results.length < maxCount; i += concurrency) {
+      final chunk = limited.skip(i).take(concurrency).toList();
+      final chunkResults = await Future.wait(
+        chunk.map(getArtwork),
+        eagerError: false,
+      );
+
+      for (final artwork in chunkResults) {
+        if (artwork != null) {
+          results.add(artwork);
+        }
+        if (results.length >= maxCount) break;
+      }
     }
+
     return results;
   }
 
@@ -90,7 +103,7 @@ class MetApiService {
   /// Uses Met departmentId=11 (European Paintings)
   Future<List<Artwork>> fetchRenaissanceFeed({int count = 20}) async {
     final ids = await searchObjectIds(
-      query: AppConstants.renaissanceSearchQuery,
+      query: 'renaissance OR "early renaissance" OR "high renaissance" OR "northern renaissance"',
       departmentId: AppConstants.europeanPaintingsDeptId,
     );
     if (ids.isEmpty) return [];
@@ -105,7 +118,56 @@ class MetApiService {
       departmentId: AppConstants.europeanPaintingsDeptId,
     );
     if (ids.isEmpty) return [];
-    return getArtworkBatch(ids, maxCount: 12);
+    return getArtworkBatch(ids, maxCount: 20);
+  }
+
+  bool _hasNamedArtist(Map<String, dynamic> data) {
+    final artist = (data['artistDisplayName'] as String?)?.trim() ?? '';
+    if (artist.isEmpty) return false;
+
+    final normalized = artist.toLowerCase();
+    const disallowed = {
+      'unknown',
+      'unknown artist',
+      'anonymous',
+      'unidentified artist',
+      'unidentified',
+    };
+    return !disallowed.contains(normalized);
+  }
+
+  bool _isLikelyRenaissance(Map<String, dynamic> data) {
+    final rawText = [
+      data['period'],
+      data['objectDate'],
+      data['culture'],
+      data['title'],
+      data['classification'],
+      data['objectName'],
+      data['artistDisplayName'],
+    ].whereType<String>().join(' ').toLowerCase();
+
+    final hasRenaissanceKeywords = rawText.contains('renaissance') ||
+        rawText.contains('mannerism') ||
+        rawText.contains('flemish') ||
+        rawText.contains('quattrocento') ||
+        rawText.contains('cinquecento');
+
+    final year = _extractYear((data['objectDate'] as String?) ?? '');
+    final inRenaissanceYearRange = year != null && year >= 1400 && year <= 1625;
+
+    return hasRenaissanceKeywords || inRenaissanceYearRange;
+  }
+
+  int? _extractYear(String dateText) {
+    final matches = RegExp(r'(\d{4})').allMatches(dateText);
+    for (final match in matches) {
+      final year = int.tryParse(match.group(1)!);
+      if (year != null && year > 1000 && year < 2100) {
+        return year;
+      }
+    }
+    return null;
   }
 
   Exception _handleDioError(DioException e) {
