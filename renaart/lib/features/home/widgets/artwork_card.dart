@@ -117,7 +117,7 @@ class _PeriodTag extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
     decoration: BoxDecoration(
-      color: (isDark ? AppColors.darkCard : Colors.white).withOpacity(0.9),
+      color: (isDark ? AppColors.darkCard : Colors.white).withValues(alpha: 0.9),
       borderRadius: BorderRadius.circular(20),
     ),
     child: Text(period, style: TextStyle(
@@ -133,7 +133,7 @@ class _OfflineBadge extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
     decoration: BoxDecoration(
-      color: AppColors.offlineBlue.withOpacity(0.9),
+      color: AppColors.offlineBlue.withValues(alpha: 0.9),
       borderRadius: BorderRadius.circular(20),
     ),
     child: const Row(
@@ -164,9 +164,9 @@ class _HeartButton extends ConsumerWidget {
       child: Container(
         width: 32, height: 32,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
+          color: Colors.white.withValues(alpha: 0.9),
           shape: BoxShape.circle,
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 4)],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 4)],
         ),
         child: Icon(
           isFavorite ? Icons.favorite : Icons.favorite_border,

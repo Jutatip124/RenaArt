@@ -23,11 +23,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     super.dispose();
   }
 
-  bool get _hasFilters =>
-      ref.read(searchArtistFilterProvider) != null ||
-      ref.read(searchPeriodFilterProvider) != null ||
-      ref.read(searchMediumFilterProvider) != null;
-
   void _clearFilters() {
     ref.read(searchArtistFilterProvider.notifier).state = null;
     ref.read(searchPeriodFilterProvider.notifier).state = null;

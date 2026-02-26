@@ -33,7 +33,7 @@ class ProfileScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: AppColors.sienna, shape: BoxShape.circle,
                   border: Border.all(
-                    color: AppColors.gold.withOpacity(0.5), width: 2),
+                    color: AppColors.gold.withValues(alpha: 0.5), width: 2),
                 ),
                 child: Center(child: Text(
                   user.nickname.isNotEmpty
@@ -70,7 +70,7 @@ class ProfileScreen extends ConsumerWidget {
               style: TextStyle(
                 fontFamily: 'Jost', fontSize: 10, letterSpacing: 1.5,
                 fontWeight: FontWeight.w300,
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 20),
@@ -99,7 +99,7 @@ class ProfileScreen extends ConsumerWidget {
                 (val) => ref.read(authProvider.notifier).updateNickname(val),
               ),
             ),
-            _Div(isDark),
+            _div(isDark),
             // Username — requires email confirmation (Week 1 spec)
             _SettingsTile(
               icon: Icons.alternate_email, label: 'Username',
@@ -111,7 +111,7 @@ class ProfileScreen extends ConsumerWidget {
                 showEmailNote: true,
               ),
             ),
-            _Div(isDark),
+            _div(isDark),
             _SettingsTile(
               icon: Icons.mail_outline, label: 'Email Address',
               value: user.email, isDark: isDark, onTap: () {},
@@ -137,14 +137,14 @@ class ProfileScreen extends ConsumerWidget {
             value: isDark, isDark: isDark,
             onChanged: (_) => ref.read(themeModeProvider.notifier).toggle(),
           ),
-          _Div(isDark),
+          _div(isDark),
           _ToggleTile(
             icon: Icons.high_quality_outlined, label: 'High Fidelity Mode',
             subtitle: 'Display images at max resolution (1080p)',
             value: user.preferences.highFidelityMode, isDark: isDark,
             onChanged: (_) => ref.read(authProvider.notifier).toggleHighFidelity(),
           ),
-          _Div(isDark),
+          _div(isDark),
           _SettingsTile(
             icon: Icons.tune_outlined, label: 'Preferred Periods',
             value: user.preferences.preferredPeriods.join(', '),
@@ -158,10 +158,10 @@ class ProfileScreen extends ConsumerWidget {
         _SettingsCard(isDark: isDark, children: [
           _SettingsTile(icon: Icons.help_outline, label: 'Help & FAQ',
             isDark: isDark, onTap: () {}),
-          _Div(isDark),
+          _div(isDark),
           _SettingsTile(icon: Icons.flag_outlined, label: 'Report a Problem',
             isDark: isDark, onTap: () {}),
-          _Div(isDark),
+          _div(isDark),
           _SettingsTile(icon: Icons.info_outline, label: 'About RenaArt',
             value: 'v1.0.0 · Met Museum API', isDark: isDark, onTap: () {}),
         ]),
@@ -220,7 +220,7 @@ class ProfileScreen extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AppColors.offlineBlue.withOpacity(0.1),
+                color: AppColors.offlineBlue.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(children: [
@@ -272,7 +272,7 @@ class _StatBadge extends StatelessWidget {
     )),
     Text(label, style: TextStyle(
       fontFamily: 'Jost', fontSize: 11,
-      color: Colors.white.withOpacity(0.6), letterSpacing: 0.5,
+      color: Colors.white.withValues(alpha: 0.6), letterSpacing: 0.5,
     )),
   ]);
 }
@@ -281,7 +281,7 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     width: 0.5, height: 36,
-    color: Colors.white.withOpacity(0.2),
+    color: Colors.white.withValues(alpha: 0.2),
   );
 }
 
@@ -320,7 +320,7 @@ class _SettingsCard extends StatelessWidget {
   );
 }
 
-Widget _Div(bool isDark) => Divider(
+Widget _div(bool isDark) => Divider(
   color: isDark ? AppColors.darkBorder : AppColors.divider,
   height: 1, thickness: 0.5,
   indent: 48,
@@ -390,10 +390,10 @@ class _ToggleTile extends StatelessWidget {
       Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: AppColors.sienna,
+        activeThumbColor: AppColors.sienna,
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.sienna.withOpacity(0.3);
+            return AppColors.sienna.withValues(alpha: 0.3);
           }
           return isDark ? AppColors.darkBorder : AppColors.divider;
         }),

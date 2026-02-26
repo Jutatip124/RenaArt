@@ -110,7 +110,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 1.5,
-                    color: AppColors.sienna.withOpacity(0.4),
+                    color: AppColors.sienna.withValues(alpha: 0.4),
                   ),
                 ),
                 const SizedBox(height: 12),

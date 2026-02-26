@@ -51,10 +51,10 @@ class HomeScreen extends ConsumerWidget {
                 margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.offlineBlue.withOpacity(0.12),
+                  color: AppColors.offlineBlue.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: AppColors.offlineBlue.withOpacity(0.3),
+                    color: AppColors.offlineBlue.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Row(children: [

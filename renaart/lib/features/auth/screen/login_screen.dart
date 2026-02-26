@@ -168,7 +168,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             const SizedBox(height: 10),
             Text('Demo mode — any email & password accepted', style: TextStyle(
-              fontFamily: 'Jost', fontSize: 11, color: sub.withOpacity(0.5),
+              fontFamily: 'Jost', fontSize: 11, color: sub.withValues(alpha: 0.5),
             )),
             const SizedBox(height: 32),
           ]),

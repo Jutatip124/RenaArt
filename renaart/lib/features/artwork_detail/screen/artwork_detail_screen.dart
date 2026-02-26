@@ -84,7 +84,7 @@ class _DetailBody extends ConsumerWidget {
             child: Container(
               margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
+                color: Colors.black.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
@@ -98,7 +98,7 @@ class _DetailBody extends ConsumerWidget {
                 margin: const EdgeInsets.all(8),
                 width: 36, height: 36,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -317,11 +317,11 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: active ? color!.withOpacity(0.1)
+          color: active ? color!.withValues(alpha: 0.1)
               : isDark ? AppColors.darkCard : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: active ? color!.withOpacity(0.3)
+            color: active ? color!.withValues(alpha: 0.3)
                 : isDark ? AppColors.darkBorder : AppColors.divider,
           ),
         ),
