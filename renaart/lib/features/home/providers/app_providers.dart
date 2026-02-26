@@ -137,13 +137,19 @@ class AuthNotifier extends StateNotifier<UserModel?> {
 // ══════════════════════════════════════════════════════════════════════════════
 // CONNECTIVITY (Global — Week 3: Offline Strategy)
 // ══════════════════════════════════════════════════════════════════════════════
+final _connectivityInstance = Provider<Connectivity>((_) => Connectivity());
+
 final connectivityProvider = StreamProvider<ConnectivityResult>((ref) {
-  return Connectivity().onConnectivityChanged.map((results) =>
+  final connectivity = ref.watch(_connectivityInstance);
+  return connectivity.onConnectivityChanged.map((results) =>
       results.isNotEmpty ? results.first : ConnectivityResult.none);
 });
 
 final isOnlineProvider = Provider<bool>((ref) {
-  final conn = ref.watch(connectivityProvider).valueOrNull;
+  final connAsync = ref.watch(connectivityProvider);
+  // While loading, assume online to avoid false offline banner on startup
+  if (connAsync.isLoading) return true;
+  final conn = connAsync.valueOrNull;
   return conn != null && conn != ConnectivityResult.none;
 });
 
@@ -199,7 +205,8 @@ class OfflineNotifier extends StateNotifier<List<String>> {
 // ══════════════════════════════════════════════════════════════════════════════
 final selectedPeriodProvider = StateProvider<String>((ref) => 'All');
 
-final homeFeedProvider = FutureProvider.autoDispose<List<Artwork>>((ref) async {
+/// Raw fetch provider — only re-runs when connectivity changes, NOT on period change
+final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) async {
   final api = ref.watch(metApiServiceProvider);
   final storage = ref.watch(storageProvider);
   final isOnline = ref.watch(isOnlineProvider);
@@ -214,11 +221,20 @@ final homeFeedProvider = FutureProvider.autoDispose<List<Artwork>>((ref) async {
   if (artworks.isNotEmpty) {
     await storage.cacheArtworks(artworks);
   }
+  return artworks;
+});
 
-  // Apply period filter (Local State: selectedPeriod)
+/// Derived provider — applies period filter locally without triggering API re-fetch
+/// Watches [_homeFeedRawProvider] + [selectedPeriodProvider] separately so that
+/// changing the period chip only re-filters in memory.
+final homeFeedProvider = Provider.autoDispose<AsyncValue<List<Artwork>>>((ref) {
+  final feedAsync = ref.watch(_homeFeedRawProvider);
   final period = ref.watch(selectedPeriodProvider);
-  if (period == 'All') return artworks;
-  return artworks.where((a) => a.period == period).toList();
+
+  return feedAsync.whenData((artworks) {
+    if (period == 'All') return artworks;
+    return artworks.where((a) => a.period == period).toList();
+  });
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
