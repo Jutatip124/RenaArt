@@ -1,9 +1,11 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// Run: flutter pub run build_runner build
 
 part of 'artwork_model.dart';
 
-// ─── ArtworkAdapter ───────────────────────────────────────────────────────────
+// **************************************************************************
+// TypeAdapterGenerator
+// **************************************************************************
+
 class ArtworkAdapter extends TypeAdapter<Artwork> {
   @override
   final int typeId = 0;
@@ -40,24 +42,42 @@ class ArtworkAdapter extends TypeAdapter<Artwork> {
   void write(BinaryWriter writer, Artwork obj) {
     writer
       ..writeByte(18)
-      ..writeByte(0)..write(obj.id)
-      ..writeByte(1)..write(obj.title)
-      ..writeByte(2)..write(obj.artist)
-      ..writeByte(3)..write(obj.artistId)
-      ..writeByte(4)..write(obj.year)
-      ..writeByte(5)..write(obj.period)
-      ..writeByte(6)..write(obj.medium)
-      ..writeByte(7)..write(obj.dimensions)
-      ..writeByte(8)..write(obj.location)
-      ..writeByte(9)..write(obj.imageUrl)
-      ..writeByte(10)..write(obj.thumbnailUrl)
-      ..writeByte(11)..write(obj.description)
-      ..writeByte(12)..write(obj.historicalContext)
-      ..writeByte(13)..write(obj.meaning)
-      ..writeByte(14)..write(obj.keySymbols)
-      ..writeByte(15)..write(obj.relatedArtworkIds)
-      ..writeByte(16)..write(obj.department)
-      ..writeByte(17)..write(obj.isPublicDomain);
+      ..writeByte(0)
+      ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.title)
+      ..writeByte(2)
+      ..write(obj.artist)
+      ..writeByte(3)
+      ..write(obj.artistId)
+      ..writeByte(4)
+      ..write(obj.year)
+      ..writeByte(5)
+      ..write(obj.period)
+      ..writeByte(6)
+      ..write(obj.medium)
+      ..writeByte(7)
+      ..write(obj.dimensions)
+      ..writeByte(8)
+      ..write(obj.location)
+      ..writeByte(9)
+      ..write(obj.imageUrl)
+      ..writeByte(10)
+      ..write(obj.thumbnailUrl)
+      ..writeByte(11)
+      ..write(obj.description)
+      ..writeByte(12)
+      ..write(obj.historicalContext)
+      ..writeByte(13)
+      ..write(obj.meaning)
+      ..writeByte(14)
+      ..write(obj.keySymbols)
+      ..writeByte(15)
+      ..write(obj.relatedArtworkIds)
+      ..writeByte(16)
+      ..write(obj.department)
+      ..writeByte(17)
+      ..write(obj.isPublicDomain);
   }
 
   @override
@@ -71,7 +91,6 @@ class ArtworkAdapter extends TypeAdapter<Artwork> {
           typeId == other.typeId;
 }
 
-// ─── UserArtworkStateAdapter ──────────────────────────────────────────────────
 class UserArtworkStateAdapter extends TypeAdapter<UserArtworkState> {
   @override
   final int typeId = 1;
@@ -97,13 +116,20 @@ class UserArtworkStateAdapter extends TypeAdapter<UserArtworkState> {
   void write(BinaryWriter writer, UserArtworkState obj) {
     writer
       ..writeByte(7)
-      ..writeByte(0)..write(obj.artworkId)
-      ..writeByte(1)..write(obj.userId)
-      ..writeByte(2)..write(obj.isFavorited)
-      ..writeByte(3)..write(obj.favoritedDate)
-      ..writeByte(4)..write(obj.lastViewed)
-      ..writeByte(5)..write(obj.viewCount)
-      ..writeByte(6)..write(obj.notes);
+      ..writeByte(0)
+      ..write(obj.artworkId)
+      ..writeByte(1)
+      ..write(obj.userId)
+      ..writeByte(2)
+      ..write(obj.isFavorited)
+      ..writeByte(3)
+      ..write(obj.favoritedDate)
+      ..writeByte(4)
+      ..write(obj.lastViewed)
+      ..writeByte(5)
+      ..write(obj.viewCount)
+      ..writeByte(6)
+      ..write(obj.notes);
   }
 
   @override
@@ -117,7 +143,6 @@ class UserArtworkStateAdapter extends TypeAdapter<UserArtworkState> {
           typeId == other.typeId;
 }
 
-// ─── OfflineArtworkAdapter ────────────────────────────────────────────────────
 class OfflineArtworkAdapter extends TypeAdapter<OfflineArtwork> {
   @override
   final int typeId = 2;
@@ -145,15 +170,24 @@ class OfflineArtworkAdapter extends TypeAdapter<OfflineArtwork> {
   void write(BinaryWriter writer, OfflineArtwork obj) {
     writer
       ..writeByte(9)
-      ..writeByte(0)..write(obj.artworkId)
-      ..writeByte(1)..write(obj.deviceId)
-      ..writeByte(2)..write(obj.isOfflineAvailable)
-      ..writeByte(3)..write(obj.downloadedDate)
-      ..writeByte(4)..write(obj.localImagePath)
-      ..writeByte(5)..write(obj.originalFileSizeMB)
-      ..writeByte(6)..write(obj.resizedFileSizeMB)
-      ..writeByte(7)..write(obj.imageResolution)
-      ..writeByte(8)..write(obj.lastAccessDate);
+      ..writeByte(0)
+      ..write(obj.artworkId)
+      ..writeByte(1)
+      ..write(obj.deviceId)
+      ..writeByte(2)
+      ..write(obj.isOfflineAvailable)
+      ..writeByte(3)
+      ..write(obj.downloadedDate)
+      ..writeByte(4)
+      ..write(obj.localImagePath)
+      ..writeByte(5)
+      ..write(obj.originalFileSizeMB)
+      ..writeByte(6)
+      ..write(obj.resizedFileSizeMB)
+      ..writeByte(7)
+      ..write(obj.imageResolution)
+      ..writeByte(8)
+      ..write(obj.lastAccessDate);
   }
 
   @override

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import '../../models/artwork_model.dart';
-import '../../models/user_model.dart';
-import '../../services/met_api_service.dart';
-import '../../services/local_storage_service.dart';
-import '../../core/constants/app_constants.dart';
+import '../../../models/artwork_model.dart';
+import '../../../models/user_model.dart';
+import '../../../services/met_api_service.dart';
+import '../../../services/local_storage_service.dart';
+import '../../../core/constants/app_constants.dart';
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SERVICES
