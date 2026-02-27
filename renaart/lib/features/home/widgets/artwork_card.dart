@@ -8,6 +8,9 @@ import '../../../core/router/app_router.dart';
 import '../../../models/artwork_model.dart';
 import '../../home/providers/app_providers.dart';
 
+// ArtworkCard — dual-mode Arts Gallery card
+// Light: white card, hairline border, serif title, warm caption
+// Dark:  charcoal card, gradient scrim, gold year accent, cinematic
 class ArtworkCard extends ConsumerWidget {
   final Artwork artwork;
   const ArtworkCard({super.key, required this.artwork});
@@ -23,15 +26,16 @@ class ArtworkCard extends ConsumerWidget {
       onTap: () => context.push(AppRoutes.artworkPath(artwork.id), extra: artwork),
       child: Container(
         decoration: BoxDecoration(
-          color:         isDark ? AppColors.darkCard : AppColors.canvasCard,
-          borderRadius:  BorderRadius.circular(8),
-          border:        Border.all(
+          color:             isDark ? AppColors.darkCard : AppColors.canvasCard,
+          borderRadius:      BorderRadius.circular(8),
+          border:            Border.all(
             color: isDark ? AppColors.darkBorder : AppColors.inkHair,
             width: isDark ? 0.5 : 0.8,
           ),
         ),
         clipBehavior: Clip.hardEdge,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+          // ── Image ──────────────────────────────────────────────────
           Stack(children: [
             CachedNetworkImage(
               imageUrl:    artwork.thumbnailUrl,
@@ -49,6 +53,7 @@ class ArtworkCard extends ConsumerWidget {
                     color: isDark ? AppColors.darkFaint : AppColors.inkLight, size: 26)),
               ),
             ),
+            // Dark mode: bottom gradient scrim
             if (isDark)
               Positioned(bottom: 0, left: 0, right: 0,
                 child: Container(height: 48,
@@ -59,6 +64,7 @@ class ArtworkCard extends ConsumerWidget {
                   ),
                 ),
               ),
+            // Heart button
             Positioned(top: 8, right: 8,
               child: _HeartBtn(
                 isFav: isFav, isDark: isDark,
@@ -66,6 +72,7 @@ class ArtworkCard extends ConsumerWidget {
                     .toggle(artwork.id, user?.userId ?? 'guest'),
               ),
             ),
+            // Offline indicator — thin gold line (dark) or blue dot (light)
             if (isOffline && isDark)
               Positioned(top: 0, left: 0, right: 0,
                 child: Container(height: 2, color: AppColors.gold)),
@@ -75,6 +82,7 @@ class ArtworkCard extends ConsumerWidget {
                   decoration: const BoxDecoration(
                       color: AppColors.saveBlue, shape: BoxShape.circle))),
           ]),
+          // ── Info ───────────────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(11, 9, 11, 12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -110,7 +118,8 @@ class ArtworkCard extends ConsumerWidget {
 }
 
 class _HeartBtn extends StatelessWidget {
-  final bool isFav, isDark;
+  final bool isFav;
+  final bool isDark;
   final VoidCallback onTap;
   const _HeartBtn({required this.isFav, required this.isDark, required this.onTap});
 

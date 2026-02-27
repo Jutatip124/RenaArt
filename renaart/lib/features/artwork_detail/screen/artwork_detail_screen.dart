@@ -24,8 +24,7 @@ class ArtworkDetailScreen extends ConsumerWidget {
           color: Theme.of(context).brightness == Brightness.dark
               ? AppColors.gold : AppColors.ink)));
     if (artwork == null) return Scaffold(appBar: AppBar(),
-        body: const Center(child: Text('Not found',
-            style: TextStyle(fontFamily: 'Jost'))));
+        body: const Center(child: Text('Not found', style: TextStyle(fontFamily: 'Jost'))));
     return _Body(artwork: artwork);
   }
 }
@@ -36,25 +35,25 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFav       = ref.watch(favoritesProvider.select((l) => l.contains(artwork.id)));
-    final isOffline   = ref.watch(offlineIdsProvider.select((l) => l.contains(artwork.id)));
-    final offlineFull = ref.watch(offlineIdsProvider.select((l) =>
+    final isFav      = ref.watch(favoritesProvider.select((l) => l.contains(artwork.id)));
+    final isOffline  = ref.watch(offlineIdsProvider.select((l) => l.contains(artwork.id)));
+    final offlineFull= ref.watch(offlineIdsProvider.select((l) =>
         l.length >= AppConstants.maxOfflineArtworks && !l.contains(artwork.id)));
-    final isDark      = Theme.of(context).brightness == Brightness.dark;
-    final user        = ref.watch(authProvider);
-    final bg          = isDark ? AppColors.darkCanvas : AppColors.canvas;
-    final text        = isDark ? AppColors.darkText   : AppColors.ink;
-    final sub         = isDark ? AppColors.darkSub    : AppColors.inkMid;
-    final faint       = isDark ? AppColors.darkFaint  : AppColors.inkLight;
+    final isDark     = Theme.of(context).brightness == Brightness.dark;
+    final user       = ref.watch(authProvider);
+    final bg         = isDark ? AppColors.darkCanvas : AppColors.canvas;
+    final text       = isDark ? AppColors.darkText   : AppColors.ink;
+    final sub        = isDark ? AppColors.darkSub    : AppColors.inkMid;
+    final faint      = isDark ? AppColors.darkFaint  : AppColors.inkLight;
 
     final cached  = ref.watch(storageProvider).getAllCachedArtworks();
-    final related = cached
-        .where((a) => a.id != artwork.id && a.period == artwork.period)
+    final related = cached.where((a) => a.id != artwork.id && a.period == artwork.period)
         .take(4).toList();
 
     return Scaffold(
       backgroundColor: bg,
       body: CustomScrollView(slivers: [
+        // ── Hero Image ──────────────────────────────────────────────
         SliverAppBar(
           expandedHeight: 320, pinned: true,
           backgroundColor: bg,
@@ -62,6 +61,7 @@ class _Body extends ConsumerWidget {
             onTap: () => context.pop(),
             child: Container(margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
+                // Glass pill button — Museum style
                 color: Colors.black.withOpacity(0.35),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -82,16 +82,18 @@ class _Body extends ConsumerWidget {
           ],
           flexibleSpace: FlexibleSpaceBar(
             background: Stack(children: [
+              // Image
               artwork.imageUrl.isNotEmpty
                   ? CachedNetworkImage(imageUrl: artwork.imageUrl,
                       fit: BoxFit.cover, width: double.infinity, height: double.infinity,
-                      placeholder: (_, __) => Container(
-                          color: isDark ? AppColors.darkCard : AppColors.canvasTone),
+                      placeholder: (_, __) => Container(color: isDark
+                          ? AppColors.darkCard : AppColors.canvasTone),
                       errorWidget: (_, __, ___) => Container(
                           color: isDark ? AppColors.darkCard : AppColors.canvasTone,
                           child: Center(child: Icon(Icons.image_outlined,
                               color: faint, size: 36))))
                   : Container(color: isDark ? AppColors.darkCard : AppColors.canvasTone),
+              // Bottom gradient — darker/stronger in dark mode (cinematic)
               Positioned(bottom: 0, left: 0, right: 0,
                 child: Container(height: 100,
                   decoration: BoxDecoration(
@@ -108,14 +110,17 @@ class _Body extends ConsumerWidget {
             ]),
           ),
         ),
+        // ── Content ─────────────────────────────────────────────────
         SliverToBoxAdapter(child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // Period label (small caps, museum style)
             Text(artwork.period.toUpperCase(),
               style: TextStyle(fontFamily: 'Jost', fontSize: 10,
                   fontWeight: FontWeight.w600, letterSpacing: 1.8,
                   color: isDark ? AppColors.gold : AppColors.accentWarm)),
             const SizedBox(height: 6),
+            // Artwork title — large Cormorant
             Text(artwork.title,
               style: TextStyle(fontFamily: 'Cormorant', fontSize: 32,
                   fontWeight: FontWeight.w700, color: text,
@@ -132,11 +137,13 @@ class _Body extends ConsumerWidget {
                     letterSpacing: 0.3)),
             ],
             const SizedBox(height: 18),
+            // Action buttons — inline pill style
             Row(children: [
               _ActionPill(
                 icon: isFav ? Icons.favorite : Icons.favorite_border,
                 label: isFav ? 'Liked' : 'Like',
-                active: isFav, activeColor: AppColors.heartRed, isDark: isDark,
+                active: isFav, activeColor: AppColors.heartRed,
+                isDark: isDark,
                 onTap: () => ref.read(favoritesProvider.notifier)
                     .toggle(artwork.id, user?.userId ?? 'guest'),
               ),
@@ -144,7 +151,8 @@ class _Body extends ConsumerWidget {
               _ActionPill(
                 icon: isOffline ? Icons.download_done : Icons.download_outlined,
                 label: isOffline ? 'Saved' : (offlineFull ? 'Full' : 'Save Offline'),
-                active: isOffline, activeColor: AppColors.saveBlue, isDark: isDark,
+                active: isOffline, activeColor: AppColors.saveBlue,
+                isDark: isDark,
                 onTap: () {
                   final ok = ref.read(offlineIdsProvider.notifier).toggleOffline(artwork);
                   if (!ok) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -156,14 +164,16 @@ class _Body extends ConsumerWidget {
               ),
             ]),
             const SizedBox(height: 20),
+            // Metadata — thin horizontal chips
             Wrap(spacing: 6, runSpacing: 6, children: [
-              if (artwork.medium.isNotEmpty)     _MetaChip(artwork.medium, isDark),
+              if (artwork.medium.isNotEmpty)    _MetaChip(artwork.medium, isDark),
               if (artwork.dimensions.isNotEmpty) _MetaChip(artwork.dimensions, isDark),
               if (artwork.location.isNotEmpty)   _MetaChip(artwork.location, isDark),
             ]),
             const SizedBox(height: 24),
             Divider(color: isDark ? AppColors.darkBorder : AppColors.inkHair, thickness: 0.8),
             const SizedBox(height: 22),
+            // Historical Background
             if (artwork.description.isNotEmpty) ...[
               _SectionTitle('Historical Background', isDark),
               const SizedBox(height: 10),
@@ -183,8 +193,10 @@ class _Body extends ConsumerWidget {
                 children: artwork.keySymbols.map((s) => _MetaChip(s, isDark)).toList()),
               const SizedBox(height: 18),
             ],
+            // Object ID footnote
             Text('Object ID · ${artwork.id}', style: TextStyle(fontFamily: 'Jost',
                 fontSize: 10, color: faint, letterSpacing: 0.3)),
+            // Related artworks
             if (related.isNotEmpty) ...[
               const SizedBox(height: 30),
               _SectionTitle('More to Explore', isDark),
@@ -207,12 +219,14 @@ class _Body extends ConsumerWidget {
   }
 }
 
+// ─── Subwidgets ───────────────────────────────────────────────────────────────
 class _SectionTitle extends StatelessWidget {
   final String text; final bool isDark;
   const _SectionTitle(this.text, this.isDark);
   @override
   Widget build(BuildContext context) => Text(text,
-    style: TextStyle(fontFamily: 'Cormorant', fontSize: 22, fontWeight: FontWeight.w600,
+    style: TextStyle(fontFamily: 'Cormorant', fontSize: 22,
+        fontWeight: FontWeight.w600,
         color: isDark ? AppColors.darkText : AppColors.ink));
 }
 
@@ -222,6 +236,7 @@ class _ActionPill extends StatelessWidget {
   final bool isDark; final VoidCallback onTap;
   const _ActionPill({required this.icon, required this.label, required this.active,
       required this.activeColor, required this.isDark, required this.onTap});
+
   @override
   Widget build(BuildContext context) => GestureDetector(
     onTap: onTap,
@@ -261,8 +276,7 @@ class _MetaChip extends StatelessWidget {
     decoration: BoxDecoration(
       color: isDark ? AppColors.darkRaised : AppColors.canvasTone,
       borderRadius: BorderRadius.circular(4),
-      border: Border.all(
-          color: isDark ? AppColors.darkBorder : AppColors.inkHair, width: 0.5),
+      border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.inkHair, width: 0.5),
     ),
     child: Text(text, style: TextStyle(fontFamily: 'Jost', fontSize: 11,
         color: isDark ? AppColors.darkSub : AppColors.inkMid)),

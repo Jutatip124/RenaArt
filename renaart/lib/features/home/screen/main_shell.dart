@@ -65,9 +65,11 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final active        = idx == current;
-    final activeColor   = isDark ? AppColors.gold      : AppColors.ink;
-    final inactiveColor = isDark ? AppColors.darkFaint : AppColors.inkLight;
+    final active = idx == current;
+    // Light: black active, grey inactive
+    // Dark:  gold active, dark-faint inactive
+    final activeColor   = isDark ? AppColors.gold       : AppColors.ink;
+    final inactiveColor = isDark ? AppColors.darkFaint  : AppColors.inkLight;
 
     return Expanded(child: InkWell(
       onTap: onTap, splashColor: Colors.transparent, highlightColor: Colors.transparent,

@@ -34,6 +34,7 @@ class _SearchState extends ConsumerState<SearchScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(child: Column(children: [
+        // ── Header ─────────────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.fromLTRB(18, 16, 18, 10),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -45,13 +46,15 @@ class _SearchState extends ConsumerState<SearchScreen> {
                 fontSize: 12, color: faint, fontWeight: FontWeight.w300)),
           ]),
         ),
+        // ── Search bar ─────────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(children: [
             Expanded(
               child: TextField(
                 controller: _ctrl,
-                onChanged: (v) => ref.read(searchQueryProvider.notifier).state = v,
+                onChanged: (v) =>
+                    ref.read(searchQueryProvider.notifier).state = v,
                 decoration: InputDecoration(
                   hintText: 'Search artworks, artists...',
                   prefixIcon: Icon(Icons.search, size: 17, color: faint),
@@ -66,6 +69,7 @@ class _SearchState extends ConsumerState<SearchScreen> {
               ),
             ),
             const SizedBox(width: 8),
+            // Filter toggle
             GestureDetector(
               onTap: () => setState(() => _showFilters = !_showFilters),
               child: AnimatedContainer(
@@ -91,12 +95,15 @@ class _SearchState extends ConsumerState<SearchScreen> {
             ),
           ]),
         ),
+        // ── Filter panel ───────────────────────────────────────────
         AnimatedCrossFade(
-          crossFadeState: _showFilters ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          crossFadeState: _showFilters
+              ? CrossFadeState.showSecond : CrossFadeState.showFirst,
           duration: const Duration(milliseconds: 200),
           firstChild: const SizedBox.shrink(),
           secondChild: _FilterPanel(isDark: isDark),
         ),
+        // ── Count + clear ──────────────────────────────────────────
         results.when(
           loading: () => const SizedBox(height: 6),
           error:   (_, __) => const SizedBox.shrink(),
@@ -121,6 +128,7 @@ class _SearchState extends ConsumerState<SearchScreen> {
             ]),
           ),
         ),
+        // ── Results ────────────────────────────────────────────────
         Expanded(child: results.when(
           loading: () => Center(child: SizedBox(width: 20, height: 20,
             child: CircularProgressIndicator(strokeWidth: 1.5,
@@ -148,6 +156,7 @@ class _SearchState extends ConsumerState<SearchScreen> {
   }
 }
 
+// ─── Filter panel ─────────────────────────────────────────────────────────────
 class _FilterPanel extends ConsumerWidget {
   final bool isDark;
   const _FilterPanel({required this.isDark});
@@ -202,7 +211,7 @@ class _FilterGroup extends StatelessWidget {
 }
 
 class _Chip extends StatelessWidget {
-  final String label; final bool selected, isDark; final VoidCallback onTap;
+  final String label; final bool selected; final bool isDark; final VoidCallback onTap;
   const _Chip(this.label, this.selected, this.isDark, this.onTap);
   @override
   Widget build(BuildContext context) => GestureDetector(

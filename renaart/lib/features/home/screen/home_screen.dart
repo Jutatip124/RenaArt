@@ -6,6 +6,11 @@ import '../../../core/constants/app_constants.dart';
 import '../../home/providers/app_providers.dart';
 import '../../home/widgets/artwork_card.dart';
 
+// Home Screen — "Welcome to Arts Gallery" layout (Image 1 reference)
+// - Section header "For You" with arrow
+// - Period filter chips (pill style, black active / outlined inactive)
+// - Masonry 2-col grid
+// Dark mode: cinematic dark bg, gold active chip
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -22,6 +27,7 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: bg,
       body: CustomScrollView(slivers: [
+        // ── AppBar ──────────────────────────────────────────────────
         SliverAppBar(
           floating: true, snap: true,
           backgroundColor: bg,
@@ -38,7 +44,8 @@ class HomeScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isDark ? AppColors.darkCard : AppColors.canvasTone,
-                border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.inkHair),
+                border: Border.all(
+                    color: isDark ? AppColors.darkBorder : AppColors.inkHair),
               ),
               child: Icon(Icons.person_outline, size: 17,
                   color: isDark ? AppColors.darkSub : AppColors.inkMid),
@@ -47,11 +54,14 @@ class HomeScreen extends ConsumerWidget {
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(46),
             child: _PeriodChips(selected: period, isDark: isDark,
-              onSelect: (p) => ref.read(selectedPeriodProvider.notifier).state = p),
+              onSelect: (p) =>
+                  ref.read(selectedPeriodProvider.notifier).state = p),
           ),
         ),
+        // ── Offline Banner ──────────────────────────────────────────
         if (!isOnline)
           SliverToBoxAdapter(child: _OfflineBanner(isDark: isDark)),
+        // ── "For You" section header ────────────────────────────────
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 16, 18, 10),
@@ -74,11 +84,13 @@ class HomeScreen extends ConsumerWidget {
             ]),
           ),
         ),
+        // ── Grid ────────────────────────────────────────────────────
         feedAsync.when(
           loading: () => const SliverToBoxAdapter(child: _SkeletonGrid()),
           error:   (e, _) => SliverToBoxAdapter(child: _ErrorView(isDark: isDark)),
           data:    (artworks) {
-            if (artworks.isEmpty) return SliverToBoxAdapter(child: _EmptyView(isDark: isDark));
+            if (artworks.isEmpty) return SliverToBoxAdapter(
+                child: _EmptyView(isDark: isDark));
             return SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               sliver: SliverMasonryGrid.count(
@@ -95,6 +107,7 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
+// ─── Period Chips ─────────────────────────────────────────────────────────────
 class _PeriodChips extends StatelessWidget {
   final String selected;
   final bool isDark;
@@ -118,6 +131,8 @@ class _PeriodChips extends StatelessWidget {
             duration: const Duration(milliseconds: 160),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
             decoration: BoxDecoration(
+              // Light: black fill active / white outlined inactive
+              // Dark:  gold fill active / dark card inactive
               color:  active
                   ? (isDark ? AppColors.gold : AppColors.ink)
                   : (isDark ? AppColors.darkCard : AppColors.canvasCard),
@@ -144,6 +159,7 @@ class _PeriodChips extends StatelessWidget {
   );
 }
 
+// ─── Offline Banner ───────────────────────────────────────────────────────────
 class _OfflineBanner extends StatelessWidget {
   final bool isDark;
   const _OfflineBanner({required this.isDark});
@@ -157,7 +173,7 @@ class _OfflineBanner extends StatelessWidget {
       border: Border.all(color: AppColors.saveBlue.withOpacity(0.25)),
     ),
     child: Row(children: [
-      const Icon(Icons.wifi_off, size: 13, color: AppColors.saveBlue),
+      Icon(Icons.wifi_off, size: 13, color: AppColors.saveBlue),
       const SizedBox(width: 8),
       Text(AppStrings.offlineBanner, style: const TextStyle(
           fontFamily: 'Jost', fontSize: 12, color: AppColors.saveBlue,
@@ -166,6 +182,7 @@ class _OfflineBanner extends StatelessWidget {
   );
 }
 
+// ─── Loading skeleton ─────────────────────────────────────────────────────────
 class _SkeletonGrid extends StatelessWidget {
   const _SkeletonGrid();
   @override
@@ -189,6 +206,7 @@ class _SkeletonGrid extends StatelessWidget {
   }
 }
 
+// ─── States ───────────────────────────────────────────────────────────────────
 class _ErrorView extends StatelessWidget {
   final bool isDark;
   const _ErrorView({required this.isDark});
@@ -196,7 +214,8 @@ class _ErrorView extends StatelessWidget {
   Widget build(BuildContext context) => Center(child: Padding(
     padding: const EdgeInsets.all(40),
     child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Icon(Icons.wifi_off, size: 36, color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+      Icon(Icons.wifi_off, size: 36,
+          color: isDark ? AppColors.darkFaint : AppColors.inkLight),
       const SizedBox(height: 14),
       Text('Could not load artworks', style: TextStyle(fontFamily: 'Cormorant',
           fontSize: 20, color: isDark ? AppColors.darkSub : AppColors.inkMid)),

@@ -59,6 +59,3 @@ flutter:
           weight: 500
         - asset: assets/fonts/Jost-Light.ttf
           weight: 300
-  assets:
-    - assets/fonts/
-    - assets/images/

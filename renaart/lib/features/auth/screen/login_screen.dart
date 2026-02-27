@@ -5,6 +5,8 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
 import '../../home/providers/app_providers.dart';
 
+// Login — Arts Gallery editorial style
+// Clean off-white, serif large headline, black CTA button
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
   @override
@@ -53,14 +55,17 @@ class _LoginState extends ConsumerState<LoginScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const SizedBox(height: 52),
+            // Large serif headline
             Text('Welcome to\nRenaArt',
               style: TextStyle(fontFamily: 'Cormorant', fontSize: 38,
                   fontWeight: FontWeight.w700, color: text,
                   letterSpacing: -1.0, height: 1.08)),
             const SizedBox(height: 8),
+            // Gold rule (dark) / ink hairline (light)
             Container(width: 32, height: 1.5,
                 color: isDark ? AppColors.gold : AppColors.ink),
             const SizedBox(height: 36),
+            // Form card
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -92,6 +97,7 @@ class _LoginState extends ConsumerState<LoginScreen> {
                       fontSize: 12, color: AppColors.errorRed)),
                 ],
                 const SizedBox(height: 20),
+                // Black CTA button — Arts Gallery style
                 SizedBox(width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _loading ? null : _signIn,
@@ -118,6 +124,7 @@ class _LoginState extends ConsumerState<LoginScreen> {
               ]),
             ),
             const SizedBox(height: 20),
+            // Guest link — subtle
             Center(child: GestureDetector(
               onTap: _loading ? null : _guest,
               child: Text('Continue without account',
