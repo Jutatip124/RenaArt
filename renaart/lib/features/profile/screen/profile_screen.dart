@@ -263,7 +263,7 @@ class ProfileScreen extends ConsumerWidget {
                   Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                          color: AppColors.saveBlue.withOpacity(0.1),
+                          color: AppColors.saveBlue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6)),
                       child: Row(children: [
                         const Icon(Icons.mail_outline, size: 13, color: AppColors.saveBlue),
@@ -335,6 +335,7 @@ class _InfoRow extends StatelessWidget {
   ]);
 }
 
+// ignore: non_constant_identifier_names
 Widget _Label(String t, Color c) => Padding(
     padding: const EdgeInsets.fromLTRB(18, 0, 18, 8),
     child: Text(t,
@@ -345,6 +346,7 @@ Widget _Label(String t, Color c) => Padding(
             letterSpacing: 1.5,
             color: c)));
 
+// ignore: non_constant_identifier_names
 Widget _Card(Color bg, bool isDark, List<Widget> children) => Container(
     margin: const EdgeInsets.symmetric(horizontal: 18),
     decoration: BoxDecoration(
@@ -354,6 +356,7 @@ Widget _Card(Color bg, bool isDark, List<Widget> children) => Container(
             color: isDark ? AppColors.darkBorder : AppColors.inkHair, width: isDark ? 0.5 : 0.8)),
     child: Column(children: children));
 
+// ignore: non_constant_identifier_names
 Widget _Div(bool isDark) => Divider(
     color: isDark ? AppColors.darkBorder : AppColors.inkHair, height: 1, thickness: 0.8, indent: 44);
 
@@ -424,9 +427,9 @@ class _ToggleTile extends StatelessWidget {
           Switch(
               value: value,
               onChanged: onToggle,
-              activeColor: activeColor,
+              activeThumbColor: activeColor,
               trackColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected)
-                  ? activeColor.withOpacity(0.25)
+                  ? activeColor.withValues(alpha: 0.25)
                   : isDark
                       ? AppColors.darkBorder
                       : AppColors.inkHair)),

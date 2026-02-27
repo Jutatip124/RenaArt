@@ -1,9 +1,25 @@
-/// App-wide constants — aligned with Week 3 Lab Sheet specifications
+// App-wide constants — aligned with Week 3 Lab Sheet specifications
+
+// ── Data Source Selection ────────────────────────────────────────────────────
+// Switch here to change which API feeds the app.
+// localAsset:          FASTEST — bundled JSON, works 100% offline, no network needed
+// ArtInstituteChicago: no API key, fast (single-request), 400k+ works
+// Rijksmuseum:         free API key at data.rijksmuseum.nl, Dutch/Flemish focus
+// MetMuseum:           original source, slowest (two-step ID batch)
+// Mock:                generated seed data (no internet required)
+enum ApiSource { localAsset, artInstituteChicago, rijksmuseum, metMuseum, mock }
+
 class AppConstants {
   AppConstants._();
 
-  // Data source toggle: false = real Met Museum API, true = offline mock data
-  static const bool useMockData = false;
+  // ─── Active data source ────────────────────────────────────────────────────
+  static const ApiSource activeSource = ApiSource.localAsset;
+
+  // Path to the bundled artworks JSON asset (used by localAsset source)
+  static const String artworksDataPath = 'assets/data/artworks.json';
+
+  // Legacy toggle kept for backward compat — derived from activeSource
+  static bool get useMockData => activeSource == ApiSource.mock;
 
   // ─── App Info ─────────────────────────────────────────────────────────────
   static const String appName = 'RenaArt';
@@ -12,21 +28,46 @@ class AppConstants {
   static const String studentId = '6631503124';
   static const String githubRepo = 'https://github.com/Jutatip124/RenaArt';
 
-  // ─── Week 3 Spec: Met Museum API Endpoints ────────────────────────────────
-  // Action: Search IDs  → GET /search?q=...&hasImages=true
-  // Action: Get Artwork → GET /objects/{id}
+  // ─── Art Institute of Chicago API (no auth required) ──────────────────────
+  // Docs: https://api.artic.edu/docs/
+  // One-request search: returns full objects + image_id in a single call
+  static const String aicApiBase = 'https://api.artic.edu/api/v1';
+  static const String aicImageBase = 'https://www.artic.edu/iiif/2';
+  // Image size helpers:  /full/843,/0/default.jpg  (large)
+  //                      /full/400,/0/default.jpg  (thumbnail)
+  static const String aicImageLarge = '/full/843,/0/default.jpg';
+  static const String aicImageThumb = '/full/400,/0/default.jpg';
+  static const List<String> aicFields = [
+    'id', 'title', 'artist_display', 'artist_id',
+    'date_display', 'date_start', 'date_end',
+    'medium_display', 'dimensions',
+    'image_id', 'thumbnail',
+    'artwork_type_title', 'classification_title',
+    'place_of_origin', 'is_public_domain',
+    'department_title', 'style_title', 'subject_titles',
+  ];
+
+  // ─── Rijksmuseum API (free key: data.rijksmuseum.nl) ──────────────────────
+  // Docs: https://data.rijksmuseum.nl/object-metadata/api/
+  // Set RIJKS_API_KEY as a GitHub Secret or in android/local.properties
+  static const String rijksApiBase =
+      'https://www.rijksmuseum.nl/api/en/collection';
+  static const String rijksApiKey = String.fromEnvironment(
+    'RIJKS_API_KEY',
+    defaultValue: 'YOUR_RIJKS_KEY', // replace or inject via --dart-define
+  );
+
+  // ─── Met Museum API Endpoints (legacy / fallback) ─────────────────────────
   static const String metApiBase =
       'https://collectionapi.metmuseum.org/public/collection/v1';
   static const String metSearchEndpoint = '$metApiBase/search';
   static const String metObjectEndpoint = '$metApiBase/objects';
 
-  // Week 3 Spec: Image resolution cap
+  // ─── Shared artwork settings ───────────────────────────────────────────────
   static const int imageMaxResolution = 1080;
-
-  // Week 3 Spec: Offline limit = 10 artworks max
   static const int maxOfflineArtworks = 10;
 
-  // ─── Hive Box Names (Week 3: Local Storage spec) ──────────────────────────
+  // ─── Hive Box Names ────────────────────────────────────────────────────────
   static const String artworksBoxName = 'artworks_cache';
   static const String favoritesBoxName = 'user_favorites';
   static const String offlineBoxName = 'offline_artworks';
@@ -41,17 +82,9 @@ class AppConstants {
   static const String keyEmail = 'user_email';
   static const String keyIsGuest = 'user_is_guest';
 
-  // ─── Met Museum Department IDs for Renaissance artworks ──────────────────
-  // departmentId=11 = European Paintings
-  // departmentId=13 = Greek/Roman (for sculptures)
-  static const String renaissanceSearchQuery =
-      'renaissance painting';
+  // ─── Met Museum Department IDs ────────────────────────────────────────────
+  static const String renaissanceSearchQuery = 'renaissance painting';
   static const int europeanPaintingsDeptId = 11;
-
-  // ─── Week 3 State Management: Global State fields ─────────────────────────
-  // Global: User's Saved/Favorite Artworks (needed in Home, Search, Detail, Collection)
-  // Global: Offline Artwork Availability (needed across all screens)
-  // Local:  Search query text, filter selections (period, medium, artist)
 }
 
 class AppStrings {

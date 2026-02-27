@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_const_constructors
 import '../models/artwork_model.dart';
 
 class MockArtworkService {
@@ -268,7 +269,7 @@ class MockArtworkService {
     if (lower.contains('sculpture') || lower.contains('relief')) return category;
     if (lower.contains('drawing')) return category;
     if (lower.contains('engraving') || lower.contains('woodcut')) {
-      return 'Print (${category})';
+      return 'Print ($category)';
     }
     if (lower.contains('tapestry')) return category;
 

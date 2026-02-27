@@ -17,7 +17,6 @@ class HomeScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       body: CustomScrollView(
@@ -76,10 +75,10 @@ class HomeScreen extends ConsumerWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withOpacity(0.08),
+                  color: colorScheme.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(6),
                   border:
-                      Border.all(color: colorScheme.primary.withOpacity(0.25)),
+                      Border.all(color: colorScheme.primary.withValues(alpha: 0.25)),
                 ),
                 child: Row(
                   children: [

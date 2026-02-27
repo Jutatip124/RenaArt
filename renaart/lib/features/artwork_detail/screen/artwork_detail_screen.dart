@@ -18,13 +18,17 @@ class ArtworkDetailScreen extends ConsumerWidget {
     final artworkAsync = ref.watch(artworkDetailProvider(artworkId));
     final artwork = artworkAsync.valueOrNull ?? preloadedArtwork;
     final user = ref.read(authProvider);
-    if (user != null) ref.read(storageProvider).recordView(artworkId, user.userId);
-    if (artwork == null && artworkAsync.isLoading) return Scaffold(
-      body: Center(child: CircularProgressIndicator(strokeWidth: 1.5,
-          color: Theme.of(context).brightness == Brightness.dark
-              ? AppColors.gold : AppColors.ink)));
-    if (artwork == null) return Scaffold(appBar: AppBar(),
-        body: const Center(child: Text('Not found', style: TextStyle(fontFamily: 'Jost'))));
+    if (user != null) { ref.read(storageProvider).recordView(artworkId, user.userId); }
+    if (artwork == null && artworkAsync.isLoading) {
+      return Scaffold(
+          body: Center(child: CircularProgressIndicator(strokeWidth: 1.5,
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? AppColors.gold : AppColors.ink)));
+    }
+    if (artwork == null) {
+      return Scaffold(appBar: AppBar(),
+          body: const Center(child: Text('Not found', style: TextStyle(fontFamily: 'Jost'))));
+    }
     return _Body(artwork: artwork);
   }
 }
@@ -62,7 +66,7 @@ class _Body extends ConsumerWidget {
             child: Container(margin: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 // Glass pill button — Museum style
-                color: Colors.black.withOpacity(0.35),
+                color: Colors.black.withValues(alpha: 0.35),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Icon(Icons.arrow_back, color: Colors.white, size: 18)),
@@ -74,7 +78,7 @@ class _Body extends ConsumerWidget {
               child: Container(
                 margin: const EdgeInsets.all(8), width: 34, height: 34,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.35), shape: BoxShape.circle),
+                  color: Colors.black.withValues(alpha: 0.35), shape: BoxShape.circle),
                 child: Icon(isFav ? Icons.favorite : Icons.favorite_border,
                     color: isFav ? AppColors.heartRed : Colors.white, size: 16),
               ),
@@ -100,7 +104,7 @@ class _Body extends ConsumerWidget {
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter, end: Alignment.topCenter,
                       colors: [
-                        (isDark ? AppColors.darkCanvas : AppColors.canvas).withOpacity(0.95),
+                        (isDark ? AppColors.darkCanvas : AppColors.canvas).withValues(alpha: 0.95),
                         Colors.transparent,
                       ],
                     ),
@@ -155,11 +159,13 @@ class _Body extends ConsumerWidget {
                 isDark: isDark,
                 onTap: () {
                   final ok = ref.read(offlineIdsProvider.notifier).toggleOffline(artwork);
-                  if (!ok) ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(AppStrings.offlineStorageFull,
-                        style: const TextStyle(fontFamily: 'Jost')),
-                    backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
-                    duration: const Duration(seconds: 3)));
+                  if (!ok) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: const Text(AppStrings.offlineStorageFull,
+                          style: TextStyle(fontFamily: 'Jost')),
+                      backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
+                      duration: const Duration(seconds: 3)));
+                  }
                 },
               ),
             ]),
@@ -244,11 +250,11 @@ class _ActionPill extends StatelessWidget {
       duration: const Duration(milliseconds: 160),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: active ? activeColor.withOpacity(0.12)
+        color: active ? activeColor.withValues(alpha: 0.12)
             : (isDark ? AppColors.darkCard : AppColors.canvasCard),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: active ? activeColor.withOpacity(0.4)
+          color: active ? activeColor.withValues(alpha: 0.4)
               : (isDark ? AppColors.darkBorder : AppColors.inkHair),
           width: 0.8,
         ),

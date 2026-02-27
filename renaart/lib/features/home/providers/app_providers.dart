@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../models/artwork_model.dart';
 import '../../../models/user_model.dart';
+import '../../../services/aic_api_service.dart';
+import '../../../services/artwork_api_service.dart';
 import '../../../services/met_api_service.dart';
 import '../../../services/mock_artwork_service.dart';
+import '../../../services/rijks_api_service.dart';
 import '../../../services/local_storage_service.dart';
 import '../../../core/constants/app_constants.dart';
 
@@ -12,12 +15,27 @@ import '../../../core/constants/app_constants.dart';
 // SERVICES
 // ══════════════════════════════════════════════════════════════════════════════
 final metApiServiceProvider = Provider<MetApiService>((_) => MetApiService());
+final aicApiServiceProvider = Provider<AicApiService>((_) => AicApiService());
+final rijksApiServiceProvider =
+    Provider<RijksApiService>((_) => RijksApiService());
 final mockArtworkServiceProvider = Provider<MockArtworkService>(
   (_) => MockArtworkService.instance,
 );
 final storageProvider = Provider<LocalStorageService>(
   (_) => LocalStorageService.instance,
 );
+
+/// Unified data source — routes to AIC / Rijksmuseum / Met / Mock based on
+/// [AppConstants.activeSource] and falls back to mock on any error.
+final artworkApiServiceProvider = Provider<ArtworkApiService>((ref) {
+  return ArtworkApiService(
+    source: AppConstants.activeSource,
+    aicService: ref.watch(aicApiServiceProvider),
+    rijksService: ref.watch(rijksApiServiceProvider),
+    metService: ref.watch(metApiServiceProvider),
+    mockService: ref.watch(mockArtworkServiceProvider),
+  );
+});
 
 // ══════════════════════════════════════════════════════════════════════════════
 // THEME (Global State — affects all screens)
@@ -211,27 +229,18 @@ final selectedPeriodProvider = StateProvider<String>((ref) => 'All');
 
 /// Raw fetch provider — only re-runs when connectivity changes, NOT on period change
 final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) async {
-  final mock = ref.watch(mockArtworkServiceProvider);
   final storage = ref.watch(storageProvider);
   final isOnline = ref.watch(isOnlineProvider);
 
-  if (AppConstants.useMockData) {
-    final artworks = await mock.fetchRenaissanceFeed(count: 80);
-    if (artworks.isNotEmpty) {
-      await storage.cacheArtworks(artworks);
-    }
-    return artworks;
-  }
-
-  // Week 3 Offline Strategy: Show cached data with offline banner
+  // Offline strategy: return cache immediately with offline banner
   if (!isOnline) {
     return storage.getAllCachedArtworks();
   }
 
-  final api = ref.watch(metApiServiceProvider);
+  final api = ref.watch(artworkApiServiceProvider);
 
-  // Fetch from API and cache results
-  final artworks = await api.fetchRenaissanceFeed(count: 20);
+  // Unified service handles AIC / Rijksmuseum / Met / Mock routing + fallback
+  final artworks = await api.fetchRenaissanceFeed(count: 30);
   if (artworks.isNotEmpty) {
     await storage.cacheArtworks(artworks);
   }
@@ -257,22 +266,15 @@ final homeFeedProvider = Provider.autoDispose<AsyncValue<List<Artwork>>>((ref) {
 final artworkDetailProvider =
     FutureProvider.family.autoDispose<Artwork?, String>((ref, id) async {
   final storage = ref.watch(storageProvider);
-  final mock = ref.watch(mockArtworkServiceProvider);
 
   // Check cache first
   final cached = storage.getCachedArtwork(id);
   if (cached != null) return cached;
 
-  if (AppConstants.useMockData) {
-    final artwork = await mock.getArtwork(id);
-    if (artwork != null) await storage.cacheArtwork(artwork);
-    return artwork;
-  }
+  final api = ref.watch(artworkApiServiceProvider);
 
-  final api = ref.watch(metApiServiceProvider);
-
-  // Fetch from API (Week 3 Action 2: GET /objects/{id})
-  final artwork = await api.getArtwork(int.tryParse(id) ?? 0);
+  // Unified service routes by id prefix (aic_, rijks_, mock_) or active source
+  final artwork = await api.getArtwork(id);
   if (artwork != null) await storage.cacheArtwork(artwork);
   return artwork;
 });
@@ -300,27 +302,18 @@ bool _isFilterableRenaissanceArtwork(Artwork artwork) {
 final searchFilterSeedProvider =
     FutureProvider.autoDispose<List<Artwork>>((ref) async {
   final storage = ref.watch(storageProvider);
-  final mock = ref.watch(mockArtworkServiceProvider);
   final isOnline = ref.watch(isOnlineProvider);
-
-  if (AppConstants.useMockData) {
-    final seed = mock.getAllArtworks().where(_isFilterableRenaissanceArtwork).toList();
-    if (seed.isNotEmpty) {
-      await storage.cacheArtworks(seed);
-    }
-    return seed;
-  }
 
   var seed = storage.getAllCachedArtworks()
       .where(_isFilterableRenaissanceArtwork)
       .toList();
 
   if (isOnline && seed.length < 24) {
-    final api = ref.watch(metApiServiceProvider);
+    final api = ref.watch(artworkApiServiceProvider);
     final fetched = await api.fetchRenaissanceFeed(count: 80);
     if (fetched.isNotEmpty) {
       await storage.cacheArtworks(fetched);
-      seed = fetched;
+      seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
     }
   }
 
@@ -362,7 +355,7 @@ final availableSearchPeriodsProvider = Provider<List<String>>((ref) {
 
 final availableSearchMediumsProvider = Provider<List<String>>((ref) {
   final seed = ref.watch(searchFilterSeedProvider).valueOrNull;
-  final canonical = AppStrings.mediums;
+  const canonical = AppStrings.mediums;
   if (seed == null || seed.isEmpty) return canonical;
 
   final filtered = canonical.where((medium) {
@@ -379,14 +372,17 @@ final searchResultsProvider =
   final artistFilter = ref.watch(searchArtistFilterProvider);
   final periodFilter = ref.watch(searchPeriodFilterProvider);
   final mediumFilter = ref.watch(searchMediumFilterProvider);
-  final mock = ref.watch(mockArtworkServiceProvider);
   final storage = ref.watch(storageProvider);
   final isOnline = ref.watch(isOnlineProvider);
   final hasAnyFilter =
       artistFilter != null || periodFilter != null || mediumFilter != null;
 
   if (AppConstants.useMockData) {
-    var results = mock.getAllArtworks().where(_isFilterableRenaissanceArtwork).toList();
+    // Mock mode uses the unified service (which routes to MockArtworkService internally)
+    final api = ref.watch(artworkApiServiceProvider);
+    var results = (await api.fetchRenaissanceFeed(count: 80))
+        .where(_isFilterableRenaissanceArtwork)
+        .toList();
 
     if (query.isNotEmpty) {
       final normalizedQuery = query.toLowerCase();
@@ -436,15 +432,14 @@ final searchResultsProvider =
     // Offline: use cache only
     results = storage.getAllCachedArtworks();
   } else if (query.isNotEmpty) {
-    final api = ref.watch(metApiServiceProvider);
-    // Week 3 API Action 1: Search IDs
+    final api = ref.watch(artworkApiServiceProvider);
     results = await api.searchArtworks(query);
     await storage.cacheArtworks(results);
   } else {
     // Online + filter-only: use cache first, then fetch feed fallback
     results = storage.getAllCachedArtworks();
     if (results.isEmpty) {
-      final api = ref.watch(metApiServiceProvider);
+      final api = ref.watch(artworkApiServiceProvider);
       final feed = await api.fetchRenaissanceFeed(count: 60);
       if (feed.isNotEmpty) {
         await storage.cacheArtworks(feed);

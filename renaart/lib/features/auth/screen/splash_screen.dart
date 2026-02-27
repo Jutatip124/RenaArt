@@ -67,12 +67,12 @@ class _SplashState extends ConsumerState<SplashScreen>
               const SizedBox(height: 4),
               Text('v${AppConstants.appVersion}',
                 style: TextStyle(fontFamily: 'Jost', fontSize: 9,
-                    fontWeight: FontWeight.w300, letterSpacing: 1.2, color: sub.withOpacity(0.5))),
+                    fontWeight: FontWeight.w300, letterSpacing: 1.2, color: sub.withValues(alpha: 0.5))),
               const SizedBox(height: 56),
               SizedBox(width: 16, height: 16,
                 child: CircularProgressIndicator(
                   strokeWidth: 1.2,
-                  color: isDark ? AppColors.gold.withOpacity(0.5)
+                  color: isDark ? AppColors.gold.withValues(alpha: 0.5)
                       : AppColors.inkLight,
                 ),
               ),

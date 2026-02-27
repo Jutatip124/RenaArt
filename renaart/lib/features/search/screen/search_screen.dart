@@ -136,13 +136,15 @@ class _SearchState extends ConsumerState<SearchScreen> {
           error:   (e, _) => Center(child: Text('Error: $e',
               style: const TextStyle(fontFamily: 'Jost', fontSize: 13))),
           data:    (list) {
-            if (list.isEmpty) return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-              Icon(Icons.search_off, size: 38,
-                  color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-              const SizedBox(height: 12),
-              Text('Nothing found', style: TextStyle(fontFamily: 'Cormorant',
-                  fontSize: 20, color: isDark ? AppColors.darkSub : AppColors.inkMid)),
-            ]));
+            if (list.isEmpty) {
+              return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Icon(Icons.search_off, size: 38,
+                    color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+                const SizedBox(height: 12),
+                Text('Nothing found', style: TextStyle(fontFamily: 'Cormorant',
+                    fontSize: 20, color: isDark ? AppColors.darkSub : AppColors.inkMid)),
+              ]));
+            }
             return MasonryGridView.count(
               padding: const EdgeInsets.fromLTRB(14, 6, 14, 24),
               crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10,

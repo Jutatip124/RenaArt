@@ -48,12 +48,12 @@ class _CollState extends ConsumerState<CollectionScreen>
                   letterSpacing: -0.6)),
               const SizedBox(height: 2),
               Row(children: [
-                Icon(Icons.favorite, size: 11, color: AppColors.heartRed),
+                const Icon(Icons.favorite, size: 11, color: AppColors.heartRed),
                 const SizedBox(width: 4),
                 Text('${favs.length} liked', style: TextStyle(fontFamily: 'Jost',
                     fontSize: 11, color: faint)),
                 const SizedBox(width: 12),
-                Icon(Icons.download_done, size: 11, color: AppColors.saveBlue),
+                const Icon(Icons.download_done, size: 11, color: AppColors.saveBlue),
                 const SizedBox(width: 4),
                 Text('$oCount/${AppConstants.maxOfflineArtworks} saved', style: TextStyle(
                     fontFamily: 'Jost', fontSize: 11, color: faint)),

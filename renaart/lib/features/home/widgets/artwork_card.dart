@@ -60,7 +60,7 @@ class ArtworkCard extends ConsumerWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter, end: Alignment.topCenter,
-                      colors: [AppColors.darkCard.withOpacity(0.75), Colors.transparent]),
+                      colors: [AppColors.darkCard.withValues(alpha: 0.75), Colors.transparent]),
                   ),
                 ),
               ),
@@ -130,8 +130,8 @@ class _HeartBtn extends StatelessWidget {
       width: 30, height: 30,
       decoration: BoxDecoration(
         color: isDark
-            ? AppColors.darkRaised.withOpacity(0.88)
-            : Colors.white.withOpacity(0.92),
+            ? AppColors.darkRaised.withValues(alpha: 0.88)
+            : Colors.white.withValues(alpha: 0.92),
         shape: BoxShape.circle,
       ),
       child: Icon(
