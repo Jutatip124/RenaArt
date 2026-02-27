@@ -36,7 +36,7 @@ class HomeScreen extends ConsumerWidget {
                   style: textTheme.labelMedium,
                 ),
                 Text(
-                  'Arts Gallery',
+                  'RenaArt',
                   style: textTheme.headlineLarge,
                 ),
               ],

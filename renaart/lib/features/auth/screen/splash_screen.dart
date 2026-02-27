@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../home/providers/app_providers.dart';
 
 // Splash — Museum cinematic: full-dark, large serif, subtle gold rule
@@ -60,9 +61,13 @@ class _SplashState extends ConsumerState<SplashScreen>
               Container(width: 40, height: 1,
                   color: isDark ? AppColors.gold : AppColors.inkLight),
               const SizedBox(height: 10),
-              Text('THE DIGITAL MUSEUM',
-                style: TextStyle(fontFamily: 'Jost', fontSize: 10,
-                    fontWeight: FontWeight.w500, letterSpacing: 3.5, color: sub)),
+              Text(AppConstants.appTagline.toUpperCase(),
+                style: TextStyle(fontFamily: 'Jost', fontSize: 9,
+                    fontWeight: FontWeight.w500, letterSpacing: 2.8, color: sub)),
+              const SizedBox(height: 4),
+              Text('v${AppConstants.appVersion}',
+                style: TextStyle(fontFamily: 'Jost', fontSize: 9,
+                    fontWeight: FontWeight.w300, letterSpacing: 1.2, color: sub.withOpacity(0.5))),
               const SizedBox(height: 56),
               SizedBox(width: 16, height: 16,
                 child: CircularProgressIndicator(

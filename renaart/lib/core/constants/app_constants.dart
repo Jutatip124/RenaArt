@@ -2,14 +2,15 @@
 class AppConstants {
   AppConstants._();
 
-  // Data source toggle
-  static const bool useMockData = true;
+  // Data source toggle: false = real Met Museum API, true = offline mock data
+  static const bool useMockData = false;
 
   // ─── App Info ─────────────────────────────────────────────────────────────
   static const String appName = 'RenaArt';
   static const String appTagline = 'The Digital Museum of the Renaissance';
+  static const String appVersion = '1.0.0';
   static const String studentId = '6631503124';
-  static const String githubRepo = 'https://github.com/Jutatip124/RenaArt.git';
+  static const String githubRepo = 'https://github.com/Jutatip124/RenaArt';
 
   // ─── Week 3 Spec: Met Museum API Endpoints ────────────────────────────────
   // Action: Search IDs  → GET /search?q=...&hasImages=true

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../home/providers/app_providers.dart';
 
 class ProfileScreen extends ConsumerWidget {
@@ -169,8 +170,9 @@ class ProfileScreen extends ConsumerWidget {
               _Div(isDark),
               _Tile(Icons.flag_outlined, 'Report a Problem', null, isDark, onTap: () {}),
               _Div(isDark),
-              _Tile(Icons.info_outline, 'About RenaArt', 'v1.0  ·  Met Museum API', isDark,
-                  onTap: () {}),
+              _Tile(Icons.info_outline, 'About RenaArt',
+                  'v${AppConstants.appVersion}  ·  Met Museum Open API', isDark,
+                  onTap: () => _aboutDialog(context, isDark)),
             ]),
             const SizedBox(height: 14),
             Padding(
@@ -200,6 +202,43 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 36),
           ],
         ),
+      ),
+    );
+  }
+
+  void _aboutDialog(BuildContext ctx, bool isDark) {
+    showDialog(
+      context: ctx,
+      builder: (_) => AlertDialog(
+        backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        title: Text(AppConstants.appName,
+            style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
+                fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
+                color: isDark ? AppColors.darkText : AppColors.ink)),
+        content: Column(mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(AppConstants.appTagline,
+              style: TextStyle(fontFamily: 'Jost', fontSize: 12,
+                  color: isDark ? AppColors.darkSub : AppColors.inkMid)),
+          const SizedBox(height: 14),
+          Container(height: 0.8,
+              color: isDark ? AppColors.darkBorder : AppColors.inkHair),
+          const SizedBox(height: 14),
+          _InfoRow('Version', 'v${AppConstants.appVersion}', isDark),
+          const SizedBox(height: 6),
+          _InfoRow('Data Source', 'Met Museum Open Access API', isDark),
+          const SizedBox(height: 6),
+          _InfoRow('Repository', 'github.com/Jutatip124/RenaArt', isDark),
+        ]),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Close',
+                style: TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600,
+                    color: isDark ? AppColors.gold : AppColors.ink)),
+          ),
+        ],
       ),
     );
   }
@@ -280,6 +319,20 @@ class _Stat extends StatelessWidget {
                 letterSpacing: 0.4,
                 color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
       ]);
+}
+
+class _InfoRow extends StatelessWidget {
+  final String label, value;
+  final bool isDark;
+  const _InfoRow(this.label, this.value, this.isDark);
+  @override
+  Widget build(BuildContext context) => Row(children: [
+    Text('$label  ', style: TextStyle(fontFamily: 'Jost', fontSize: 11,
+        fontWeight: FontWeight.w500,
+        color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
+    Expanded(child: Text(value, style: TextStyle(fontFamily: 'Jost', fontSize: 11,
+        color: isDark ? AppColors.darkText : AppColors.ink), overflow: TextOverflow.ellipsis)),
+  ]);
 }
 
 Widget _Label(String t, Color c) => Padding(

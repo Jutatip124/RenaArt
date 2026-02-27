@@ -1,0 +1,62 @@
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout source ─────────────────────────────────────────────────
+      - uses: actions/checkout@v4
+
+      # ── 2. Setup Flutter ───────────────────────────────────────────────────
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+          cache: true
+
+      # ── 3. Install dependencies ────────────────────────────────────────────
+      - name: Install dependencies
+        working-directory: renaart
+        run: flutter pub get
+
+      # ── 4. Analyze (lint check) ────────────────────────────────────────────
+      - name: Analyze
+        working-directory: renaart
+        run: flutter analyze --no-fatal-infos
+
+      # ── 5. Run tests ───────────────────────────────────────────────────────
+      - name: Run tests
+        working-directory: renaart
+        run: flutter test
+
+      # ── 6. Build Flutter web ───────────────────────────────────────────────
+      - name: Build web
+        working-directory: renaart
+        run: flutter build web --release --no-wasm-dry-run
+
+      # ── 7a. Deploy live channel on push to main ────────────────────────────
+      - name: Deploy to Firebase Hosting (live)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+
+      # ── 7b. Deploy preview channel on pull requests ────────────────────────
+      - name: Deploy to Firebase Hosting (preview)
+        if: github.event_name == 'pull_request'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          expires: 7d
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
