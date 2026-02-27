@@ -1,10 +1,3 @@
-Dear Jutatip Sriputhon,
-Student ID: 6631503124
-
-This email is to inform you of the final evaluation result for your
-Week 2 – App Concept (Mini Project) submission on January 29, 2026.
-The assessment has been completed, and the summary is as follows:
-
 App Name: RenaArt
 Concept Overview: A mobile app that helps users explore Renaissance
 artworks with clear explanations, search tools, and offline access.
