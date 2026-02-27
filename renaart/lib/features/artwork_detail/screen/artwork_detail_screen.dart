@@ -167,4 +167,104 @@ class _Body extends ConsumerWidget {
             if (artwork.description.isNotEmpty) ...[
               _SectionTitle('Historical Background', isDark),
               const SizedBox(height: 10),
-              Text(artwork.description, style: TextStyle(fontF
+              Text(artwork.description, style: TextStyle(fontFamily: 'Jost',
+                  fontSize: 14, height: 1.7, fontWeight: FontWeight.w300, color: sub)),
+              const SizedBox(height: 18),
+            ],
+            if (artwork.meaning.isNotEmpty) ...[
+              _SectionTitle('Meaning & Symbols', isDark),
+              const SizedBox(height: 10),
+              Text(artwork.meaning, style: TextStyle(fontFamily: 'Jost',
+                  fontSize: 14, height: 1.7, fontWeight: FontWeight.w300, color: sub)),
+              const SizedBox(height: 12),
+            ],
+            if (artwork.keySymbols.isNotEmpty) ...[
+              Wrap(spacing: 6, runSpacing: 6,
+                children: artwork.keySymbols.map((s) => _MetaChip(s, isDark)).toList()),
+              const SizedBox(height: 18),
+            ],
+            Text('Object ID · ${artwork.id}', style: TextStyle(fontFamily: 'Jost',
+                fontSize: 10, color: faint, letterSpacing: 0.3)),
+            if (related.isNotEmpty) ...[
+              const SizedBox(height: 30),
+              _SectionTitle('More to Explore', isDark),
+              const SizedBox(height: 14),
+              SizedBox(height: 190,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: related.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 10),
+                  itemBuilder: (_, i) => SizedBox(width: 130,
+                      child: ArtworkCard(artwork: related[i])),
+                ),
+              ),
+            ],
+            const SizedBox(height: 36),
+          ]),
+        )),
+      ]),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  final String text; final bool isDark;
+  const _SectionTitle(this.text, this.isDark);
+  @override
+  Widget build(BuildContext context) => Text(text,
+    style: TextStyle(fontFamily: 'Cormorant', fontSize: 22, fontWeight: FontWeight.w600,
+        color: isDark ? AppColors.darkText : AppColors.ink));
+}
+
+class _ActionPill extends StatelessWidget {
+  final IconData icon; final String label;
+  final bool active; final Color activeColor;
+  final bool isDark; final VoidCallback onTap;
+  const _ActionPill({required this.icon, required this.label, required this.active,
+      required this.activeColor, required this.isDark, required this.onTap});
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      decoration: BoxDecoration(
+        color: active ? activeColor.withOpacity(0.12)
+            : (isDark ? AppColors.darkCard : AppColors.canvasCard),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: active ? activeColor.withOpacity(0.4)
+              : (isDark ? AppColors.darkBorder : AppColors.inkHair),
+          width: 0.8,
+        ),
+      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Icon(icon, size: 15,
+            color: active ? activeColor
+                : (isDark ? AppColors.darkFaint : AppColors.inkLight)),
+        const SizedBox(width: 6),
+        Text(label, style: TextStyle(fontFamily: 'Jost', fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: active ? activeColor
+                : (isDark ? AppColors.darkSub : AppColors.inkMid))),
+      ]),
+    ),
+  );
+}
+
+class _MetaChip extends StatelessWidget {
+  final String text; final bool isDark;
+  const _MetaChip(this.text, this.isDark);
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    decoration: BoxDecoration(
+      color: isDark ? AppColors.darkRaised : AppColors.canvasTone,
+      borderRadius: BorderRadius.circular(4),
+      border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.inkHair, width: 0.5),
+    ),
+    child: Text(text, style: TextStyle(fontFamily: 'Jost', fontSize: 11,
+        color: isDark ? AppColors.darkSub : AppColors.inkMid)),
+  );
+}
