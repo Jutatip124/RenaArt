@@ -67,3 +67,8 @@ node_modules/
 
 # dataconnect generated files
 .dataconnect
+
+# ── Android release signing (NEVER commit) ───────────────────────────────────
+*.keystore
+*.jks
+renaart/android/key.properties

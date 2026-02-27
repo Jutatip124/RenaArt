@@ -1,0 +1,83 @@
+name: Deploy Android to Play Store
+
+on:
+  push:
+    tags:
+      - 'v*'          # Trigger only on version tags: v1.0.0, v1.1.0, …
+  workflow_dispatch:  # Allow manual trigger from GitHub Actions UI
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────────
+      - uses: actions/checkout@v4
+
+      # ── 2. Setup Java (required for Android Gradle build) ────────────────────
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # ── 3. Setup Flutter (latest stable) ─────────────────────────────────────
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      # ── 4. Restore keystore from secret (NEVER stored in repo) ───────────────
+      #       In GitHub: Settings → Secrets → KEYSTORE_BASE64
+      #       Generate with: base64 -w 0 renaart-release.jks | pbcopy
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode \
+            > renaart/renaart-release.jks
+
+      # ── 5. Write key.properties from secrets (never committed to repo) ────────
+      - name: Write key.properties
+        run: |
+          cat > renaart/android/key.properties <<EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=../renaart-release.jks
+          EOF
+
+      # ── 6. Install Flutter dependencies ──────────────────────────────────────
+      - name: Install dependencies
+        working-directory: renaart
+        run: flutter pub get
+
+      # ── 7. Analyze ───────────────────────────────────────────────────────────
+      - name: Analyze
+        working-directory: renaart
+        run: flutter analyze --no-fatal-infos
+
+      # ── 8. Run tests ─────────────────────────────────────────────────────────
+      - name: Run tests
+        working-directory: renaart
+        run: flutter test
+
+      # ── 9. Build Android App Bundle (AAB) ────────────────────────────────────
+      #       AAB is required by Google Play (not APK)
+      - name: Build AAB
+        working-directory: renaart
+        run: flutter build appbundle --release
+
+      # ── 10. Upload to Play Store (internal track) ─────────────────────────────
+      #        Promote to alpha → beta → production manually in Play Console
+      - name: Upload to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_JSON_KEY }}
+          packageName: com.renaart.app
+          releaseFiles: renaart/build/app/outputs/bundle/release/app-release.aab
+          track: internal
+          status: completed
+          whatsNewDirectory: distribution/whatsnew   # optional release notes
+
+      # ── 11. Clean up keystore (never leave on runner) ─────────────────────────
+      - name: Remove keystore
+        if: always()
+        run: rm -f renaart/renaart-release.jks renaart/android/key.properties

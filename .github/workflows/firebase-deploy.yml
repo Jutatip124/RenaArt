@@ -14,10 +14,9 @@ jobs:
       # ── 1. Checkout source ─────────────────────────────────────────────────
       - uses: actions/checkout@v4
 
-      # ── 2. Setup Flutter ───────────────────────────────────────────────────
+      # ── 2. Setup Flutter (latest stable) ──────────────────────────────────
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
 
@@ -36,10 +35,10 @@ jobs:
         working-directory: renaart
         run: flutter test
 
-      # ── 6. Build Flutter web ───────────────────────────────────────────────
+      # ── 6. Build Flutter web (release) ────────────────────────────────────
       - name: Build web
         working-directory: renaart
-        run: flutter build web --release --no-wasm-dry-run
+        run: flutter build web --release
 
       # ── 7a. Deploy live channel on push to main ────────────────────────────
       - name: Deploy to Firebase Hosting (live)
@@ -49,7 +48,7 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           channelId: live
-          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          projectId: renaart-ded29
 
       # ── 7b. Deploy preview channel on pull requests ────────────────────────
       - name: Deploy to Firebase Hosting (preview)
@@ -59,4 +58,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           expires: 7d
-          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          projectId: renaart-ded29

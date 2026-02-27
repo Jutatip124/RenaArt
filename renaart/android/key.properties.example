@@ -1,0 +1,10 @@
+# android/key.properties.example
+# ─────────────────────────────────────────────────────────────────────────────
+# COPY this file to android/key.properties and fill in your real values.
+# android/key.properties is listed in .gitignore — it must NEVER be committed.
+# ─────────────────────────────────────────────────────────────────────────────
+
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=YOUR_KEY_ALIAS
+storeFile=../renaart-release.jks

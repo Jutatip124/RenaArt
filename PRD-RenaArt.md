@@ -21,7 +21,9 @@
 12. [External Integrations](#12-external-integrations)
 13. [Offline Support](#13-offline-support)
 14. [UI / Design Principles](#14-ui--design-principles)
-15. [Firebase Deployment](#15-firebase-deployment)
+15. [Deployment](#15-deployment)
+    - [15.1 Firebase Hosting (Web)](#151-firebase-hosting-web)
+    - [15.2 Google Play Store (Android)](#152-google-play-store-android)
 16. [Out of Scope](#16-out-of-scope)
 17. [Risks & Mitigations](#17-risks--mitigations)
 18. [Appendix](#18-appendix)
@@ -354,7 +356,7 @@ firebase login
 cd renaart
 
 # 2. Build Flutter web (release mode)
-flutter build web --release --no-wasm-dry-run
+flutter build web --release
 
 # 3. Return to repo root and deploy
 cd ..
@@ -366,7 +368,7 @@ Upon success, Firebase CLI outputs:
 ```
 ✔  Deploy complete!
 
-Hosting URL: https://<your-project-id>.web.app
+Hosting URL: https://renaart-ded29.web.app/
 ```
 
 ### Environment Targets
@@ -395,11 +397,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          channel: 'stable'
       - name: Install dependencies
         run: cd renaart && flutter pub get
       - name: Build web
-        run: cd renaart && flutter build web --release --no-wasm-dry-run
+        run: cd renaart && flutter build web --release
       - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -407,6 +409,69 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           channelId: live
 ```
+
+---
+
+## 15.2 Google Play Store (Android)
+
+### Overview
+The Flutter Android build is signed with a release keystore and uploaded to the **Google Play Store** as an AAB (Android App Bundle). The keystore and all credentials are stored exclusively as GitHub Secrets — they are **never committed to the repository**.
+
+### Required GitHub Secrets
+
+| Secret | How to get it |
+|---|---|
+| `KEYSTORE_BASE64` | `base64 -w 0 renaart-release.jks` |
+| `KEYSTORE_PASSWORD` | Password chosen when generating the keystore |
+| `KEY_ALIAS` | Alias chosen when generating the keystore |
+| `KEY_PASSWORD` | Key password chosen when generating the keystore |
+| `GOOGLE_PLAY_JSON_KEY` | Service account JSON from Google Play Console → Setup → API access |
+
+### One-Time Local Setup
+```bash
+# From repo root — generates keystore + writes android/key.properties locally
+bash scripts/setup-signing.sh
+```
+The script also prints the `KEYSTORE_BASE64` value ready to paste into GitHub Secrets.
+
+### Build & Sign Locally
+```bash
+cd renaart
+
+# Copy example and fill in your real values
+cp android/key.properties.example android/key.properties
+# (edit android/key.properties with your credentials)
+
+# Build signed AAB
+flutter build appbundle --release
+# Output: build/app/outputs/bundle/release/app-release.aab
+```
+
+### Automated Deploy (GitHub Actions)
+Workflow file: `.github/workflows/playstore-deploy.yml`
+
+**Trigger:** pushing a version tag (e.g. `git tag v1.0.0 && git push --tags`)
+
+Pipeline steps:
+1. Decode `KEYSTORE_BASE64` secret → write `renaart-release.jks`
+2. Write `android/key.properties` from secrets
+3. `flutter pub get` → `flutter analyze` → `flutter test`
+4. `flutter build appbundle --release` → produces signed AAB
+5. Upload AAB to Play Store **internal track** via `r0adkll/upload-google-play`
+6. **Delete keystore and key.properties** from runner (`if: always()`)
+
+### Promotion Path
+```
+internal  →  closed testing (alpha)  →  open testing (beta)  →  production
+```
+Promote manually in Google Play Console after QA at each stage.
+
+### Safety Checklist
+- [x] `*.jks`, `*.keystore`, `android/key.properties` in `.gitignore` (both root and `renaart/`)
+- [x] Keystore never stored in repo — only in GitHub Secrets as base64
+- [x] Workflow deletes keystore from runner after every run
+- [x] Play Store service account has minimum required role (Release manager only)
+- [x] AAB is signed with release keystore (not the debug key)
 
 ---
 
@@ -420,7 +485,7 @@ The following items are explicitly **not** included in the MVP:
 | Audio narration / guided tours | Complexity beyond MVP timeline |
 | User-generated content / reviews | Content moderation required |
 | Push notifications | Not required for core learning loop |
-| iOS / Android app store release | MVP targets web (Firebase Hosting) + local Flutter run |
+| iOS App Store release | Requires Apple Developer account and macOS build environment |
 | Social sharing | Beyond MVP feature set |
 | Multi-language support (i18n) | Single language (English) for MVP |
 
@@ -434,6 +499,8 @@ The following items are explicitly **not** included in the MVP:
 | Large image payloads degrade performance | Medium | Medium | Use `smallImageUrl` in cards; `primaryImageUrl` only on detail screen; `cached_network_image` |
 | Offline data stale / artwork removed from API | Low | Medium | Store full artwork snapshot at save time; show "archived" badge if no longer available online |
 | Firebase Hosting build deployment failure | Low | Medium | Keep build output committed or use CI artifact; test `firebase serve` locally before deploying |
+| Play Store keystore lost / corrupted | Low | Critical | Back up `renaart-release.jks` in a password manager or offline secure storage; Google cannot re-sign lost AABs |
+| Google Play service account JSON leaked | Low | High | Store only in GitHub Secrets; never log or print in CI; rotate immediately if exposed |
 | Authentication state loss on web | Medium | Medium | Persist session in `shared_preferences`; re-check on app resume |
 
 ---
