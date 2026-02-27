@@ -7,125 +7,67 @@ import '../../home/providers/app_providers.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
-
   @override
-  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen>
+class _SplashState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
-  late final Animation<double> _fadeAnim;
-  late final Animation<double> _scaleAnim;
+  late final Animation<double>   _fade;
+  late final Animation<Offset>   _slide;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1600),
-    );
-    _fadeAnim = CurvedAnimation(parent: _ctrl, curve: Curves.easeIn);
-    _scaleAnim = Tween<double>(begin: 0.92, end: 1.0).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic),
-    );
+    _ctrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1400));
+    _fade  = CurvedAnimation(parent: _ctrl, curve: const Interval(0, 0.7, curve: Curves.easeOut));
+    _slide = Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero)
+        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
     _ctrl.forward();
-
-    // Navigate after preload delay
-    Future.delayed(const Duration(milliseconds: 2200), () {
+    Future.delayed(const Duration(milliseconds: 2600), () {
       if (!mounted) return;
-      final auth = ref.read(authProvider);
-      context.go(auth != null ? AppRoutes.home : AppRoutes.login);
+      context.go(ref.read(authProvider) != null ? AppRoutes.home : AppRoutes.login);
     });
   }
 
   @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
+  void dispose() { _ctrl.dispose(); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg     = isDark ? AppColors.darkCanvas : AppColors.canvas;
+    final text   = isDark ? AppColors.darkText   : AppColors.ink;
+    final sub    = isDark ? AppColors.darkFaint  : AppColors.inkLight;
+
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBg : AppColors.parchment,
-      body: Center(
-        child: FadeTransition(
-          opacity: _fadeAnim,
-          child: ScaleTransition(
-            scale: _scaleAnim,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Logo mark
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    color: AppColors.sienna,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'RA',
-                      style: TextStyle(
-                        fontFamily: 'Cormorant',
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
+      backgroundColor: bg,
+      body: FadeTransition(
+        opacity: _fade,
+        child: SlideTransition(
+          position: _slide,
+          child: Center(
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Text('RenaArt',
+                style: TextStyle(fontFamily: 'Cormorant', fontSize: 52,
+                    fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
+                    letterSpacing: -1.5, color: text, height: 1.0)),
+              const SizedBox(height: 10),
+              Container(width: 40, height: 1,
+                  color: isDark ? AppColors.gold : AppColors.inkLight),
+              const SizedBox(height: 10),
+              Text('THE DIGITAL MUSEUM',
+                style: TextStyle(fontFamily: 'Jost', fontSize: 10,
+                    fontWeight: FontWeight.w500, letterSpacing: 3.5, color: sub)),
+              const SizedBox(height: 56),
+              SizedBox(width: 16, height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.2,
+                  color: isDark ? AppColors.gold.withOpacity(0.5) : AppColors.inkLight,
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  'RenaArt',
-                  style: TextStyle(
-                    fontFamily: 'Cormorant',
-                    fontSize: 40,
-                    fontWeight: FontWeight.w600,
-                    fontStyle: FontStyle.italic,
-                    color: isDark ? AppColors.darkText : AppColors.inkDark,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'The Digital Museum of the Renaissance',
-                  style: TextStyle(
-                    fontFamily: 'Jost',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w300,
-                    letterSpacing: 1.8,
-                    color: isDark
-                        ? AppColors.darkTextFaint
-                        : AppColors.inkFaint,
-                  ),
-                ),
-                const SizedBox(height: 52),
-                SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 1.5,
-                    color: AppColors.sienna.withValues(alpha: 0.4),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Loading artworks...',
-                  style: TextStyle(
-                    fontFamily: 'Jost',
-                    fontSize: 11,
-                    color: isDark
-                        ? AppColors.darkTextFaint
-                        : AppColors.inkFaint,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ]),
           ),
         ),
       ),

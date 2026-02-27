@@ -7,35 +7,26 @@ import '../../home/providers/app_providers.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
-
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _emailCtrl = TextEditingController();
-  final _passCtrl = TextEditingController();
-  bool _obscure = true;
-  bool _loading = false;
-  String? _error;
+class _LoginState extends ConsumerState<LoginScreen> {
+  final _email = TextEditingController();
+  final _pass  = TextEditingController();
+  bool _obs = true, _loading = false;
+  String? _err;
 
   @override
-  void dispose() {
-    _emailCtrl.dispose();
-    _passCtrl.dispose();
-    super.dispose();
-  }
+  void dispose() { _email.dispose(); _pass.dispose(); super.dispose(); }
 
   Future<void> _signIn() async {
-    final email = _emailCtrl.text.trim();
-    final pass = _passCtrl.text;
-    if (email.isEmpty || pass.isEmpty) {
-      setState(() => _error = 'Please fill in all fields.');
-      return;
+    if (_email.text.trim().isEmpty || _pass.text.isEmpty) {
+      setState(() => _err = 'Please fill in all fields.'); return;
     }
-    setState(() { _loading = true; _error = null; });
-    await Future.delayed(const Duration(milliseconds: 600));
-    await ref.read(authProvider.notifier).signIn(email, pass);
+    setState(() { _loading = true; _err = null; });
+    await Future.delayed(const Duration(milliseconds: 500));
+    await ref.read(authProvider.notifier).signIn(_email.text.trim(), _pass.text);
     if (mounted) context.go(AppRoutes.home);
   }
 
@@ -48,128 +39,97 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? AppColors.darkBg : AppColors.parchment;
-    final text = isDark ? AppColors.darkText : AppColors.inkDark;
-    final sub = isDark ? AppColors.darkTextSecondary : AppColors.inkLight;
+    final bg     = isDark ? AppColors.darkCanvas : AppColors.canvas;
+    final text   = isDark ? AppColors.darkText   : AppColors.ink;
+    final sub    = isDark ? AppColors.darkSub    : AppColors.inkMid;
+    final faint  = isDark ? AppColors.darkFaint  : AppColors.inkLight;
+    final card   = isDark ? AppColors.darkCard   : AppColors.canvasCard;
+    final border = isDark ? AppColors.darkBorder : AppColors.inkHair;
 
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Column(children: [
-            const SizedBox(height: 60),
-            // Logo
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const SizedBox(height: 52),
+            Text('Welcome to\nRenaArt',
+              style: TextStyle(fontFamily: 'Cormorant', fontSize: 38,
+                  fontWeight: FontWeight.w700, color: text,
+                  letterSpacing: -1.0, height: 1.08)),
+            const SizedBox(height: 8),
+            Container(width: 32, height: 1.5,
+                color: isDark ? AppColors.gold : AppColors.ink),
+            const SizedBox(height: 36),
             Container(
-              width: 60, height: 60,
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.sienna,
-                borderRadius: BorderRadius.circular(15),
+                color: card,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: border, width: isDark ? 0.5 : 0.8),
               ),
-              child: const Center(
-                child: Text('RA', style: TextStyle(
-                  fontFamily: 'Cormorant', fontSize: 24,
-                  fontWeight: FontWeight.w600, color: Colors.white,
-                )),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text('RenaArt', style: TextStyle(
-              fontFamily: 'Cormorant', fontSize: 34,
-              fontWeight: FontWeight.w600, fontStyle: FontStyle.italic,
-              color: text,
-            )),
-            Text('The Digital Museum of the Renaissance', style: TextStyle(
-              fontFamily: 'Jost', fontSize: 11,
-              letterSpacing: 1.2, fontWeight: FontWeight.w300,
-              color: sub,
-            )),
-            const SizedBox(height: 44),
-            // Card
-            _Card(isDark: isDark, children: [
-              Text('Welcome back', style: TextStyle(
-                fontFamily: 'Cormorant', fontSize: 24,
-                fontWeight: FontWeight.w600, color: text,
-              )),
-              const SizedBox(height: 2),
-              Text('Sign in to your gallery', style: TextStyle(
-                fontFamily: 'Jost', fontSize: 13, color: sub,
-              )),
-              const SizedBox(height: 24),
-              _FieldLabel('EMAIL ADDRESS', sub),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _emailCtrl,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  hintText: 'you@example.com',
-                  prefixIcon: Icon(Icons.mail_outline, size: 18,
-                    color: AppColors.inkFaint),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _FieldLabel('PASSWORD', sub),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _passCtrl,
-                obscureText: _obscure,
-                decoration: InputDecoration(
-                  hintText: 'Min. 6 characters',
-                  prefixIcon: const Icon(Icons.lock_outline, size: 18,
-                    color: AppColors.inkFaint),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                      size: 18, color: AppColors.inkFaint,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                _Label('EMAIL', faint),
+                const SizedBox(height: 6),
+                TextField(controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(hintText: 'you@example.com')),
+                const SizedBox(height: 14),
+                _Label('PASSWORD', faint),
+                const SizedBox(height: 6),
+                TextField(controller: _pass, obscureText: _obs,
+                  decoration: InputDecoration(
+                    hintText: 'Min. 6 characters',
+                    suffixIcon: IconButton(
+                      icon: Icon(_obs ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          size: 17, color: faint),
+                      onPressed: () => setState(() => _obs = !_obs),
                     ),
-                    onPressed: () => setState(() => _obscure = !_obscure),
+                  )),
+                if (_err != null) ...[
+                  const SizedBox(height: 10),
+                  Text(_err!, style: const TextStyle(fontFamily: 'Jost',
+                      fontSize: 12, color: AppColors.errorRed)),
+                ],
+                const SizedBox(height: 20),
+                SizedBox(width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _loading ? null : _signIn,
+                    child: _loading
+                        ? SizedBox(width: 16, height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 1.5,
+                                color: isDark ? AppColors.darkCanvas : Colors.white))
+                        : const Text('SIGN IN'),
                   ),
                 ),
-              ),
-              if (_error != null) ...[
-                const SizedBox(height: 10),
-                Text(_error!, style: const TextStyle(
-                  fontFamily: 'Jost', fontSize: 12, color: AppColors.errorRed,
+                const SizedBox(height: 14),
+                Center(child: GestureDetector(
+                  onTap: () => context.push(AppRoutes.register),
+                  child: RichText(text: TextSpan(
+                    text: "Don't have an account?  ",
+                    style: TextStyle(fontFamily: 'Jost', fontSize: 13, color: sub),
+                    children: [TextSpan(text: 'Create one',
+                      style: TextStyle(fontWeight: FontWeight.w600,
+                          color: isDark ? AppColors.gold : AppColors.ink,
+                          decoration: TextDecoration.underline,
+                          decorationColor: isDark ? AppColors.gold : AppColors.ink))],
+                  )),
                 )),
-              ],
-              const SizedBox(height: 22),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _loading ? null : _signIn,
-                  child: _loading
-                      ? const SizedBox(width: 18, height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 1.5, color: Colors.white))
-                      : const Text('Sign In'),
-                ),
-              ),
-              const SizedBox(height: 14),
-              GestureDetector(
-                onTap: () => context.push(AppRoutes.register),
-                child: Center(child: RichText(text: TextSpan(
-                  text: "Don't have an account? ",
-                  style: TextStyle(fontFamily: 'Jost', fontSize: 13, color: sub),
-                  children: [TextSpan(
-                    text: 'Create one',
-                    style: const TextStyle(
-                      color: AppColors.sienna, fontWeight: FontWeight.w500,
-                    ),
-                  )],
-                ))),
-              ),
-            ]),
-            const SizedBox(height: 18),
-            GestureDetector(
-              onTap: _loading ? null : _guest,
-              child: Text('Continue as Guest', style: TextStyle(
-                fontFamily: 'Jost', fontSize: 13, color: sub,
-                decoration: TextDecoration.underline, decorationColor: sub,
-              )),
+              ]),
             ),
-            const SizedBox(height: 10),
-            Text('Demo mode — any email & password accepted', style: TextStyle(
-              fontFamily: 'Jost', fontSize: 11, color: sub.withValues(alpha: 0.5),
+            const SizedBox(height: 20),
+            Center(child: GestureDetector(
+              onTap: _loading ? null : _guest,
+              child: Text('Continue without account',
+                style: TextStyle(fontFamily: 'Jost', fontSize: 12,
+                    color: faint, letterSpacing: 0.2,
+                    decoration: TextDecoration.underline,
+                    decorationColor: faint)),
             )),
+            const SizedBox(height: 12),
+            Center(child: Text('Demo mode · any credentials accepted',
+              style: TextStyle(fontFamily: 'Jost', fontSize: 10,
+                  color: faint.withOpacity(0.5), letterSpacing: 0.3))),
             const SizedBox(height: 32),
           ]),
         ),
@@ -178,34 +138,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 }
 
-class _FieldLabel extends StatelessWidget {
-  final String text;
-  final Color color;
-  const _FieldLabel(this.text, this.color);
-
+class _Label extends StatelessWidget {
+  final String text; final Color color;
+  const _Label(this.text, this.color);
   @override
-  Widget build(BuildContext context) => Text(text, style: TextStyle(
-    fontFamily: 'Jost', fontSize: 10, letterSpacing: 1.2,
-    fontWeight: FontWeight.w500, color: color,
-  ));
-}
-
-class _Card extends StatelessWidget {
-  final bool isDark;
-  final List<Widget> children;
-  const _Card({required this.isDark, required this.children});
-
-  @override
-  Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(24),
-    decoration: BoxDecoration(
-      color: isDark ? AppColors.darkCard : Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(
-        color: isDark ? AppColors.darkBorder : AppColors.divider,
-        width: 0.5,
-      ),
-    ),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children),
-  );
+  Widget build(BuildContext context) => Text(text,
+    style: TextStyle(fontFamily: 'Jost', fontSize: 10,
+        fontWeight: FontWeight.w600, letterSpacing: 1.3, color: color));
 }

@@ -6,80 +6,47 @@ import '../../search/screen/search_screen.dart';
 import '../../collection/screen/collection_screen.dart';
 import '../../profile/screen/profile_screen.dart';
 
-final _currentTabProvider = StateProvider<int>((ref) => 0);
+final _tabProvider = StateProvider<int>((ref) => 0);
 
 class MainShell extends ConsumerWidget {
   final Widget child;
   const MainShell({super.key, required this.child});
 
   static const _screens = [
-    HomeScreen(),
-    SearchScreen(),
-    CollectionScreen(),
-    ProfileScreen(),
+    HomeScreen(), SearchScreen(), CollectionScreen(), ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tabIndex = ref.watch(_currentTabProvider);
+    final idx    = ref.watch(_tabProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final navBg  = isDark ? AppColors.darkSurface : AppColors.canvasCard;
+    final border = isDark ? AppColors.darkBorder  : AppColors.inkHair;
 
     return Scaffold(
-      body: IndexedStack(index: tabIndex, children: _screens),
+      body: IndexedStack(index: idx, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: isDark ? AppColors.darkSurface : AppColors.surfaceWhite,
-          border: Border(
-            top: BorderSide(
-              color: isDark ? AppColors.darkBorder : AppColors.divider,
-              width: 0.5,
-            ),
-          ),
+          color: navBg,
+          border: Border(top: BorderSide(color: border, width: 0.8)),
         ),
         child: SafeArea(
           top: false,
-          child: SizedBox(
-            height: 58,
-            child: Row(
-              children: [
-                _TabItem(
-                  icon: Icons.home_outlined,
-                  activeIcon: Icons.home,
-                  label: 'Home',
-                  index: 0,
-                  current: tabIndex,
-                  isDark: isDark,
-                  onTap: () => ref.read(_currentTabProvider.notifier).state = 0,
-                ),
-                _TabItem(
-                  icon: Icons.search_outlined,
-                  activeIcon: Icons.search,
-                  label: 'Search',
-                  index: 1,
-                  current: tabIndex,
-                  isDark: isDark,
-                  onTap: () => ref.read(_currentTabProvider.notifier).state = 1,
-                ),
-                _TabItem(
-                  icon: Icons.favorite_border,
-                  activeIcon: Icons.favorite,
-                  label: 'Collection',
-                  index: 2,
-                  current: tabIndex,
-                  isDark: isDark,
-                  onTap: () => ref.read(_currentTabProvider.notifier).state = 2,
-                ),
-                _TabItem(
-                  icon: Icons.person_outline,
-                  activeIcon: Icons.person,
-                  label: 'Profile',
-                  index: 3,
-                  current: tabIndex,
-                  isDark: isDark,
-                  onTap: () => ref.read(_currentTabProvider.notifier).state = 3,
-                ),
-              ],
-            ),
+          child: SizedBox(height: 54,
+            child: Row(children: [
+              _NavItem(icon: Icons.home_outlined,  activeIcon: Icons.home,
+                  label: 'Home',       idx: 0, current: idx, isDark: isDark,
+                  onTap: () => ref.read(_tabProvider.notifier).state = 0),
+              _NavItem(icon: Icons.search,          activeIcon: Icons.search,
+                  label: 'Search',     idx: 1, current: idx, isDark: isDark,
+                  onTap: () => ref.read(_tabProvider.notifier).state = 1),
+              _NavItem(icon: Icons.favorite_border, activeIcon: Icons.favorite,
+                  label: 'Collection', idx: 2, current: idx, isDark: isDark,
+                  onTap: () => ref.read(_tabProvider.notifier).state = 2),
+              _NavItem(icon: Icons.person_outline,  activeIcon: Icons.person,
+                  label: 'Profile',    idx: 3, current: idx, isDark: isDark,
+                  onTap: () => ref.read(_tabProvider.notifier).state = 3),
+            ]),
           ),
         ),
       ),
@@ -87,58 +54,33 @@ class MainShell extends ConsumerWidget {
   }
 }
 
-class _TabItem extends StatelessWidget {
-  final IconData icon;
-  final IconData activeIcon;
+class _NavItem extends StatelessWidget {
+  final IconData icon, activeIcon;
   final String label;
-  final int index;
-  final int current;
+  final int idx, current;
   final bool isDark;
   final VoidCallback onTap;
-
-  const _TabItem({
-    required this.icon,
-    required this.activeIcon,
-    required this.label,
-    required this.index,
-    required this.current,
-    required this.isDark,
-    required this.onTap,
-  });
+  const _NavItem({required this.icon, required this.activeIcon, required this.label,
+      required this.idx, required this.current, required this.isDark, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final isActive = index == current;
-    final activeColor = isDark ? AppColors.goldLight : AppColors.sienna;
-    final inactiveColor = isDark ? AppColors.darkTextFaint : AppColors.inkFaint;
+    final active        = idx == current;
+    final activeColor   = isDark ? AppColors.gold      : AppColors.ink;
+    final inactiveColor = isDark ? AppColors.darkFaint : AppColors.inkLight;
 
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isActive ? activeIcon : icon,
-              size: 22,
-              color: isActive ? activeColor : inactiveColor,
-            ),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Jost',
-                fontSize: 10,
-                fontWeight: isActive ? FontWeight.w500 : FontWeight.w400,
-                color: isActive ? activeColor : inactiveColor,
-                letterSpacing: 0.3,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return Expanded(child: InkWell(
+      onTap: onTap, splashColor: Colors.transparent, highlightColor: Colors.transparent,
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Icon(active ? activeIcon : icon, size: 21,
+            color: active ? activeColor : inactiveColor),
+        const SizedBox(height: 3),
+        Text(label,
+          style: TextStyle(fontFamily: 'Jost', fontSize: 10,
+              fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              letterSpacing: 0.2,
+              color: active ? activeColor : inactiveColor)),
+      ]),
+    ));
   }
 }

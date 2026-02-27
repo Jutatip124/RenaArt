@@ -7,181 +7,132 @@ import '../../home/providers/app_providers.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
-
   @override
-  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegState();
 }
 
-class _RegisterScreenState extends ConsumerState<RegisterScreen> {
-  final _nicknameCtrl = TextEditingController();
-  final _emailCtrl = TextEditingController();
-  final _passCtrl = TextEditingController();
-  final _confirmCtrl = TextEditingController();
-  bool _obscure = true;
-  bool _obscureConfirm = true;
-  bool _loading = false;
-  String? _error;
+class _RegState extends ConsumerState<RegisterScreen> {
+  final _nick    = TextEditingController();
+  final _email   = TextEditingController();
+  final _pass    = TextEditingController();
+  final _confirm = TextEditingController();
+  bool _obs1 = true, _obs2 = true, _loading = false;
+  String? _err;
 
   @override
   void dispose() {
-    _nicknameCtrl.dispose();
-    _emailCtrl.dispose();
-    _passCtrl.dispose();
-    _confirmCtrl.dispose();
+    _nick.dispose(); _email.dispose(); _pass.dispose(); _confirm.dispose();
     super.dispose();
   }
 
   Future<void> _register() async {
-    final nickname = _nicknameCtrl.text.trim();
-    final email = _emailCtrl.text.trim();
-    final pass = _passCtrl.text;
-    final confirm = _confirmCtrl.text;
-
-    if (nickname.isEmpty || email.isEmpty || pass.isEmpty) {
-      setState(() => _error = 'Please fill in all fields.');
-      return;
+    if (_nick.text.trim().isEmpty || _email.text.trim().isEmpty || _pass.text.isEmpty) {
+      setState(() => _err = 'Please fill in all fields.'); return;
     }
-    if (pass != confirm) {
-      setState(() => _error = 'Passwords do not match.');
-      return;
+    if (_pass.text != _confirm.text) {
+      setState(() => _err = 'Passwords do not match.'); return;
     }
-    if (pass.length < 6) {
-      setState(() => _error = 'Password must be at least 6 characters.');
-      return;
+    if (_pass.text.length < 6) {
+      setState(() => _err = 'Password must be at least 6 characters.'); return;
     }
-
-    setState(() { _loading = true; _error = null; });
-    await Future.delayed(const Duration(milliseconds: 700));
-    await ref.read(authProvider.notifier).register(nickname, email, pass);
+    setState(() { _loading = true; _err = null; });
+    await Future.delayed(const Duration(milliseconds: 600));
+    await ref.read(authProvider.notifier).register(
+        _nick.text.trim(), _email.text.trim(), _pass.text);
     if (mounted) context.go(AppRoutes.home);
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final text = isDark ? AppColors.darkText : AppColors.inkDark;
-    final sub = isDark ? AppColors.darkTextSecondary : AppColors.inkLight;
+    final bg     = isDark ? AppColors.darkCanvas : AppColors.canvas;
+    final text   = isDark ? AppColors.darkText   : AppColors.ink;
+    final sub    = isDark ? AppColors.darkSub    : AppColors.inkMid;
+    final faint  = isDark ? AppColors.darkFaint  : AppColors.inkLight;
+    final card   = isDark ? AppColors.darkCard   : AppColors.canvasCard;
+    final border = isDark ? AppColors.darkBorder : AppColors.inkHair;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.darkBg : AppColors.parchment,
+      backgroundColor: bg,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const SizedBox(height: 14),
-            IconButton(
-              onPressed: () => context.pop(),
-              icon: Icon(Icons.arrow_back, color: text),
-              padding: EdgeInsets.zero,
-            ),
+            const SizedBox(height: 16),
+            IconButton(onPressed: () => context.pop(),
+                icon: Icon(Icons.arrow_back, color: text), padding: EdgeInsets.zero),
             const SizedBox(height: 20),
-            Text('Create Account', style: TextStyle(
-              fontFamily: 'Cormorant', fontSize: 32,
-              fontWeight: FontWeight.w600, color: text,
-            )),
-            Text('Join the Renaissance', style: TextStyle(
-              fontFamily: 'Jost', fontSize: 13, color: sub,
-            )),
-            const SizedBox(height: 28),
+            Text('Create\nAccount',
+              style: TextStyle(fontFamily: 'Cormorant', fontSize: 38,
+                  fontWeight: FontWeight.w700, color: text,
+                  letterSpacing: -1.0, height: 1.08)),
+            const SizedBox(height: 8),
+            Container(width: 32, height: 1.5,
+                color: isDark ? AppColors.gold : AppColors.ink),
+            const SizedBox(height: 32),
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDark ? AppColors.darkCard : Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isDark ? AppColors.darkBorder : AppColors.divider,
-                  width: 0.5,
-                ),
+                color: card, borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: border, width: isDark ? 0.5 : 0.8),
               ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                _label('DISPLAY NAME', sub),
+                _Label('DISPLAY NAME', faint),
                 const SizedBox(height: 6),
-                TextField(
-                  controller: _nicknameCtrl,
-                  decoration: const InputDecoration(
-                    hintText: 'Your preferred name',
-                    prefixIcon: Icon(Icons.person_outline, size: 18, color: AppColors.inkFaint),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _label('EMAIL ADDRESS', sub),
+                TextField(controller: _nick,
+                    decoration: const InputDecoration(hintText: 'Your preferred name')),
+                const SizedBox(height: 14),
+                _Label('EMAIL', faint),
                 const SizedBox(height: 6),
-                TextField(
-                  controller: _emailCtrl,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    hintText: 'you@example.com',
-                    prefixIcon: Icon(Icons.mail_outline, size: 18, color: AppColors.inkFaint),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _label('PASSWORD', sub),
+                TextField(controller: _email, keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(hintText: 'you@example.com')),
+                const SizedBox(height: 14),
+                _Label('PASSWORD', faint),
                 const SizedBox(height: 6),
-                TextField(
-                  controller: _passCtrl,
-                  obscureText: _obscure,
-                  decoration: InputDecoration(
-                    hintText: 'Min. 6 characters',
-                    prefixIcon: const Icon(Icons.lock_outline, size: 18, color: AppColors.inkFaint),
+                TextField(controller: _pass, obscureText: _obs1,
+                  decoration: InputDecoration(hintText: 'Min. 6 characters',
                     suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                        size: 18, color: AppColors.inkFaint,
-                      ),
-                      onPressed: () => setState(() => _obscure = !_obscure),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _label('CONFIRM PASSWORD', sub),
+                      icon: Icon(_obs1 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          size: 17, color: faint),
+                      onPressed: () => setState(() => _obs1 = !_obs1),
+                    ))),
+                const SizedBox(height: 14),
+                _Label('CONFIRM PASSWORD', faint),
                 const SizedBox(height: 6),
-                TextField(
-                  controller: _confirmCtrl,
-                  obscureText: _obscureConfirm,
-                  decoration: InputDecoration(
-                    hintText: 'Re-enter password',
-                    prefixIcon: const Icon(Icons.lock_outline, size: 18, color: AppColors.inkFaint),
+                TextField(controller: _confirm, obscureText: _obs2,
+                  decoration: InputDecoration(hintText: 'Re-enter password',
                     suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                        size: 18, color: AppColors.inkFaint,
-                      ),
-                      onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'By creating an account you agree to our Terms of Service.',
-                  style: TextStyle(fontFamily: 'Jost', fontSize: 11, color: sub, height: 1.5),
-                ),
-                if (_error != null) ...[
+                      icon: Icon(_obs2 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                          size: 17, color: faint),
+                      onPressed: () => setState(() => _obs2 = !_obs2),
+                    ))),
+                if (_err != null) ...[
                   const SizedBox(height: 10),
-                  Text(_error!, style: const TextStyle(
-                    fontFamily: 'Jost', fontSize: 12, color: AppColors.errorRed,
-                  )),
+                  Text(_err!, style: const TextStyle(fontFamily: 'Jost',
+                      fontSize: 12, color: AppColors.errorRed)),
                 ],
-                const SizedBox(height: 22),
-                SizedBox(
-                  width: double.infinity,
+                const SizedBox(height: 20),
+                SizedBox(width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _loading ? null : _register,
                     child: _loading
-                        ? const SizedBox(width: 18, height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 1.5, color: Colors.white))
-                        : const Text('Create Account'),
+                        ? SizedBox(width: 16, height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 1.5,
+                                color: isDark ? AppColors.darkCanvas : Colors.white))
+                        : const Text('CREATE ACCOUNT'),
                   ),
                 ),
                 const SizedBox(height: 14),
                 Center(child: GestureDetector(
                   onTap: () => context.pop(),
                   child: RichText(text: TextSpan(
-                    text: 'Already have an account? ',
+                    text: 'Already have an account?  ',
                     style: TextStyle(fontFamily: 'Jost', fontSize: 13, color: sub),
-                    children: [TextSpan(
-                      text: 'Sign in',
-                      style: const TextStyle(color: AppColors.sienna, fontWeight: FontWeight.w500),
-                    )],
+                    children: [TextSpan(text: 'Sign in',
+                      style: TextStyle(fontWeight: FontWeight.w600,
+                          color: isDark ? AppColors.gold : AppColors.ink,
+                          decoration: TextDecoration.underline,
+                          decorationColor: isDark ? AppColors.gold : AppColors.ink))],
                   )),
                 )),
               ]),
@@ -192,9 +143,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       ),
     );
   }
+}
 
-  Widget _label(String text, Color color) => Text(text, style: TextStyle(
-    fontFamily: 'Jost', fontSize: 10,
-    letterSpacing: 1.2, fontWeight: FontWeight.w500, color: color,
-  ));
+class _Label extends StatelessWidget {
+  final String text; final Color color;
+  const _Label(this.text, this.color);
+  @override
+  Widget build(BuildContext context) => Text(text,
+    style: TextStyle(fontFamily: 'Jost', fontSize: 10,
+        fontWeight: FontWeight.w600, letterSpacing: 1.3, color: color));
 }
