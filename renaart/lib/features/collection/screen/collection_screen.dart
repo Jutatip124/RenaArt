@@ -123,4 +123,74 @@ class _CollState extends ConsumerState<CollectionScreen>
   void _removeDialog(BuildContext ctx, WidgetRef ref, String id, bool isDark) {
     showDialog(context: ctx, builder: (_) => AlertDialog(
       backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
-      shape: RoundedRectangleBorder(borderRad
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      title: Text('Remove offline?', style: TextStyle(fontFamily: 'Cormorant',
+          fontSize: 20, fontWeight: FontWeight.w600,
+          color: isDark ? AppColors.darkText : AppColors.ink)),
+      content: Text('This artwork will require internet to view.',
+        style: TextStyle(fontFamily: 'Jost', fontSize: 13,
+            color: isDark ? AppColors.darkSub : AppColors.inkMid)),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx),
+          child: Text('Cancel', style: TextStyle(fontFamily: 'Jost',
+              color: isDark ? AppColors.darkFaint : AppColors.inkLight))),
+        TextButton(
+          onPressed: () {
+            ref.read(offlineIdsProvider.notifier).remove(id);
+            Navigator.pop(ctx);
+          },
+          child: const Text('Remove', style: TextStyle(fontFamily: 'Jost',
+              color: AppColors.heartRed, fontWeight: FontWeight.w600))),
+      ],
+    ));
+  }
+}
+
+class _StorageBar extends StatelessWidget {
+  final int count, max; final bool isDark;
+  const _StorageBar({required this.count, required this.max, required this.isDark});
+  @override
+  Widget build(BuildContext context) => Container(
+    margin: const EdgeInsets.fromLTRB(18, 10, 18, 0),
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+    decoration: BoxDecoration(
+      color: isDark ? AppColors.darkCard : AppColors.canvasCard,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.inkHair, width: 0.8),
+    ),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text('Offline Library', style: TextStyle(fontFamily: 'Jost', fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: isDark ? AppColors.darkText : AppColors.ink)),
+        Text('$count/$max artworks', style: TextStyle(fontFamily: 'Jost',
+            fontSize: 13, fontWeight: FontWeight.w600,
+            color: count >= max ? AppColors.heartRed : AppColors.saveBlue)),
+      ]),
+      const SizedBox(height: 8),
+      ClipRRect(borderRadius: BorderRadius.circular(3),
+        child: LinearProgressIndicator(value: count / max, minHeight: 4,
+            backgroundColor: isDark ? AppColors.darkBorder : AppColors.inkHair,
+            color: count >= max ? AppColors.heartRed : AppColors.saveBlue)),
+    ]),
+  );
+}
+
+class _Empty extends StatelessWidget {
+  final IconData icon; final String title, body; final bool isDark;
+  const _Empty({required this.icon, required this.title,
+      required this.body, required this.isDark});
+  @override
+  Widget build(BuildContext context) => Center(child: Column(mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(icon, size: 38, color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+      const SizedBox(height: 14),
+      Text(title, style: TextStyle(fontFamily: 'Cormorant', fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: isDark ? AppColors.darkSub : AppColors.inkMid)),
+      const SizedBox(height: 6),
+      Text(body, style: TextStyle(fontFamily: 'Jost', fontSize: 13,
+          color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
+    ]));
+}
