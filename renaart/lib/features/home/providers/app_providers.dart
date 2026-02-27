@@ -139,6 +139,20 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     state = updated;
   }
 
+  Future<void> updateEmail(String email) async {
+    if (state == null) return;
+    final updated = state!.copyWith(email: email);
+    await LocalStorageService.instance.saveUser(updated);
+    state = updated;
+  }
+
+  Future<void> updatePassword(String password) async {
+    // Password stored locally only (mock auth)
+    // In production this would call a backend API
+    if (state == null || password.isEmpty) return;
+    // No-op for now — password not stored in UserModel for security
+  }
+
   Future<void> toggleHighFidelity() async {
     if (state == null) return;
     final updated = state!.copyWith(

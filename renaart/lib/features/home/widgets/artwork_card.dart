@@ -26,12 +26,20 @@ class ArtworkCard extends ConsumerWidget {
       onTap: () => context.push(AppRoutes.artworkPath(artwork.id), extra: artwork),
       child: Container(
         decoration: BoxDecoration(
-          color:             isDark ? AppColors.darkCard : AppColors.canvasCard,
-          borderRadius:      BorderRadius.circular(8),
-          border:            Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.inkHair,
-            width: isDark ? 0.5 : 0.8,
-          ),
+          color:        isDark ? AppColors.darkCard : AppColors.canvasCard,
+          borderRadius: BorderRadius.circular(16),
+          border: isDark
+              ? Border.all(color: AppColors.darkBorder, width: 0.5)
+              : null,
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  )
+                ],
         ),
         clipBehavior: Clip.hardEdge,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -64,27 +72,26 @@ class ArtworkCard extends ConsumerWidget {
                   ),
                 ),
               ),
-            // Heart button
+            // Heart + Save buttons stacked vertically (top-right)
             Positioned(top: 8, right: 8,
-              child: _HeartBtn(
-                isFav: isFav, isDark: isDark,
-                onTap: () => ref.read(favoritesProvider.notifier)
-                    .toggle(artwork.id, user?.userId ?? 'guest'),
-              ),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                _HeartBtn(
+                  isFav: isFav, isDark: isDark,
+                  onTap: () => ref.read(favoritesProvider.notifier)
+                      .toggle(artwork.id, user?.userId ?? 'guest'),
+                ),
+                const SizedBox(height: 5),
+                _SaveBtn(
+                  isSaved: isOffline, isDark: isDark,
+                  onTap: () => ref.read(offlineIdsProvider.notifier)
+                      .toggleOffline(artwork),
+                ),
+              ]),
             ),
-            // Offline indicator — thin gold line (dark) or blue dot (light)
-            if (isOffline && isDark)
-              Positioned(top: 0, left: 0, right: 0,
-                child: Container(height: 2, color: AppColors.gold)),
-            if (isOffline && !isDark)
-              Positioned(top: 10, left: 10,
-                child: Container(width: 7, height: 7,
-                  decoration: const BoxDecoration(
-                      color: AppColors.saveBlue, shape: BoxShape.circle))),
           ]),
           // ── Info ───────────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.fromLTRB(11, 9, 11, 12),
+            padding: const EdgeInsets.all(12),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(artwork.title,
                 maxLines: 2, overflow: TextOverflow.ellipsis,
@@ -138,6 +145,33 @@ class _HeartBtn extends StatelessWidget {
         isFav ? Icons.favorite : Icons.favorite_border,
         size: 15,
         color: isFav ? AppColors.heartRed
+            : isDark ? AppColors.darkFaint : AppColors.inkLight,
+      ),
+    ),
+  );
+}
+
+class _SaveBtn extends StatelessWidget {
+  final bool isSaved;
+  final bool isDark;
+  final VoidCallback onTap;
+  const _SaveBtn({required this.isSaved, required this.isDark, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    onTap: onTap,
+    child: Container(
+      width: 30, height: 30,
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppColors.darkRaised.withValues(alpha: 0.88)
+            : Colors.white.withValues(alpha: 0.92),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        isSaved ? Icons.bookmark : Icons.bookmark_border,
+        size: 15,
+        color: isSaved ? AppColors.saveBlue
             : isDark ? AppColors.darkFaint : AppColors.inkLight,
       ),
     ),

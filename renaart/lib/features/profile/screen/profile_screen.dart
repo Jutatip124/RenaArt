@@ -58,23 +58,7 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          width: 22,
-                          height: 22,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isDark ? AppColors.darkCanvas : AppColors.canvasCard,
-                            border: Border.all(
-                                color: isDark ? AppColors.darkSurface : AppColors.canvasTone,
-                                width: 2),
-                          ),
-                          child: Icon(Icons.edit,
-                              size: 10, color: isDark ? AppColors.darkSub : AppColors.inkMid),
-                        ),
-                      ),
+
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -134,7 +118,16 @@ class ProfileScreen extends ConsumerWidget {
                         (v) => ref.read(authProvider.notifier).updateUsername(v),
                         note: 'Requires email confirmation to change')),
                 _Div(isDark),
-                _Tile(Icons.mail_outline, 'Email', user.email, isDark, onTap: () {}),
+                _Tile(Icons.mail_outline, 'Email', user.email, isDark,
+                    onTap: () => _editDialog(context, ref, 'Email', user.email, isDark,
+                        (v) => ref.read(authProvider.notifier).updateEmail(v))),
+                _Div(isDark),
+                _Tile(Icons.lock_outline, 'Password', '••••••••', isDark,
+                    onTap: () => _editDialog(context, ref, 'Password', '', isDark,
+                        (v) => ref.read(authProvider.notifier).updatePassword(v),
+                        isPassword: true)),
+                _Div(isDark),
+                _ReadOnlyTile(Icons.badge_outlined, 'User ID', user.userId, isDark),
               ] else
                 _Tile(Icons.person_outline, 'Browsing as Guest',
                     'Sign in to save your collection', isDark, onTap: () {
@@ -245,7 +238,7 @@ class ProfileScreen extends ConsumerWidget {
 
   void _editDialog(BuildContext ctx, WidgetRef ref, String label, String current, bool isDark,
       Function(String) onSave,
-      {String? note}) {
+      {String? note, bool isPassword = false}) {
     final ctrl = TextEditingController(text: current);
     showDialog(
         context: ctx,
@@ -275,7 +268,13 @@ class ProfileScreen extends ConsumerWidget {
                       ])),
                   const SizedBox(height: 12),
                 ],
-                TextField(controller: ctrl),
+                TextField(
+                  controller: ctrl,
+                  obscureText: isPassword,
+                  decoration: isPassword
+                      ? const InputDecoration(hintText: 'New password')
+                      : null,
+                ),
               ]),
               actions: [
                 TextButton(
@@ -359,6 +358,32 @@ Widget _Card(Color bg, bool isDark, List<Widget> children) => Container(
 // ignore: non_constant_identifier_names
 Widget _Div(bool isDark) => Divider(
     color: isDark ? AppColors.darkBorder : AppColors.inkHair, height: 1, thickness: 0.8, indent: 44);
+
+class _ReadOnlyTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final bool isDark;
+  const _ReadOnlyTile(this.icon, this.label, this.value, this.isDark);
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    child: Row(children: [
+      Icon(icon, size: 17, color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(label, style: TextStyle(fontFamily: 'Jost', fontSize: 14,
+              color: isDark ? AppColors.darkText : AppColors.ink)),
+          Text(value, style: TextStyle(fontFamily: 'Jost', fontSize: 11,
+              letterSpacing: 0.5,
+              color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
+        ]),
+      ),
+      Icon(Icons.lock, size: 13, color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+    ]),
+  );
+}
 
 class _Tile extends StatelessWidget {
   final IconData icon;

@@ -32,7 +32,7 @@ class MainShell extends ConsumerWidget {
         ),
         child: SafeArea(
           top: false,
-          child: SizedBox(height: 54,
+          child: SizedBox(height: 64,
             child: Row(children: [
               _NavItem(icon: Icons.home_outlined,  activeIcon: Icons.home,
                   label: 'Home',       idx: 0, current: idx, isDark: isDark,
@@ -66,15 +66,14 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = idx == current;
-    // Light: black active, grey inactive
-    // Dark:  gold active, dark-faint inactive
-    final activeColor   = isDark ? AppColors.gold       : AppColors.ink;
-    final inactiveColor = isDark ? AppColors.darkFaint  : AppColors.inkLight;
+    // Active: Primary (black/white), Inactive: Secondary text
+    final activeColor   = isDark ? AppColors.darkText  : AppColors.ink;
+    final inactiveColor = isDark ? AppColors.darkSub   : AppColors.inkMid;
 
     return Expanded(child: InkWell(
       onTap: onTap, splashColor: Colors.transparent, highlightColor: Colors.transparent,
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(active ? activeIcon : icon, size: 21,
+        Icon(active ? activeIcon : icon, size: 24,
             color: active ? activeColor : inactiveColor),
         const SizedBox(height: 3),
         Text(label,

@@ -61,10 +61,7 @@ class _CollState extends ConsumerState<CollectionScreen>
             ]),
           ]),
         ),
-        // ── Storage bar (offline tab only) ─────────────────────────
-        if (_tab.index == 1)
-          _StorageBar(count: oCount, max: AppConstants.maxOfflineArtworks, isDark: isDark),
-        const SizedBox(height: 14),
+        
         // ── Tabs ───────────────────────────────────────────────────
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 18),
@@ -155,36 +152,6 @@ class _CollState extends ConsumerState<CollectionScreen>
 }
 
 // ─── Subwidgets ───────────────────────────────────────────────────────────────
-class _StorageBar extends StatelessWidget {
-  final int count, max; final bool isDark;
-  const _StorageBar({required this.count, required this.max, required this.isDark});
-  @override
-  Widget build(BuildContext context) => Container(
-    margin: const EdgeInsets.fromLTRB(18, 10, 18, 0),
-    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-    decoration: BoxDecoration(
-      color: isDark ? AppColors.darkCard : AppColors.canvasCard,
-      borderRadius: BorderRadius.circular(8),
-      border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.inkHair, width: 0.8),
-    ),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text('Offline Library', style: TextStyle(fontFamily: 'Jost', fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: isDark ? AppColors.darkText : AppColors.ink)),
-        Text('$count/$max artworks', style: TextStyle(fontFamily: 'Jost',
-            fontSize: 13, fontWeight: FontWeight.w600,
-            color: count >= max ? AppColors.heartRed : AppColors.saveBlue)),
-      ]),
-      const SizedBox(height: 8),
-      ClipRRect(borderRadius: BorderRadius.circular(3),
-        child: LinearProgressIndicator(value: count / max, minHeight: 4,
-            backgroundColor: isDark ? AppColors.darkBorder : AppColors.inkHair,
-            color: count >= max ? AppColors.heartRed : AppColors.saveBlue)),
-    ]),
-  );
-}
-
 class _Empty extends StatelessWidget {
   final IconData icon; final String title, body; final bool isDark;
   const _Empty({required this.icon, required this.title, required this.body, required this.isDark});

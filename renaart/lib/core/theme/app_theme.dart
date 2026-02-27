@@ -1,42 +1,58 @@
 import 'package:flutter/material.dart';
 
 // ═══════════════════════════════════════════════════════════════════
-//  RenaArt Design System v3
-//  LIGHT  → Arts Gallery aesthetic (warm canvas, editorial serif, black badge)
-//  DARK   → Museum Cinematic (deep charcoal, full-bleed, gold accent)
+//  RenaArt Design System v4 — Modern Minimalist × Art Gallery
+//  Inspired by Character.ai / clean SaaS aesthetic
+//  Light: near-white bg, pure-white cards, near-black text
+//  Dark:  matte black, deep grey surface, white text
+//  Buttons: Stadium (capsule) shape — pill at every size
+//  Cards:   BorderRadius.circular(20)
+//  Inputs:  BorderRadius.circular(16)
 // ═══════════════════════════════════════════════════════════════════
 
 class AppColors {
   AppColors._();
 
-  // LIGHT
-  static const Color canvas      = Color(0xFFF7F4EF);
-  static const Color canvasCard  = Color(0xFFFFFFFF);
-  static const Color canvasTone  = Color(0xFFEEE8DF);
-  static const Color ink         = Color(0xFF111111);
-  static const Color inkBody     = Color(0xFF2C2C2C);
-  static const Color inkMid      = Color(0xFF7A7069);
-  static const Color inkLight    = Color(0xFFABA49B);
-  static const Color inkHair     = Color(0xFFE4DDD4);
-  static const Color badge       = Color(0xFF111111);
-  static const Color accentWarm  = Color(0xFF8A5C3E);
+  // ─── Light Palette ────────────────────────────────────────────────
+  static const Color lightBg      = Color(0xFFF6F6F6);
+  static const Color lightSurface = Color(0xFFFFFFFF);
+  static const Color lightText    = Color(0xFF111111);
+  static const Color lightSub     = Color(0xFF666666);
+  static const Color lightBorder  = Color(0xFFE5E5E5);
 
-  // DARK
-  static const Color darkCanvas  = Color(0xFF141414);
-  static const Color darkSurface = Color(0xFF1C1C1C);
-  static const Color darkCard    = Color(0xFF242424);
-  static const Color darkRaised  = Color(0xFF2C2C2C);
-  static const Color darkBorder  = Color(0xFF313131);
-  static const Color darkText    = Color(0xFFF2F2F2);
-  static const Color darkSub     = Color(0xFFB0A89E);
-  static const Color darkFaint   = Color(0xFF6A625A);
-  static const Color gold        = Color(0xFFC8A84B);
-  static const Color goldDim     = Color(0xFF8A7230);
+  // ─── Dark Palette ─────────────────────────────────────────────────
+  static const Color darkBg       = Color(0xFF0E0E0E);
+  static const Color darkSurface  = Color(0xFF1A1A1A);
+  static const Color darkText     = Color(0xFFFFFFFF);
+  static const Color darkSub      = Color(0xFFB3B3B3);
+  static const Color darkBorder   = Color(0xFF2C2C2C);
 
-  // Semantic
-  static const Color heartRed    = Color(0xFFB03020);
-  static const Color saveBlue    = Color(0xFF2C5F9E);
-  static const Color errorRed    = Color(0xFFC0392B);
+  // ─── Accent ───────────────────────────────────────────────────────
+  static const Color accentBlueLight = Color(0xFF1E88E5); // light accent
+  static const Color accentBlueDark  = Color(0xFF64B5F6); // dark accent
+  static const Color accent          = Color(0xFFC8A84B); // gold (legacy)
+  static const Color error           = Color(0xFFE53935);
+
+  // ─── Backward-compat aliases ──────────────────────────────────────
+  static const Color canvas        = lightBg;
+  static const Color canvasCard    = lightSurface;
+  static const Color canvasTone    = Color(0xFFEEEEEE);
+  static const Color ink           = lightText;
+  static const Color inkBody       = Color(0xFF333333);
+  static const Color inkMid        = lightSub;
+  static const Color inkLight      = Color(0xFF999999);
+  static const Color inkHair       = lightBorder;
+  static const Color badge         = lightText;
+  static const Color accentWarm    = Color(0xFF8A5C3E);
+  static const Color darkCanvas    = darkBg;
+  static const Color darkCard      = Color(0xFF1A1A1A); // = darkSurface
+  static const Color darkRaised    = darkBorder;
+  static const Color darkFaint     = Color(0xFF5A5A5A);
+  static const Color gold          = accent;
+  static const Color goldDim       = Color(0xFF8A7230);
+  static const Color heartRed      = error;
+  static const Color saveBlue      = accentBlueLight;
+  static const Color errorRed      = error;
 }
 
 class AppTheme {
@@ -45,135 +61,188 @@ class AppTheme {
   static ThemeData get light => _light();
   static ThemeData get dark  => _dark();
 
+  // ─── LIGHT ────────────────────────────────────────────────────────
   static ThemeData _light() => ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: AppColors.canvas,
+    scaffoldBackgroundColor: AppColors.lightBg,
     colorScheme: const ColorScheme.light(
-      primary: AppColors.ink, secondary: AppColors.accentWarm,
-      surface: AppColors.canvasCard, onSurface: AppColors.ink,
-      outline: AppColors.inkHair,
+      primary:   AppColors.lightText,
+      secondary: AppColors.accent,
+      surface:   AppColors.lightSurface,
+      onSurface: AppColors.lightText,
+      outline:   AppColors.lightBorder,
+      error:     AppColors.error,
     ),
     fontFamily: 'Jost',
     textTheme: const TextTheme(
-      displayLarge:   TextStyle(fontFamily: 'Cormorant', fontSize: 48,
-          fontWeight: FontWeight.w700, color: AppColors.ink,
-          letterSpacing: -1.2, height: 1.02),
-      headlineLarge:  TextStyle(fontFamily: 'Cormorant', fontSize: 28,
-          fontWeight: FontWeight.w600, color: AppColors.ink, letterSpacing: -0.4),
-      headlineMedium: TextStyle(fontFamily: 'Cormorant', fontSize: 22,
-          fontWeight: FontWeight.w600, color: AppColors.ink),
-      titleLarge:     TextStyle(fontFamily: 'Jost', fontSize: 16,
-          fontWeight: FontWeight.w500, color: AppColors.inkBody),
+      // H1 — 28 / 700
+      displayLarge:   TextStyle(fontFamily: 'Jost', fontSize: 28,
+          fontWeight: FontWeight.w700, color: AppColors.lightText, letterSpacing: -0.5),
+      // H2 — 20 / 600
+      headlineLarge:  TextStyle(fontFamily: 'Jost', fontSize: 20,
+          fontWeight: FontWeight.w600, color: AppColors.lightText),
+      headlineMedium: TextStyle(fontFamily: 'Jost', fontSize: 20,
+          fontWeight: FontWeight.w600, color: AppColors.lightText),
+      // Card Title — 18 / 600
+      titleLarge:     TextStyle(fontFamily: 'Jost', fontSize: 18,
+          fontWeight: FontWeight.w600, color: AppColors.lightText),
+      // Body — 14 / 400
       titleMedium:    TextStyle(fontFamily: 'Jost', fontSize: 14,
-          fontWeight: FontWeight.w500, color: AppColors.inkBody),
+          fontWeight: FontWeight.w400, color: AppColors.lightSub),
       bodyLarge:      TextStyle(fontFamily: 'Jost', fontSize: 14,
-          fontWeight: FontWeight.w300, height: 1.65, color: AppColors.inkMid),
-      bodyMedium:     TextStyle(fontFamily: 'Jost', fontSize: 12,
-          height: 1.5, color: AppColors.inkLight),
-      labelLarge:     TextStyle(fontFamily: 'Jost', fontSize: 11,
-          fontWeight: FontWeight.w600, letterSpacing: 1.2, color: AppColors.ink),
-      labelMedium:    TextStyle(fontFamily: 'Jost', fontSize: 10,
-          fontWeight: FontWeight.w500, letterSpacing: 1.0, color: AppColors.inkMid),
-      labelSmall:     TextStyle(fontFamily: 'Jost', fontSize: 9,
-          fontWeight: FontWeight.w500, letterSpacing: 1.4, color: AppColors.inkLight),
+          fontWeight: FontWeight.w400, color: AppColors.lightText),
+      bodyMedium:     TextStyle(fontFamily: 'Jost', fontSize: 14,
+          fontWeight: FontWeight.w400, color: AppColors.lightSub),
+      // Chip — 13 / 500
+      labelLarge:     TextStyle(fontFamily: 'Jost', fontSize: 13,
+          fontWeight: FontWeight.w500, letterSpacing: 0.2),
+      // Caption — 12 / 400
+      labelMedium:    TextStyle(fontFamily: 'Jost', fontSize: 12,
+          fontWeight: FontWeight.w400, color: AppColors.lightSub),
+      labelSmall:     TextStyle(fontFamily: 'Jost', fontSize: 12,
+          fontWeight: FontWeight.w400, color: AppColors.inkLight),
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.canvas, elevation: 0,
-      scrolledUnderElevation: 0, foregroundColor: AppColors.ink,
+      backgroundColor: AppColors.lightBg, elevation: 0,
+      scrolledUnderElevation: 0, foregroundColor: AppColors.lightText,
       centerTitle: false,
       titleTextStyle: TextStyle(fontFamily: 'Cormorant', fontSize: 24,
           fontWeight: FontWeight.w600, fontStyle: FontStyle.italic,
-          color: AppColors.ink, letterSpacing: -0.3),
+          color: AppColors.lightText, letterSpacing: -0.3),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.lightText,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        textStyle: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600,
+            fontSize: 14),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: AppColors.lightText,
+        side: const BorderSide(color: AppColors.lightBorder, width: 1.5),
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        textStyle: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600,
+            fontSize: 14),
+      ),
+    ),
+    cardTheme: CardThemeData(
+      color: AppColors.lightSurface,
+      elevation: 0,
+      shadowColor: Colors.black.withValues(alpha: 0.08),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppColors.lightBorder),
+      ),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      filled: true, fillColor: AppColors.canvasCard,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-      border:        OutlineInputBorder(borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.inkHair, width: 1)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.inkHair, width: 1)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.ink, width: 1.5)),
+      filled: true, fillColor: AppColors.lightSurface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.lightBorder)),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.lightText, width: 1.5)),
       hintStyle: const TextStyle(fontFamily: 'Jost', fontSize: 13,
           color: AppColors.inkLight),
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.ink, foregroundColor: Colors.white,
-      elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-      textStyle: const TextStyle(fontFamily: 'Jost', fontSize: 13,
-          fontWeight: FontWeight.w500, letterSpacing: 0.6),
-    )),
-    cardTheme: CardThemeData(color: AppColors.canvasCard, elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),
-          side: const BorderSide(color: AppColors.inkHair, width: 0.8))),
-    dividerTheme: const DividerThemeData(color: AppColors.inkHair, thickness: 0.8, space: 0),
+    dividerTheme: const DividerThemeData(
+        color: AppColors.lightBorder, thickness: 0.8, space: 0),
   );
 
+  // ─── DARK ─────────────────────────────────────────────────────────
   static ThemeData _dark() => ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: AppColors.darkCanvas,
+    scaffoldBackgroundColor: AppColors.darkBg,
     colorScheme: const ColorScheme.dark(
-      primary: AppColors.gold, secondary: AppColors.gold,
-      surface: AppColors.darkSurface, onSurface: AppColors.darkText,
-      outline: AppColors.darkBorder,
+      primary:   AppColors.darkText,
+      secondary: AppColors.accent,
+      surface:   AppColors.darkSurface,
+      onSurface: AppColors.darkText,
+      outline:   AppColors.darkBorder,
+      error:     AppColors.error,
     ),
     fontFamily: 'Jost',
     textTheme: const TextTheme(
-      displayLarge:   TextStyle(fontFamily: 'Cormorant', fontSize: 48,
-          fontWeight: FontWeight.w700, color: AppColors.darkText,
-          letterSpacing: -1.2, height: 1.02),
-      headlineLarge:  TextStyle(fontFamily: 'Cormorant', fontSize: 28,
-          fontWeight: FontWeight.w600, color: AppColors.darkText, letterSpacing: -0.4),
-      headlineMedium: TextStyle(fontFamily: 'Cormorant', fontSize: 22,
+      displayLarge:   TextStyle(fontFamily: 'Jost', fontSize: 28,
+          fontWeight: FontWeight.w700, color: AppColors.darkText, letterSpacing: -0.5),
+      headlineLarge:  TextStyle(fontFamily: 'Jost', fontSize: 20,
           fontWeight: FontWeight.w600, color: AppColors.darkText),
-      titleLarge:     TextStyle(fontFamily: 'Jost', fontSize: 16,
-          fontWeight: FontWeight.w500, color: AppColors.darkText),
+      headlineMedium: TextStyle(fontFamily: 'Jost', fontSize: 20,
+          fontWeight: FontWeight.w600, color: AppColors.darkText),
+      titleLarge:     TextStyle(fontFamily: 'Jost', fontSize: 18,
+          fontWeight: FontWeight.w600, color: AppColors.darkText),
       titleMedium:    TextStyle(fontFamily: 'Jost', fontSize: 14,
           fontWeight: FontWeight.w400, color: AppColors.darkSub),
       bodyLarge:      TextStyle(fontFamily: 'Jost', fontSize: 14,
-          fontWeight: FontWeight.w300, height: 1.65, color: AppColors.darkSub),
-      bodyMedium:     TextStyle(fontFamily: 'Jost', fontSize: 12,
-          height: 1.5, color: AppColors.darkFaint),
-      labelLarge:     TextStyle(fontFamily: 'Jost', fontSize: 11,
-          fontWeight: FontWeight.w600, letterSpacing: 1.2, color: AppColors.darkText),
-      labelMedium:    TextStyle(fontFamily: 'Jost', fontSize: 10,
-          fontWeight: FontWeight.w500, letterSpacing: 1.0, color: AppColors.darkFaint),
-      labelSmall:     TextStyle(fontFamily: 'Jost', fontSize: 9,
-          fontWeight: FontWeight.w500, letterSpacing: 1.4, color: AppColors.darkFaint),
+          fontWeight: FontWeight.w400, color: AppColors.darkText),
+      bodyMedium:     TextStyle(fontFamily: 'Jost', fontSize: 14,
+          fontWeight: FontWeight.w400, color: AppColors.darkSub),
+      labelLarge:     TextStyle(fontFamily: 'Jost', fontSize: 13,
+          fontWeight: FontWeight.w500, letterSpacing: 0.2),
+      labelMedium:    TextStyle(fontFamily: 'Jost', fontSize: 12,
+          fontWeight: FontWeight.w400, color: AppColors.darkSub),
+      labelSmall:     TextStyle(fontFamily: 'Jost', fontSize: 12,
+          fontWeight: FontWeight.w400, color: AppColors.darkFaint),
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.darkCanvas, elevation: 0,
+      backgroundColor: AppColors.darkBg, elevation: 0,
       scrolledUnderElevation: 0, foregroundColor: AppColors.darkText,
       centerTitle: false,
       titleTextStyle: TextStyle(fontFamily: 'Cormorant', fontSize: 24,
           fontWeight: FontWeight.w600, fontStyle: FontStyle.italic,
           color: AppColors.darkText, letterSpacing: -0.3),
     ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.darkText,
+        foregroundColor: AppColors.darkBg,
+        elevation: 0,
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        textStyle: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600,
+            fontSize: 14),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: AppColors.darkText,
+        side: const BorderSide(color: AppColors.darkBorder, width: 1.5),
+        shape: const StadiumBorder(),
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+        textStyle: const TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600,
+            fontSize: 14),
+      ),
+    ),
+    cardTheme: CardThemeData(
+      color: AppColors.darkSurface,
+      elevation: 0, // no shadow in dark
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: AppColors.darkBorder),
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
-      filled: true, fillColor: AppColors.darkCard,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-      border:        OutlineInputBorder(borderRadius: BorderRadius.circular(8),
+      filled: true, fillColor: AppColors.darkSurface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.darkBorder)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.darkBorder)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppColors.gold, width: 1.5)),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.darkText, width: 1.5)),
       hintStyle: const TextStyle(fontFamily: 'Jost', fontSize: 13,
           color: AppColors.darkFaint),
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.darkText, foregroundColor: AppColors.darkCanvas,
-      elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-      textStyle: const TextStyle(fontFamily: 'Jost', fontSize: 13,
-          fontWeight: FontWeight.w600, letterSpacing: 0.6),
-    )),
-    cardTheme: CardThemeData(color: AppColors.darkCard, elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),
-          side: const BorderSide(color: AppColors.darkBorder, width: 0.5))),
-    dividerTheme: const DividerThemeData(color: AppColors.darkBorder, thickness: 0.8, space: 0),
+    dividerTheme: const DividerThemeData(
+        color: AppColors.darkBorder, thickness: 0.8, space: 0),
   );
 }

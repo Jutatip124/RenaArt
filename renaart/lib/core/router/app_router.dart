@@ -6,6 +6,7 @@ import '../../features/auth/screen/login_screen.dart';
 import '../../features/auth/screen/register_screen.dart';
 import '../../features/home/screen/main_shell.dart';
 import '../../features/artwork_detail/screen/artwork_detail_screen.dart';
+import '../../features/artwork_detail/screen/image_viewer_screen.dart';
 import '../../features/home/providers/app_providers.dart';
 import '../../models/artwork_model.dart';
 
@@ -19,6 +20,7 @@ class AppRoutes {
   static const String register = '/register';
   static const String home = '/home';
   static const String artworkDetail = '/artwork/:id';
+  static const String imageViewer = '/image-viewer';
 
   static String artworkPath(String id) => '/artwork/$id';
 }
@@ -58,6 +60,17 @@ final routerProvider = Provider<GoRouter>((ref) {
           final id = state.pathParameters['id']!;
           final artwork = state.extra as Artwork?;
           return ArtworkDetailScreen(artworkId: id, preloadedArtwork: artwork);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.imageViewer,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String>? ?? {};
+          return ImageViewerScreen(
+            imageUrl: extra['imageUrl'] ?? '',
+            title: extra['title'] ?? '',
+            artist: extra['artist'] ?? '',
+          );
         },
       ),
       ShellRoute(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../models/artwork_model.dart';
@@ -86,17 +87,24 @@ class _Body extends ConsumerWidget {
           ],
           flexibleSpace: FlexibleSpaceBar(
             background: Stack(children: [
-              // Image
-              artwork.imageUrl.isNotEmpty
-                  ? CachedNetworkImage(imageUrl: artwork.imageUrl,
-                      fit: BoxFit.cover, width: double.infinity, height: double.infinity,
-                      placeholder: (_, __) => Container(color: isDark
-                          ? AppColors.darkCard : AppColors.canvasTone),
-                      errorWidget: (_, __, ___) => Container(
-                          color: isDark ? AppColors.darkCard : AppColors.canvasTone,
-                          child: Center(child: Icon(Icons.image_outlined,
-                              color: faint, size: 36))))
-                  : Container(color: isDark ? AppColors.darkCard : AppColors.canvasTone),
+              // Tappable image — opens fullscreen viewer
+              GestureDetector(
+                onTap: () => context.push(AppRoutes.imageViewer, extra: {
+                  'imageUrl': artwork.imageUrl,
+                  'title': artwork.title,
+                  'artist': artwork.artist,
+                }),
+                child: artwork.imageUrl.isNotEmpty
+                    ? CachedNetworkImage(imageUrl: artwork.imageUrl,
+                        fit: BoxFit.cover, width: double.infinity, height: double.infinity,
+                        placeholder: (_, __) => Container(color: isDark
+                            ? AppColors.darkCard : AppColors.canvasTone),
+                        errorWidget: (_, __, ___) => Container(
+                            color: isDark ? AppColors.darkCard : AppColors.canvasTone,
+                            child: Center(child: Icon(Icons.image_outlined,
+                                color: faint, size: 36))))
+                    : Container(color: isDark ? AppColors.darkCard : AppColors.canvasTone),
+              ),
               // Bottom gradient — darker/stronger in dark mode (cinematic)
               Positioned(bottom: 0, left: 0, right: 0,
                 child: Container(height: 100,
