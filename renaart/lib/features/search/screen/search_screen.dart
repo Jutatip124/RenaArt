@@ -24,7 +24,6 @@ class _SearchState extends ConsumerState<SearchScreen> {
     final results  = ref.watch(searchResultsProvider);
     final isDark   = Theme.of(context).brightness == Brightness.dark;
     final bg       = isDark ? AppColors.darkCanvas : AppColors.canvas;
-    final textCol  = isDark ? AppColors.darkText   : AppColors.ink;
     final faint    = isDark ? AppColors.darkFaint  : AppColors.inkLight;
 
     final hasFilters = ref.watch(searchArtistFilterProvider) != null
@@ -34,18 +33,7 @@ class _SearchState extends ConsumerState<SearchScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(child: Column(children: [
-        // ── Header ─────────────────────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.fromLTRB(18, 16, 18, 10),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Art Discovery', style: TextStyle(fontFamily: 'Cormorant',
-                fontSize: 28, fontWeight: FontWeight.w700, color: textCol,
-                letterSpacing: -0.6)),
-            const SizedBox(height: 2),
-            Text('Search the Renaissance', style: TextStyle(fontFamily: 'Jost',
-                fontSize: 12, color: faint, fontWeight: FontWeight.w300)),
-          ]),
-        ),
+        const SizedBox(height: 16),
         // ── Search bar ─────────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -79,7 +67,7 @@ class _SearchState extends ConsumerState<SearchScreen> {
                   color: hasFilters
                       ? (isDark ? AppColors.gold : AppColors.ink)
                       : (isDark ? AppColors.darkCard : AppColors.canvasCard),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(30),
                   border: Border.all(
                     color: hasFilters
                         ? (isDark ? AppColors.gold : AppColors.ink)

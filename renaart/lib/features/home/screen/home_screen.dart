@@ -31,19 +31,7 @@ class HomeScreen extends ConsumerWidget {
                 fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
                 color: text, letterSpacing: -0.5, height: 1.0)),
           ]),
-          actions: [
-            Container(
-              width: 34, height: 34, margin: const EdgeInsets.only(right: 16),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isDark ? AppColors.darkCard : AppColors.canvasTone,
-                border: Border.all(
-                    color: isDark ? AppColors.darkBorder : AppColors.inkHair),
-              ),
-              child: Icon(Icons.person_outline, size: 17,
-                  color: isDark ? AppColors.darkSub : AppColors.inkMid),
-            ),
-          ],
+          actions: const [],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(46),
             child: _PeriodChips(selected: period, isDark: isDark,
@@ -54,23 +42,7 @@ class HomeScreen extends ConsumerWidget {
         // ── Offline Banner ──────────────────────────────────────
         if (!isOnline)
           SliverToBoxAdapter(child: _OfflineBanner(isDark: isDark)),
-        // ── "For You" section header ────────────────────────────
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 16, 18, 10),
-            child: Row(children: [
-              Text('For You', style: TextStyle(fontFamily: 'Cormorant',
-                  fontSize: 20, fontWeight: FontWeight.w600, color: text)),
-              const Spacer(),
-              if (feedAsync.isLoading)
-                SizedBox(width: 14, height: 14,
-                  child: CircularProgressIndicator(strokeWidth: 1.3,
-                      color: isDark ? AppColors.gold : AppColors.inkLight))
         
-              
-            ]),
-          ),
-        ),
         // ── Grid ────────────────────────────────────────────────
         feedAsync.when(
           loading: () => const SliverToBoxAdapter(child: _SkeletonGrid()),
