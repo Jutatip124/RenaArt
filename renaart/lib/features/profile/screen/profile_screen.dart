@@ -23,7 +23,9 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: bg,
-      body: SingleChildScrollView(children: [
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
         Container(
           width: double.infinity,
           color: isDark ? AppColors.darkSurface : AppColors.canvasTone,
@@ -146,7 +148,7 @@ class ProfileScreen extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 36),
-      ]),
+      ],
     );
   }
 
