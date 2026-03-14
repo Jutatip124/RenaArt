@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,12 +13,20 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (_) {
+    // Firebase init failed — app will fall back to local asset data
+  }
 
   // Week 3: Initialize Hive local storage
-  await LocalStorageService.instance.init();
+  try {
+    await LocalStorageService.instance.init();
+  } catch (_) {
+    // Hive init failed — non-fatal, features degrade gracefully
+  }
 
   // Status bar
   SystemChrome.setSystemUIOverlayStyle(
@@ -27,7 +36,18 @@ Future<void> main() async {
     ),
   );
 
-  runApp(const ProviderScope(child: RenaArtApp()));
+  // Catch unhandled Flutter framework errors
+  FlutterError.onError = (details) {
+    FlutterError.presentError(details);
+  };
+
+  // Catch all unhandled async errors
+  runZonedGuarded(
+    () => runApp(const ProviderScope(child: RenaArtApp())),
+    (error, stack) {
+      debugPrint('Unhandled error: $error');
+    },
+  );
 }
 
 class RenaArtApp extends ConsumerWidget {

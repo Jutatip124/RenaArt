@@ -27,10 +27,19 @@ class LocalStorageService {
     if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(UserArtworkStateAdapter());
     if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(OfflineArtworkAdapter());
 
-    // Open boxes
-    _artworksCache = await Hive.openBox<Artwork>(AppConstants.artworksBoxName);
-    _favoritesBox = await Hive.openBox<UserArtworkState>(AppConstants.favoritesBoxName);
-    _offlineBox = await Hive.openBox<OfflineArtwork>(AppConstants.offlineBoxName);
+    // Open boxes — clear corrupted data on error and retry
+    _artworksCache = await _openBoxSafe<Artwork>(AppConstants.artworksBoxName);
+    _favoritesBox = await _openBoxSafe<UserArtworkState>(AppConstants.favoritesBoxName);
+    _offlineBox = await _openBoxSafe<OfflineArtwork>(AppConstants.offlineBoxName);
+  }
+
+  Future<Box<T>> _openBoxSafe<T>(String name) async {
+    try {
+      return await Hive.openBox<T>(name);
+    } catch (_) {
+      await Hive.deleteBoxFromDisk(name);
+      return await Hive.openBox<T>(name);
+    }
   }
 
   // ─── Artworks Cache ─────────────────────────────────────────────────────────

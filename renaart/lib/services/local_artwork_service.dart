@@ -21,12 +21,22 @@ class LocalArtworkService {
 
   Future<List<Artwork>> _load() async {
     if (_cache != null) return _cache!;
-    final jsonStr = await rootBundle.loadString(AppConstants.artworksDataPath);
-    final list = (jsonDecode(jsonStr) as List<dynamic>);
-    _cache = list
-        .map((e) => Artwork.fromLocalJson(e as Map<String, dynamic>))
-        .where((a) => a.imageUrl.isNotEmpty)
-        .toList();
+    try {
+      final jsonStr = await rootBundle.loadString(AppConstants.artworksDataPath);
+      final list = (jsonDecode(jsonStr) as List<dynamic>);
+      final artworks = <Artwork>[];
+      for (final e in list) {
+        try {
+          final a = Artwork.fromLocalJson(e as Map<String, dynamic>);
+          if (a.imageUrl.isNotEmpty) artworks.add(a);
+        } catch (_) {
+          // Skip malformed entries
+        }
+      }
+      _cache = artworks;
+    } catch (_) {
+      _cache = [];
+    }
     return _cache!;
   }
 

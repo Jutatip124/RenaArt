@@ -16,11 +16,21 @@ class FirestoreArtworkService {
 
   Future<List<Artwork>> _load() async {
     if (_cache != null) return _cache!;
-    final snapshot = await _collection.orderBy('artist').get();
-    _cache = snapshot.docs
-        .map((doc) => Artwork.fromLocalJson(doc.data()))
-        .where((a) => a.imageUrl.isNotEmpty)
-        .toList();
+    try {
+      final snapshot = await _collection.orderBy('artist').get();
+      final artworks = <Artwork>[];
+      for (final doc in snapshot.docs) {
+        try {
+          final a = Artwork.fromLocalJson(doc.data());
+          if (a.imageUrl.isNotEmpty) artworks.add(a);
+        } catch (_) {
+          // Skip malformed documents
+        }
+      }
+      _cache = artworks;
+    } catch (_) {
+      _cache = [];
+    }
     return _cache!;
   }
 

@@ -87,32 +87,39 @@ class Artwork extends HiveObject {
   /// Factory: parse from bundled assets/data/artworks.json
   /// Instant load — no network. All images from Wikimedia Commons (public domain).
   factory Artwork.fromLocalJson(Map<String, dynamic> json) {
-    final year = json['year'] as int? ?? 0;
+    final rawYear = json['year'];
+    final year = rawYear is num ? rawYear.toInt() : (int.tryParse('$rawYear') ?? 0);
     final symbols = json['keySymbols'];
     return Artwork(
-      id: (json['id'] as String? ?? '').isNotEmpty
-          ? json['id'] as String
-          : 'local_${json['title']}',
-      title: (json['title'] as String? ?? 'Untitled').trim(),
-      artist: (json['artist'] as String? ?? 'Unknown Artist').trim(),
+      id: _str(json['id']).isNotEmpty ? _str(json['id']) : 'local_${json['title']}',
+      title: _str(json['title'], 'Untitled'),
+      artist: _str(json['artist'], 'Unknown Artist'),
       artistId: '',
       year: year > 0 ? year.toString() : '',
-      period: (json['period'] as String? ?? 'Renaissance').trim(),
-      medium: (json['medium'] as String? ?? '').trim(),
-      dimensions: (json['dimensions'] as String? ?? '').trim(),
-      location: (json['origin'] as String? ?? '').trim(),
-      imageUrl: (json['imageUrl'] as String? ?? '').trim(),
-      thumbnailUrl: (json['thumbnailUrl'] as String? ?? json['imageUrl'] as String? ?? '').trim(),
-      description: (json['description'] as String? ?? '').trim(),
-      historicalContext: (json['historicalContext'] as String? ?? '').trim(),
-      meaning: (json['meaning'] as String? ?? '').trim(),
-      keySymbols: symbols is List ? symbols.cast<String>() : const [],
+      period: _str(json['period'], 'Renaissance'),
+      medium: _str(json['medium']),
+      dimensions: _str(json['dimensions']),
+      location: _str(json['origin']),
+      imageUrl: _str(json['imageUrl']),
+      thumbnailUrl: _str(json['thumbnailUrl']).isNotEmpty
+          ? _str(json['thumbnailUrl'])
+          : _str(json['imageUrl']),
+      description: _str(json['description']),
+      historicalContext: _str(json['historicalContext']),
+      meaning: _str(json['meaning']),
+      keySymbols: symbols is List
+          ? symbols.map((e) => '$e').toList()
+          : const [],
       relatedArtworkIds: const [],
-      department: (json['type'] as String? ?? 'Painting'),
-      isPublicDomain: (json['isPublicDomain'] as bool?) ?? true,
-      subject: (json['subject'] as String? ?? 'Religious').trim(),
+      department: _str(json['type'], 'Painting'),
+      isPublicDomain: json['isPublicDomain'] == true,
+      subject: _str(json['subject'], 'Religious'),
     );
   }
+
+  /// Safely extract a trimmed string from a dynamic value.
+  static String _str(dynamic v, [String fallback = '']) =>
+      (v is String ? v : (v?.toString() ?? fallback)).trim();
 
   @override
   String toString() => 'Artwork($id: $title by $artist)';
