@@ -27,7 +27,7 @@ final themeModeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>(
 );
 
 class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(ThemeMode.light) {
+  ThemeNotifier() : super(ThemeMode.dark) {
     _load();
   }
 
