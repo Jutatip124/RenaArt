@@ -276,6 +276,9 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       state = updated;
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
+    } catch (e) {
+      if (e is String) rethrow;
+      throw 'Could not update email. Please try again.';
     }
   }
 
@@ -289,6 +292,9 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       }
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
+    } catch (e) {
+      if (e is String) rethrow;
+      throw 'Could not update password. Please try again.';
     }
   }
 
