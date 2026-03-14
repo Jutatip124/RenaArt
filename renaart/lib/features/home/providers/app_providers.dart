@@ -77,7 +77,35 @@ class AuthNotifier extends StateNotifier<UserModel?> {
 
   Future<void> _load() async {
     try {
-      final fbUser = _auth?.currentUser;
+      final auth = _auth;
+      // Check for Google redirect result first
+      if (auth != null) {
+        try {
+          final redirectResult = await auth.getRedirectResult();
+          if (redirectResult.user != null) {
+            final fbUser = redirectResult.user!;
+            final email = fbUser.email ?? '';
+            var profile = await _db.loadProfile(fbUser.uid, email);
+            if (profile == null) {
+              final username = email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
+              profile = UserModel(
+                userId: fbUser.uid,
+                name: fbUser.displayName ?? username,
+                nickname: fbUser.displayName ?? username,
+                username: username,
+                email: email,
+                createdAt: DateTime.now().toIso8601String(),
+              );
+              await _db.saveProfile(profile);
+              await _db.claimUsername(username, fbUser.uid);
+            }
+            await LocalStorageService.instance.saveUser(profile);
+            state = profile;
+            return;
+          }
+        } catch (_) {}
+      }
+      final fbUser = auth?.currentUser;
       if (fbUser != null) {
         final profile = await _db.loadProfile(fbUser.uid, fbUser.email ?? '');
         if (profile != null) {
@@ -120,32 +148,15 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Sign in with Google popup. Throws [String] on error.
+  /// Sign in with Google redirect (popup blocked by COOP on Firebase Hosting).
   Future<void> signInWithGoogle() async {
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
       final provider = GoogleAuthProvider();
-      final cred = await auth.signInWithPopup(provider);
-      final fbUser = cred.user;
-      if (fbUser == null) throw 'Google sign-in failed. Please try again.';
-      final email = fbUser.email ?? '';
-      var profile = await _db.loadProfile(fbUser.uid, email);
-      if (profile == null) {
-        final username = email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
-        profile = UserModel(
-          userId: fbUser.uid,
-          name: fbUser.displayName ?? username,
-          nickname: fbUser.displayName ?? username,
-          username: username,
-          email: email,
-          createdAt: DateTime.now().toIso8601String(),
-        );
-        await _db.saveProfile(profile);
-        await _db.claimUsername(username, fbUser.uid);
-      }
-      await LocalStorageService.instance.saveUser(profile);
-      state = profile;
+      // Use redirect instead of popup to avoid COOP issues on Firebase Hosting
+      await auth.signInWithRedirect(provider);
+      // After redirect, the page reloads. _load() will pick up the user.
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
     } catch (e) {
