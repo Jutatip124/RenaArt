@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../models/artwork_model.dart';
 import '../../../models/user_model.dart';
 import '../../../services/artwork_api_service.dart';
+import '../../../services/local_artwork_service.dart';
 import '../../../services/local_storage_service.dart';
 import '../../../core/constants/app_constants.dart';
 
@@ -225,10 +226,10 @@ final selectedPeriodProvider = StateProvider<String>((ref) => 'All');
 /// Raw fetch provider — only re-runs when connectivity changes, NOT on period change
 final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) async {
   final storage = ref.watch(storageProvider);
-  final api = ref.watch(artworkApiServiceProvider);
 
+  // Try primary data source (Firestore → local asset fallback chain)
   try {
-    // Load all artworks from Firestore (primary) or local asset (fallback)
+    final api = ref.watch(artworkApiServiceProvider);
     final artworks = await api.fetchRenaissanceFeed(count: 200);
     if (artworks.isNotEmpty) {
       // Cache silently — don't let cache failures break loading
@@ -236,8 +237,18 @@ final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) asy
       return artworks;
     }
   } catch (_) {
-    // Firestore + local asset both failed — try Hive cache
+    // ArtworkApiService creation or fetch failed — try direct local load
   }
+
+  // Direct local asset fallback (bypasses ArtworkApiService entirely)
+  try {
+    final local = LocalArtworkService.instance;
+    final artworks = await local.fetchRenaissanceFeed(count: 200);
+    if (artworks.isNotEmpty) {
+      try { await storage.cacheArtworks(artworks); } catch (_) {}
+      return artworks;
+    }
+  } catch (_) {}
 
   // Last resort: return whatever is in the Hive cache
   try {
@@ -309,14 +320,23 @@ final searchFilterSeedProvider =
       .toList();
 
   if (seed.length < 24) {
-    final api = ref.watch(artworkApiServiceProvider);
     try {
+      final api = ref.watch(artworkApiServiceProvider);
       final fetched = await api.fetchRenaissanceFeed(count: 200);
       if (fetched.isNotEmpty) {
         try { await storage.cacheArtworks(fetched); } catch (_) {}
         seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
       }
-    } catch (_) {}
+    } catch (_) {
+      // Fallback: try direct local asset load
+      try {
+        final local = LocalArtworkService.instance;
+        final fetched = await local.fetchRenaissanceFeed(count: 200);
+        if (fetched.isNotEmpty) {
+          seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
+        }
+      } catch (_) {}
+    }
   }
 
   return seed;
@@ -388,8 +408,8 @@ final searchResultsProvider =
   results = storage.getAllCachedArtworks();
   if (results.isEmpty) {
     // Fallback: load from API/local directly
-    final api = ref.watch(artworkApiServiceProvider);
     try {
+      final api = ref.watch(artworkApiServiceProvider);
       if (query.isNotEmpty) {
         results = await api.searchArtworks(query, maxCount: 200);
       } else {
@@ -398,7 +418,15 @@ final searchResultsProvider =
       if (results.isNotEmpty) {
         try { await storage.cacheArtworks(results); } catch (_) {}
       }
-    } catch (_) {}
+    } catch (_) {
+      // Direct local fallback
+      try {
+        final local = LocalArtworkService.instance;
+        results = query.isNotEmpty
+            ? await local.searchArtworks(query, maxCount: 200)
+            : await local.fetchRenaissanceFeed(count: 200);
+      } catch (_) {}
+    }
   }
 
   results = results.where(_isFilterableRenaissanceArtwork).toList();
