@@ -23,7 +23,12 @@ class LocalStorageService {
 
   /// Initialize Hive boxes — call in main() before runApp
   Future<void> init() async {
-    await Hive.initFlutter();
+    try {
+      await Hive.initFlutter();
+    } catch (_) {
+      // Hive web init can fail if IndexedDB is blocked or corrupted
+      return;
+    }
 
     // Register adapters
     if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(ArtworkAdapter());

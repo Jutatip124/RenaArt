@@ -34,10 +34,12 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   }
 
   Future<void> _load() async {
-    final user = await LocalStorageService.instance.loadUser();
-    if (user != null && user.preferences.darkMode) {
-      state = ThemeMode.dark;
-    }
+    try {
+      final user = await LocalStorageService.instance.loadUser();
+      if (user != null && user.preferences.darkMode) {
+        state = ThemeMode.dark;
+      }
+    } catch (_) {}
   }
 
   Future<void> toggle() async {
@@ -72,16 +74,20 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   final _db = FirestoreUserService.instance;
 
   Future<void> _load() async {
-    final fbUser = _auth.currentUser;
-    if (fbUser != null) {
-      final profile = await _db.loadProfile(fbUser.uid, fbUser.email ?? '');
-      if (profile != null) {
-        await LocalStorageService.instance.saveUser(profile);
-        state = profile;
-        return;
+    try {
+      final fbUser = _auth.currentUser;
+      if (fbUser != null) {
+        final profile = await _db.loadProfile(fbUser.uid, fbUser.email ?? '');
+        if (profile != null) {
+          await LocalStorageService.instance.saveUser(profile);
+          state = profile;
+          return;
+        }
       }
+      state = await LocalStorageService.instance.loadUser();
+    } catch (_) {
+      // Init failed — user stays null, app shows login
     }
-    state = await LocalStorageService.instance.loadUser();
   }
 
   /// Sign in with email/password. Throws [String] on error.
