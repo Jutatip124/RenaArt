@@ -45,7 +45,8 @@ class _SplashState extends ConsumerState<SplashScreen>
 
     return Scaffold(
       backgroundColor: bg,
-      body: FadeTransition(
+      body: SafeArea(
+        child: FadeTransition(
         opacity: _fade,
         child: SlideTransition(
           position: _slide,
@@ -79,6 +80,7 @@ class _SplashState extends ConsumerState<SplashScreen>
             ]),
           ),
         ),
+      ),
       ),
     );
   }

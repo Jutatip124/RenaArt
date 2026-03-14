@@ -25,14 +25,14 @@ class ProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: bg,
-      body: SingleChildScrollView(
-        // FIXED: SingleChildScrollView takes 'child', not 'children'
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              color: isDark ? AppColors.darkSurface : AppColors.canvasTone,
-              padding: const EdgeInsets.fromLTRB(20, 56, 20, 28),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                color: isDark ? AppColors.darkSurface : AppColors.canvasTone,
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
               child: Column(
                 children: [
                   Stack(
@@ -195,6 +195,7 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 36),
           ],
         ),
+      ),
       ),
     );
   }

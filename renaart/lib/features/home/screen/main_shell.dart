@@ -24,7 +24,10 @@ class MainShell extends ConsumerWidget {
     final border = isDark ? AppColors.darkBorder  : AppColors.inkHair;
 
     return Scaffold(
-      body: IndexedStack(index: idx, children: _screens),
+      body: SafeArea(
+        bottom: false,
+        child: IndexedStack(index: idx, children: _screens),
+      ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: navBg,
