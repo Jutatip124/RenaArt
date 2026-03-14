@@ -52,8 +52,19 @@ class _Body extends ConsumerWidget {
     final faint      = isDark ? AppColors.darkFaint  : AppColors.inkLight;
 
     final cached  = ref.watch(storageProvider).getAllCachedArtworks();
-    final related = cached.where((a) => a.id != artwork.id && a.period == artwork.period)
-        .take(4).toList();
+    // Related artworks: prefer same artist, then same period, then same medium
+    final others = cached.where((a) => a.id != artwork.id).toList();
+    others.sort((a, b) {
+      int scoreA = 0, scoreB = 0;
+      if (a.artist == artwork.artist) scoreA += 3;
+      if (b.artist == artwork.artist) scoreB += 3;
+      if (a.period == artwork.period) scoreA += 2;
+      if (b.period == artwork.period) scoreB += 2;
+      if (a.medium == artwork.medium) scoreA += 1;
+      if (b.medium == artwork.medium) scoreB += 1;
+      return scoreB.compareTo(scoreA);
+    });
+    final related = others.take(6).toList();
 
     return Scaffold(
       backgroundColor: bg,
