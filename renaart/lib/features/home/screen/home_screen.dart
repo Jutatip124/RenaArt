@@ -29,7 +29,7 @@ class HomeScreen extends ConsumerWidget {
           title: Row(mainAxisSize: MainAxisSize.min, children: [
             ColorFiltered(
               colorFilter: ColorFilter.mode(
-                isDark ? AppColors.gold : AppColors.ink,
+                isDark ? Colors.white : AppColors.ink,
                 BlendMode.srcIn,
               ),
               child: Image.asset('assets/images/logo_dark.png',

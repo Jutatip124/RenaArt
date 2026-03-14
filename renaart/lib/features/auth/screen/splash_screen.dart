@@ -52,22 +52,16 @@ class _SplashState extends ConsumerState<SplashScreen>
           position: _slide,
           child: Center(
             child: Column(mainAxisSize: MainAxisSize.min, children: [
-              // Logo — gold in dark, black in light
+              // Logo — white in dark, black in light
               ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                  isDark ? AppColors.gold : AppColors.ink,
+                  isDark ? Colors.white : AppColors.ink,
                   BlendMode.srcIn,
                 ),
                 child: Image.asset('assets/images/logo_dark.png',
-                    width: 120, height: 120),
+                    width: 180, height: 180),
               ),
               const SizedBox(height: 16),
-              // Wordmark
-              Text('RenaArt',
-                style: TextStyle(fontFamily: 'Cormorant', fontSize: 52,
-                    fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
-                    letterSpacing: -1.5, color: text, height: 1.0)),
-              const SizedBox(height: 10),
               // Gold rule
               Container(width: 40, height: 1,
                   color: isDark ? AppColors.gold : AppColors.inkLight),
