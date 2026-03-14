@@ -9,7 +9,8 @@ class FirestoreArtworkService {
   FirestoreArtworkService._();
   static final FirestoreArtworkService instance = FirestoreArtworkService._();
 
-  late final _collection = FirebaseFirestore.instance.collection('artworks');
+  CollectionReference<Map<String, dynamic>> get _collection =>
+      FirebaseFirestore.instance.collection('artworks');
 
   // In-memory cache so Firestore is only queried once per session
   List<Artwork>? _cache;
