@@ -99,6 +99,16 @@ class _LoginState extends ConsumerState<LoginScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const SizedBox(height: 52),
+            // Logo
+            Center(child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                isDark ? AppColors.gold : AppColors.ink,
+                BlendMode.srcIn,
+              ),
+              child: Image.asset('assets/images/logo_dark.png',
+                  width: 80, height: 80),
+            )),
+            const SizedBox(height: 16),
             // Large serif headline
             Text('Welcome to\nRenaArt',
               style: TextStyle(fontFamily: 'Cormorant', fontSize: 38,

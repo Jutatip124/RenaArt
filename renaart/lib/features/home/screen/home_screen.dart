@@ -26,9 +26,20 @@ class HomeScreen extends ConsumerWidget {
           pinned: true,
           backgroundColor: bg,
           centerTitle: true,
-          title: Text('RenaArt', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
-              fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
-              color: text, letterSpacing: -0.5, height: 1.0)),
+          title: Row(mainAxisSize: MainAxisSize.min, children: [
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                isDark ? AppColors.gold : AppColors.ink,
+                BlendMode.srcIn,
+              ),
+              child: Image.asset('assets/images/logo_dark.png',
+                  width: 28, height: 28),
+            ),
+            const SizedBox(width: 8),
+            Text('RenaArt', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
+                fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
+                color: text, letterSpacing: -0.5, height: 1.0)),
+          ]),
           actions: const [],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(46),
