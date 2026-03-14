@@ -227,18 +227,25 @@ final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) asy
   final storage = ref.watch(storageProvider);
   final api = ref.watch(artworkApiServiceProvider);
 
-  // Load all artworks from local asset and cache for search/filter
-  final artworks = await api.fetchRenaissanceFeed(count: 200);
-  if (artworks.isNotEmpty) {
-    await storage.cacheArtworks(artworks);
+  try {
+    // Load all artworks from Firestore (primary) or local asset (fallback)
+    final artworks = await api.fetchRenaissanceFeed(count: 200);
+    if (artworks.isNotEmpty) {
+      // Cache silently — don't let cache failures break loading
+      try { await storage.cacheArtworks(artworks); } catch (_) {}
+      return artworks;
+    }
+  } catch (_) {
+    // Firestore + local asset both failed — try Hive cache
   }
 
-  // If local load failed, fallback to cache
-  if (artworks.isEmpty) {
-    return storage.getAllCachedArtworks();
-  }
+  // Last resort: return whatever is in the Hive cache
+  try {
+    final cached = storage.getAllCachedArtworks();
+    if (cached.isNotEmpty) return cached;
+  } catch (_) {}
 
-  return artworks;
+  return [];
 });
 
 /// Derived provider — applies period filter locally without triggering API re-fetch
@@ -303,11 +310,13 @@ final searchFilterSeedProvider =
 
   if (seed.length < 24) {
     final api = ref.watch(artworkApiServiceProvider);
-    final fetched = await api.fetchRenaissanceFeed(count: 200);
-    if (fetched.isNotEmpty) {
-      await storage.cacheArtworks(fetched);
-      seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
-    }
+    try {
+      final fetched = await api.fetchRenaissanceFeed(count: 200);
+      if (fetched.isNotEmpty) {
+        try { await storage.cacheArtworks(fetched); } catch (_) {}
+        seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
+      }
+    } catch (_) {}
   }
 
   return seed;
@@ -380,14 +389,16 @@ final searchResultsProvider =
   if (results.isEmpty) {
     // Fallback: load from API/local directly
     final api = ref.watch(artworkApiServiceProvider);
-    if (query.isNotEmpty) {
-      results = await api.searchArtworks(query, maxCount: 200);
-    } else {
-      results = await api.fetchRenaissanceFeed(count: 200);
-    }
-    if (results.isNotEmpty) {
-      await storage.cacheArtworks(results);
-    }
+    try {
+      if (query.isNotEmpty) {
+        results = await api.searchArtworks(query, maxCount: 200);
+      } else {
+        results = await api.fetchRenaissanceFeed(count: 200);
+      }
+      if (results.isNotEmpty) {
+        try { await storage.cacheArtworks(results); } catch (_) {}
+      }
+    } catch (_) {}
   }
 
   results = results.where(_isFilterableRenaissanceArtwork).toList();

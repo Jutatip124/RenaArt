@@ -14,9 +14,12 @@ class LocalStorageService {
   LocalStorageService._();
   static final LocalStorageService instance = LocalStorageService._();
 
-  late Box<Artwork> _artworksCache;
-  late Box<UserArtworkState> _favoritesBox;
-  late Box<OfflineArtwork> _offlineBox;
+  Box<Artwork>? _artworksCache;
+  Box<UserArtworkState>? _favoritesBox;
+  Box<OfflineArtwork>? _offlineBox;
+
+  bool get _ready =>
+      _artworksCache != null && _favoritesBox != null && _offlineBox != null;
 
   /// Initialize Hive boxes — call in main() before runApp
   Future<void> init() async {
@@ -45,29 +48,30 @@ class LocalStorageService {
   // ─── Artworks Cache ─────────────────────────────────────────────────────────
 
   Future<void> cacheArtwork(Artwork artwork) async {
-    await _artworksCache.put(artwork.id, artwork);
+    await _artworksCache?.put(artwork.id, artwork);
   }
 
   Future<void> cacheArtworks(List<Artwork> artworks) async {
+    if (_artworksCache == null) return;
     final map = {for (final a in artworks) a.id: a};
-    await _artworksCache.putAll(map);
+    await _artworksCache!.putAll(map);
   }
 
-  Artwork? getCachedArtwork(String id) => _artworksCache.get(id);
+  Artwork? getCachedArtwork(String id) => _artworksCache?.get(id);
 
-  List<Artwork> getAllCachedArtworks() => _artworksCache.values.toList();
+  List<Artwork> getAllCachedArtworks() =>
+      _artworksCache?.values.toList() ?? [];
 
   // ─── Favorites (Week 3: Room.insert(UserArtworkState)) ───────────────────
 
   /// Week 5 Spec: toggleFavorite(Artwork): add/remove from favorites box
   Future<void> toggleFavorite(String artworkId, String userId) async {
-    final existing = _favoritesBox.get(artworkId);
+    if (_favoritesBox == null) return;
+    final existing = _favoritesBox!.get(artworkId);
     if (existing != null && existing.isFavorited) {
-      // Remove
-      await _favoritesBox.delete(artworkId);
+      await _favoritesBox!.delete(artworkId);
     } else {
-      // Add
-      await _favoritesBox.put(
+      await _favoritesBox!.put(
         artworkId,
         UserArtworkState(
           artworkId: artworkId,
@@ -81,23 +85,25 @@ class LocalStorageService {
   }
 
   bool isFavorite(String artworkId) {
-    final state = _favoritesBox.get(artworkId);
+    final state = _favoritesBox?.get(artworkId);
     return state?.isFavorited ?? false;
   }
 
   /// Week 5 Spec: getFavorites(): return List by querying artworks box with favorites keys
   List<Artwork> getFavorites() {
-    final favoriteIds = _favoritesBox.values
+    if (!_ready) return [];
+    final favoriteIds = _favoritesBox!.values
         .where((s) => s.isFavorited)
         .map((s) => s.artworkId)
         .toSet();
-    return _artworksCache.values
+    return _artworksCache!.values
         .where((a) => favoriteIds.contains(a.id))
         .toList();
   }
 
   List<String> getFavoriteIds() {
-    return _favoritesBox.values
+    if (_favoritesBox == null) return [];
+    return _favoritesBox!.values
         .where((s) => s.isFavorited)
         .map((s) => s.artworkId)
         .toList();
@@ -107,29 +113,30 @@ class LocalStorageService {
 
   /// Week 5 Spec: isOfflineFull getter: returns bool when offline.length >= 10
   bool get isOfflineFull =>
-      _offlineBox.length >= AppConstants.maxOfflineArtworks;
+      (_offlineBox?.length ?? 0) >= AppConstants.maxOfflineArtworks;
 
-  int get offlineCount => _offlineBox.length;
+  int get offlineCount => _offlineBox?.length ?? 0;
 
-  bool isOffline(String artworkId) => _offlineBox.containsKey(artworkId);
+  bool isOffline(String artworkId) =>
+      _offlineBox?.containsKey(artworkId) ?? false;
 
   /// Week 5 Spec: saveOffline(Artwork): save to offline box with MAX 10 limit, return bool
   /// Returns false if full (Week 3: "Storage Full (10/10)" scenario)
   bool saveOffline(Artwork artwork) {
+    if (_offlineBox == null) return false;
     if (isOffline(artwork.id)) {
-      // Toggle off
-      _offlineBox.delete(artwork.id);
+      _offlineBox!.delete(artwork.id);
       return true;
     }
-    if (isOfflineFull) return false; // Week 3: return false if full
+    if (isOfflineFull) return false;
 
-    _offlineBox.put(
+    _offlineBox!.put(
       artwork.id,
       OfflineArtwork(
         artworkId: artwork.id,
         isOfflineAvailable: true,
         downloadedDate: DateTime.now().toIso8601String(),
-        imageResolution: '1080x1440', // Week 3: capped at 1080p
+        imageResolution: '1080x1440',
         lastAccessDate: DateTime.now().toIso8601String(),
       ),
     );
@@ -137,29 +144,32 @@ class LocalStorageService {
   }
 
   void removeOffline(String artworkId) {
-    _offlineBox.delete(artworkId);
+    _offlineBox?.delete(artworkId);
   }
 
   /// Week 5 Spec: getOfflineArtworks(): same pattern as getFavorites
   List<Artwork> getOfflineArtworks() {
-    final offlineIds = _offlineBox.keys.cast<String>().toSet();
-    return _artworksCache.values
+    if (!_ready) return [];
+    final offlineIds = _offlineBox!.keys.cast<String>().toSet();
+    return _artworksCache!.values
         .where((a) => offlineIds.contains(a.id))
         .toList();
   }
 
-  List<String> getOfflineIds() => _offlineBox.keys.cast<String>().toList();
+  List<String> getOfflineIds() =>
+      _offlineBox?.keys.cast<String>().toList() ?? [];
 
   // ─── View Tracking (Week 3: viewCount in UserArtworkState) ───────────────
 
   Future<void> recordView(String artworkId, String userId) async {
-    final existing = _favoritesBox.get(artworkId);
+    if (_favoritesBox == null) return;
+    final existing = _favoritesBox!.get(artworkId);
     if (existing != null) {
       existing.viewCount = (existing.viewCount) + 1;
       existing.lastViewed = DateTime.now().toIso8601String();
       await existing.save();
     } else {
-      await _favoritesBox.put(
+      await _favoritesBox!.put(
         artworkId,
         UserArtworkState(
           artworkId: artworkId,
@@ -173,7 +183,7 @@ class LocalStorageService {
   }
 
   int getViewCount(String artworkId) =>
-      _favoritesBox.get(artworkId)?.viewCount ?? 0;
+      _favoritesBox?.get(artworkId)?.viewCount ?? 0;
 
   // ─── User Profile (SharedPreferences) ────────────────────────────────────
 
