@@ -7,6 +7,8 @@ class FirestoreUserService {
   static final instance = FirestoreUserService._();
 
   late final _col = FirebaseFirestore.instance.collection('users');
+  late final _usernames = FirebaseFirestore.instance.collection('usernames');
+  late final _reports = FirebaseFirestore.instance.collection('reports');
 
   Future<void> saveProfile(UserModel user) async {
     await _col.doc(user.userId).set({
@@ -39,5 +41,45 @@ class FirestoreUserService {
     } catch (_) {
       return null;
     }
+  }
+
+  /// Check if a username is available (case-insensitive).
+  Future<bool> isUsernameAvailable(String username) async {
+    try {
+      final doc = await _usernames.doc(username.toLowerCase()).get();
+      return !doc.exists;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Claim a username for a user. Returns false if already taken.
+  Future<bool> claimUsername(String username, String userId) async {
+    try {
+      final key = username.toLowerCase();
+      final doc = await _usernames.doc(key).get();
+      if (doc.exists && doc.data()?['userId'] != userId) return false;
+      await _usernames.doc(key).set({'userId': userId});
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Release a previously claimed username.
+  Future<void> releaseUsername(String username) async {
+    try {
+      await _usernames.doc(username.toLowerCase()).delete();
+    } catch (_) {}
+  }
+
+  /// Submit a problem report to Firestore.
+  Future<void> submitReport(String userId, String category, String description) async {
+    await _reports.add({
+      'userId': userId,
+      'category': category,
+      'description': description,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
   }
 }

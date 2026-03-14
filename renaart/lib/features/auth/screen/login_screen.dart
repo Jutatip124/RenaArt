@@ -63,6 +63,16 @@ class _LoginState extends ConsumerState<LoginScreen> {
     if (mounted) context.go(AppRoutes.home);
   }
 
+  Future<void> _signInWithGoogle() async {
+    setState(() { _loading = true; _err = null; });
+    try {
+      await ref.read(authProvider.notifier).signInWithGoogle();
+      if (mounted) context.go(AppRoutes.home);
+    } catch (e) {
+      if (mounted) setState(() { _loading = false; _err = e.toString(); });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -172,6 +182,37 @@ class _LoginState extends ConsumerState<LoginScreen> {
                     decoration: TextDecoration.underline,
                     decorationColor: faint)),
             )),
+            const SizedBox(height: 16),
+            // OR divider
+            Row(children: [
+              Expanded(child: Container(height: 0.5, color: border)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text('OR', style: TextStyle(fontFamily: 'Jost',
+                    fontSize: 10, letterSpacing: 1.5,
+                    fontWeight: FontWeight.w500, color: faint)),
+              ),
+              Expanded(child: Container(height: 0.5, color: border)),
+            ]),
+            const SizedBox(height: 16),
+            // Google Sign-In button
+            SizedBox(width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _loading ? null : _signInWithGoogle,
+                icon: Text('G', style: TextStyle(fontFamily: 'Jost',
+                    fontSize: 18, fontWeight: FontWeight.w700,
+                    color: isDark ? AppColors.gold : AppColors.ink)),
+                label: Text('Sign in with Google',
+                    style: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? AppColors.darkText : AppColors.ink)),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: border, width: isDark ? 0.5 : 0.8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                ),
+              ),
+            ),
             const SizedBox(height: 12),
             const SizedBox(height: 32),
           ]),

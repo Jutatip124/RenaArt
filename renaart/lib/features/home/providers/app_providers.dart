@@ -72,7 +72,6 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   final _db = FirestoreUserService.instance;
 
   Future<void> _load() async {
-    // Try Firebase Auth current user first
     final fbUser = _auth.currentUser;
     if (fbUser != null) {
       final profile = await _db.loadProfile(fbUser.uid, fbUser.email ?? '');
@@ -82,11 +81,10 @@ class AuthNotifier extends StateNotifier<UserModel?> {
         return;
       }
     }
-    // Fall back to locally saved user
     state = await LocalStorageService.instance.loadUser();
   }
 
-  /// Sign in with Firebase Auth. Throws [String] on error.
+  /// Sign in with email/password. Throws [String] on error.
   Future<void> signIn(String email, String password) async {
     try {
       final cred = await _auth.signInWithEmailAndPassword(
@@ -108,9 +106,42 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Register with Firebase Auth. Throws [String] on error.
-  Future<void> register(String nickname, String email, String password) async {
+  /// Sign in with Google popup. Throws [String] on error.
+  Future<void> signInWithGoogle() async {
     try {
+      final provider = GoogleAuthProvider();
+      final cred = await _auth.signInWithPopup(provider);
+      final fbUser = cred.user!;
+      final email = fbUser.email ?? '';
+      var profile = await _db.loadProfile(fbUser.uid, email);
+      if (profile == null) {
+        final username = email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
+        profile = UserModel(
+          userId: fbUser.uid,
+          name: fbUser.displayName ?? username,
+          nickname: fbUser.displayName ?? username,
+          username: username,
+          email: email,
+          createdAt: DateTime.now().toIso8601String(),
+        );
+        await _db.saveProfile(profile);
+        await _db.claimUsername(username, fbUser.uid);
+      }
+      await LocalStorageService.instance.saveUser(profile);
+      state = profile;
+    } on FirebaseAuthException catch (e) {
+      throw _mapAuthError(e.code);
+    } catch (e) {
+      throw 'Google sign-in failed. Please try again.';
+    }
+  }
+
+  /// Register with email/password + username. Throws [String] on error.
+  Future<void> register(String nickname, String username, String email, String password) async {
+    try {
+      final available = await _db.isUsernameAvailable(username);
+      if (!available) throw 'Username "@$username" is already taken.';
+
       final cred = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       final fbUser = cred.user!;
@@ -119,10 +150,11 @@ class AuthNotifier extends StateNotifier<UserModel?> {
         userId: fbUser.uid,
         name: nickname,
         nickname: nickname,
-        username: email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_'),
+        username: username,
         email: email,
         createdAt: DateTime.now().toIso8601String(),
       );
+      await _db.claimUsername(username, fbUser.uid);
       await _db.saveProfile(user);
       await LocalStorageService.instance.saveUser(user);
       state = user;
@@ -131,7 +163,26 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Send password reset email. Throws [String] on error.
+  /// Check if a username is available.
+  Future<bool> isUsernameAvailable(String username) =>
+      _db.isUsernameAvailable(username);
+
+  /// Re-authenticate the current user with their password.
+  Future<void> reauthenticate(String password) async {
+    final fbUser = _auth.currentUser;
+    if (fbUser == null || fbUser.email == null) {
+      throw 'No authenticated user found.';
+    }
+    try {
+      final cred = EmailAuthProvider.credential(
+          email: fbUser.email!, password: password);
+      await fbUser.reauthenticateWithCredential(cred);
+    } on FirebaseAuthException catch (e) {
+      throw _mapAuthError(e.code);
+    }
+  }
+
+  /// Send password reset email.
   Future<void> resetPassword(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
@@ -154,14 +205,21 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     state = updated;
   }
 
-  Future<void> updateUsername(String username) async {
+  /// Update username — requires re-auth beforehand. Checks uniqueness.
+  Future<void> updateUsername(String newUsername) async {
     if (state == null) return;
-    final updated = state!.copyWith(username: username);
+    final available = await _db.isUsernameAvailable(newUsername);
+    if (!available) throw 'Username "@$newUsername" is already taken.';
+    final oldUsername = state!.username;
+    await _db.claimUsername(newUsername, state!.userId);
+    await _db.releaseUsername(oldUsername);
+    final updated = state!.copyWith(username: newUsername);
     await LocalStorageService.instance.saveUser(updated);
     await _db.saveProfile(updated);
     state = updated;
   }
 
+  /// Update email — sends verification to new email. Requires re-auth.
   Future<void> updateEmail(String email) async {
     if (state == null) return;
     try {
@@ -178,6 +236,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
+  /// Update password. Requires re-auth beforehand.
   Future<void> updatePassword(String password) async {
     if (state == null || password.isEmpty) return;
     try {
@@ -188,6 +247,12 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
     }
+  }
+
+  /// Submit a problem report to Firestore.
+  Future<void> submitReport(String category, String description) async {
+    final userId = state?.userId ?? 'anonymous';
+    await _db.submitReport(userId, category, description);
   }
 
   Future<void> toggleHighFidelity() async {
@@ -232,7 +297,6 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 }
-
 // ══════════════════════════════════════════════════════════════════════════════
 // CONNECTIVITY (Global — Week 3: Offline Strategy)
 // ══════════════════════════════════════════════════════════════════════════════

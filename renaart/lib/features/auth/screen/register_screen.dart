@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,32 +15,72 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegState extends ConsumerState<RegisterScreen> {
   final _nick    = TextEditingController();
+  final _user    = TextEditingController();
   final _email   = TextEditingController();
   final _pass    = TextEditingController();
   final _confirm = TextEditingController();
   bool _obs1 = true, _obs2 = true, _loading = false;
   String? _err;
 
+  // Username availability
+  bool? _usernameAvailable;
+  bool _usernameChecking = false;
+  Timer? _usernameTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pass.addListener(() => setState(() {}));
+    _user.addListener(_onUsernameChanged);
+  }
+
   @override
   void dispose() {
-    _nick.dispose(); _email.dispose(); _pass.dispose(); _confirm.dispose();
+    _usernameTimer?.cancel();
+    _nick.dispose(); _user.dispose(); _email.dispose();
+    _pass.dispose(); _confirm.dispose();
     super.dispose();
   }
 
+  void _onUsernameChanged() {
+    _usernameTimer?.cancel();
+    final val = _user.text.trim();
+    if (val.length < 3) {
+      setState(() { _usernameAvailable = null; _usernameChecking = false; });
+      return;
+    }
+    setState(() => _usernameChecking = true);
+    _usernameTimer = Timer(const Duration(milliseconds: 600), () async {
+      final available = await ref.read(authProvider.notifier).isUsernameAvailable(val);
+      if (mounted && _user.text.trim() == val) {
+        setState(() { _usernameAvailable = available; _usernameChecking = false; });
+      }
+    });
+  }
+
   Future<void> _register() async {
-    if (_nick.text.trim().isEmpty || _email.text.trim().isEmpty || _pass.text.isEmpty) {
+    final nick = _nick.text.trim();
+    final user = _user.text.trim();
+    final email = _email.text.trim();
+    if (nick.isEmpty || user.isEmpty || email.isEmpty || _pass.text.isEmpty) {
       setState(() => _err = 'Please fill in all fields.'); return;
+    }
+    if (user.length < 3) {
+      setState(() => _err = 'Username must be at least 3 characters.'); return;
+    }
+    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(user)) {
+      setState(() => _err = 'Username can only contain letters, numbers, and underscores.'); return;
     }
     if (_pass.text != _confirm.text) {
       setState(() => _err = 'Passwords do not match.'); return;
     }
-    if (_pass.text.length < 6) {
-      setState(() => _err = 'Password must be at least 6 characters.'); return;
+    final strength = _passwordStrength(_pass.text);
+    if (!strength.every((r) => r.met)) {
+      setState(() => _err = 'Password does not meet all requirements.'); return;
     }
     setState(() { _loading = true; _err = null; });
     try {
-      await ref.read(authProvider.notifier).register(
-          _nick.text.trim(), _email.text.trim(), _pass.text);
+      await ref.read(authProvider.notifier).register(nick, user, email, _pass.text);
       if (mounted) context.go(AppRoutes.home);
     } catch (e) {
       if (mounted) setState(() { _loading = false; _err = e.toString(); });
@@ -51,10 +92,13 @@ class _RegState extends ConsumerState<RegisterScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg     = isDark ? AppColors.darkCanvas : AppColors.canvas;
     final text   = isDark ? AppColors.darkText   : AppColors.ink;
-    final sub    = isDark ? AppColors.darkSub    : AppColors.inkMid;
     final faint  = isDark ? AppColors.darkFaint  : AppColors.inkLight;
     final card   = isDark ? AppColors.darkCard   : AppColors.canvasCard;
     final border = isDark ? AppColors.darkBorder : AppColors.inkHair;
+    final sub    = isDark ? AppColors.darkSub    : AppColors.inkMid;
+    final gold   = isDark ? AppColors.gold       : AppColors.ink;
+
+    final passReqs = _passwordStrength(_pass.text);
 
     return Scaffold(
       backgroundColor: bg,
@@ -73,8 +117,7 @@ class _RegState extends ConsumerState<RegisterScreen> {
                   fontWeight: FontWeight.w700, color: text,
                   letterSpacing: -1.0, height: 1.08)),
             const SizedBox(height: 8),
-            Container(width: 32, height: 1.5,
-                color: isDark ? AppColors.gold : AppColors.ink),
+            Container(width: 32, height: 1.5, color: gold),
             const SizedBox(height: 32),
             Container(
               padding: const EdgeInsets.all(20),
@@ -88,6 +131,37 @@ class _RegState extends ConsumerState<RegisterScreen> {
                 TextField(controller: _nick,
                     decoration: const InputDecoration(hintText: 'Your preferred name')),
                 const SizedBox(height: 14),
+                _Label('USERNAME', faint),
+                const SizedBox(height: 6),
+                TextField(controller: _user,
+                    decoration: InputDecoration(
+                      hintText: 'Unique username (letters, numbers, _)',
+                      prefixText: '@ ',
+                      prefixStyle: TextStyle(fontFamily: 'Jost', color: faint),
+                      suffixIcon: _usernameChecking
+                          ? const Padding(
+                              padding: EdgeInsets.all(12),
+                              child: SizedBox(width: 14, height: 14,
+                                  child: CircularProgressIndicator(strokeWidth: 1.5)))
+                          : _usernameAvailable == null
+                              ? null
+                              : Icon(
+                                  _usernameAvailable! ? Icons.check_circle : Icons.cancel,
+                                  size: 17,
+                                  color: _usernameAvailable!
+                                      ? const Color(0xFF4CAF50) : AppColors.errorRed),
+                    )),
+                if (_user.text.trim().length >= 3 && !_usernameChecking && _usernameAvailable != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Text(
+                      _usernameAvailable! ? 'Username is available' : 'Username is already taken',
+                      style: TextStyle(fontFamily: 'Jost', fontSize: 11,
+                          color: _usernameAvailable!
+                              ? const Color(0xFF4CAF50) : AppColors.errorRed),
+                    ),
+                  ),
+                const SizedBox(height: 14),
                 _Label('EMAIL', faint),
                 const SizedBox(height: 6),
                 TextField(controller: _email, keyboardType: TextInputType.emailAddress,
@@ -96,12 +170,28 @@ class _RegState extends ConsumerState<RegisterScreen> {
                 _Label('PASSWORD', faint),
                 const SizedBox(height: 6),
                 TextField(controller: _pass, obscureText: _obs1,
-                  decoration: InputDecoration(hintText: 'Min. 6 characters',
+                  decoration: InputDecoration(hintText: 'Create a strong password',
                     suffixIcon: IconButton(
                       icon: Icon(_obs1 ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                           size: 17, color: faint),
                       onPressed: () => setState(() => _obs1 = !_obs1),
                     ))),
+                if (_pass.text.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  ...passReqs.map((r) => Padding(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Row(children: [
+                      Icon(r.met ? Icons.check_circle : Icons.circle_outlined,
+                          size: 13,
+                          color: r.met ? const Color(0xFF4CAF50)
+                              : isDark ? AppColors.darkFaint : AppColors.inkLight),
+                      const SizedBox(width: 6),
+                      Text(r.label, style: TextStyle(fontFamily: 'Jost', fontSize: 11,
+                          color: r.met ? const Color(0xFF4CAF50)
+                              : isDark ? AppColors.darkFaint : AppColors.inkLight)),
+                    ]),
+                  )),
+                ],
                 const SizedBox(height: 14),
                 _Label('CONFIRM PASSWORD', faint),
                 const SizedBox(height: 6),
@@ -136,9 +226,9 @@ class _RegState extends ConsumerState<RegisterScreen> {
                     style: TextStyle(fontFamily: 'Jost', fontSize: 13, color: sub),
                     children: [TextSpan(text: 'Sign in',
                       style: TextStyle(fontWeight: FontWeight.w600,
-                          color: isDark ? AppColors.gold : AppColors.ink,
+                          color: gold,
                           decoration: TextDecoration.underline,
-                          decorationColor: isDark ? AppColors.gold : AppColors.ink))],
+                          decorationColor: gold))],
                   )),
                 )),
               ]),
@@ -150,6 +240,20 @@ class _RegState extends ConsumerState<RegisterScreen> {
       ]),
     );
   }
+
+  List<_PasswordReq> _passwordStrength(String pass) => [
+    _PasswordReq('At least 8 characters', pass.length >= 8),
+    _PasswordReq('Contains uppercase letter (A-Z)', pass.contains(RegExp(r'[A-Z]'))),
+    _PasswordReq('Contains lowercase letter (a-z)', pass.contains(RegExp(r'[a-z]'))),
+    _PasswordReq('Contains number (0-9)', pass.contains(RegExp(r'[0-9]'))),
+    _PasswordReq('Contains special character (!@#\$%...)', pass.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>\-_=+\[\]\\\/~`]'))),
+  ];
+}
+
+class _PasswordReq {
+  final String label;
+  final bool met;
+  const _PasswordReq(this.label, this.met);
 }
 
 class _Label extends StatelessWidget {
