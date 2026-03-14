@@ -97,6 +97,7 @@ class _Body extends ConsumerWidget {
                 child: artwork.imageUrl.isNotEmpty
                     ? CachedNetworkImage(imageUrl: artwork.imageUrl,
                         fit: BoxFit.cover, width: double.infinity, height: double.infinity,
+                        httpHeaders: const {'User-Agent': 'RenaArtApp/1.0 (Flutter; educational)'},
                         placeholder: (_, __) => Container(color: isDark
                             ? AppColors.darkCard : AppColors.canvasTone),
                         errorWidget: (_, __, ___) => Container(

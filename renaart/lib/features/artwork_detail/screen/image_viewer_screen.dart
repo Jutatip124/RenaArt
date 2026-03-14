@@ -81,6 +81,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
                     ? CachedNetworkImage(
                         imageUrl: widget.imageUrl,
                         fit: BoxFit.contain,
+                        httpHeaders: const {'User-Agent': 'RenaArtApp/1.0 (Flutter; educational)'},
                         placeholder: (_, __) => const Center(
                           child: SizedBox(
                             width: 24,
