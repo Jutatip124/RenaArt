@@ -59,9 +59,9 @@ class _SplashState extends ConsumerState<SplashScreen>
                   BlendMode.srcIn,
                 ),
                 child: Image.asset('assets/images/logo_dark.png',
-                    width: 180, height: 180),
+                    width: 240, height: 240),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 6),
               // Gold rule
               Container(width: 40, height: 1,
                   color: isDark ? AppColors.gold : AppColors.inkLight),
