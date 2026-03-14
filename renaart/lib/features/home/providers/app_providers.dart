@@ -369,12 +369,12 @@ final availableSearchPeriodsProvider = Provider<List<String>>((ref) {
 
 final availableSearchMediumsProvider = Provider<List<String>>((ref) {
   final seed = ref.watch(searchFilterSeedProvider).valueOrNull;
-  const canonical = AppStrings.mediums;
+  const canonical = AppStrings.artForms;
   if (seed == null || seed.isEmpty) return canonical;
 
-  final filtered = canonical.where((medium) {
-    final m = medium.toLowerCase();
-    return seed.any((a) => a.medium.toLowerCase().contains(m));
+  final filtered = canonical.where((artForm) {
+    final a = artForm.toLowerCase();
+    return seed.any((artwork) => artwork.department.toLowerCase().contains(a));
   }).toList();
 
   return filtered.isEmpty ? canonical : filtered;
@@ -425,7 +425,7 @@ final searchResultsProvider =
     if (mediumFilter != null) {
       final normalizedMedium = mediumFilter.toLowerCase();
       results = results
-          .where((artwork) => artwork.medium.toLowerCase().contains(normalizedMedium))
+          .where((artwork) => artwork.department.toLowerCase().contains(normalizedMedium))
           .toList();
     }
 
@@ -489,7 +489,7 @@ final searchResultsProvider =
   }
   if (mediumFilter != null) {
     results = results.where((a) =>
-        a.medium.toLowerCase().contains(mediumFilter.toLowerCase())).toList();
+        a.department.toLowerCase().contains(mediumFilter.toLowerCase())).toList();
   }
 
   return results;

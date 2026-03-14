@@ -35,13 +35,14 @@ class ArtworkAdapter extends TypeAdapter<Artwork> {
       relatedArtworkIds: (fields[15] as List).cast<String>(),
       department: fields[16] as String,
       isPublicDomain: fields[17] as bool,
+      subject: fields[18] as String? ?? 'Religious',
     );
   }
 
   @override
   void write(BinaryWriter writer, Artwork obj) {
     writer
-      ..writeByte(18)
+      ..writeByte(19)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -77,7 +78,9 @@ class ArtworkAdapter extends TypeAdapter<Artwork> {
       ..writeByte(16)
       ..write(obj.department)
       ..writeByte(17)
-      ..write(obj.isPublicDomain);
+      ..write(obj.isPublicDomain)
+      ..writeByte(18)
+      ..write(obj.subject);
   }
 
   @override

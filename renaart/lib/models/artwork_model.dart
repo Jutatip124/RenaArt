@@ -59,6 +59,9 @@ class Artwork extends HiveObject {
   @HiveField(17)
   final bool isPublicDomain;
 
+  @HiveField(18)
+  final String subject;
+
   Artwork({
     required this.id,
     required this.title,
@@ -78,6 +81,7 @@ class Artwork extends HiveObject {
     this.relatedArtworkIds = const [],
     this.department = 'European Paintings',
     this.isPublicDomain = true,
+    this.subject = 'Religious',
   });
 
   /// Factory: parse from bundled assets/data/artworks.json
@@ -106,6 +110,7 @@ class Artwork extends HiveObject {
       relatedArtworkIds: const [],
       department: (json['type'] as String? ?? 'Painting'),
       isPublicDomain: (json['isPublicDomain'] as bool?) ?? true,
+      subject: (json['subject'] as String? ?? 'Religious').trim(),
     );
   }
 
@@ -133,13 +138,18 @@ class Artwork extends HiveObject {
     final subjects = json['subject_titles'];
     if (subjects is List) tags.addAll(subjects.cast<String>().take(5));
 
+    final artType = (json['artwork_type_title'] as String?) ?? '';
+    final classification = (json['classification_title'] as String?) ?? '';
+    final artForm = _classifyArtForm(artType, classification, medium);
+    final subjectStr = _classifySubject(title, tags);
+
     return Artwork(
       id: 'aic_${json['id']}',
       title: title,
       artist: artistRaw.isEmpty ? 'Unknown Artist' : artistRaw,
       year: dateStr,
       period: _parsePeriodFromYear(dateStart, dateEnd,
-          json['style_title'] as String?, json['classification_title'] as String?),
+          json['style_title'] as String?, classification),
       medium: medium,
       dimensions: dimensions,
       location: place.isNotEmpty ? place : 'Art Institute of Chicago',
@@ -147,9 +157,10 @@ class Artwork extends HiveObject {
       thumbnailUrl: thumbUrl,
       description: _buildAicDescription(title, artistRaw, dateStr, dept, place),
       historicalContext: dept,
-      department: dept,
+      department: artForm,
       isPublicDomain: isPublic,
       keySymbols: tags,
+      subject: subjectStr,
     );
   }
 
@@ -206,6 +217,40 @@ class Artwork extends HiveObject {
       if (year >= 1300 && year <= 1625) return 'Renaissance';
     }
     return 'Other';
+  }
+
+  static String _classifyArtForm(String artType, String classification, String medium) {
+    final combined = '$artType $classification $medium'.toLowerCase();
+    if (combined.contains('sculpture') || combined.contains('statue') ||
+        combined.contains('bronze') || combined.contains('marble sculpt')) return 'Sculpture';
+    if (combined.contains('drawing') || combined.contains('sketch') ||
+        combined.contains('chalk') || combined.contains('charcoal')) return 'Drawing';
+    if (combined.contains('print') || combined.contains('engraving') ||
+        combined.contains('woodcut') || combined.contains('etching') ||
+        combined.contains('lithograph')) return 'Print';
+    if (combined.contains('tapestry') || combined.contains('textile') ||
+        combined.contains('ceramic') || combined.contains('furniture') ||
+        combined.contains('decorative')) return 'Decorative Arts';
+    return 'Painting';
+  }
+
+  static String _classifySubject(String title, List<String> tags) {
+    final combined = '$title ${tags.join(' ')}'.toLowerCase();
+    if (combined.contains('madonna') || combined.contains('christ') ||
+        combined.contains('virgin') || combined.contains('saint') ||
+        combined.contains('crucif') || combined.contains('biblical') ||
+        combined.contains('angel') || combined.contains('holy') ||
+        combined.contains('baptism') || combined.contains('annunciat')) return 'Religious';
+    if (combined.contains('venus') || combined.contains('apollo') ||
+        combined.contains('diana') || combined.contains('zeus') ||
+        combined.contains('myth') || combined.contains('bacchus') ||
+        combined.contains('perseus') || combined.contains('cupid')) return 'Mythology';
+    if (combined.contains('portrait') || combined.contains('self-portrait')) return 'Portrait';
+    if (combined.contains('nude') || combined.contains('anatomy') ||
+        combined.contains('bather')) return 'Nude / Anatomy';
+    if (combined.contains('battle') || combined.contains('histor')) return 'Historical';
+    if (combined.contains('allegory') || combined.contains('vanitas')) return 'Allegory';
+    return 'Religious';
   }
 
   static String _buildAicDescription(String title, String artist,

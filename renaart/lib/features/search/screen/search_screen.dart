@@ -177,7 +177,7 @@ class _FilterPanel extends ConsumerWidget {
           _Chip(p, periodF == p, isDark, () => ref.read(searchPeriodFilterProvider.notifier)
               .state = periodF == p ? null : p)).toList()),
         const SizedBox(height: 12),
-        _FilterGroup('MEDIUM', faint, AppStrings.mediums.map((m) =>
+        _FilterGroup('ART FORM', faint, AppStrings.artForms.map((m) =>
           _Chip(m, mediumF == m, isDark, () => ref.read(searchMediumFilterProvider.notifier)
               .state = mediumF == m ? null : m)).toList()),
       ]),

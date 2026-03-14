@@ -118,14 +118,23 @@ class AppStrings {
     'Fra Angelico',
   ];
 
-  // Mediums for filters
-  static const List<String> mediums = [
+  // Art Form categories (museum standard classification)
+  static const List<String> artForms = [
     'Painting',
     'Sculpture',
-    'Fresco',
     'Drawing',
     'Print',
-    'Tapestry',
+    'Decorative Arts',
+  ];
+
+  // Subject categories for content-based filtering
+  static const List<String> subjects = [
+    'Religious',
+    'Mythology',
+    'Portrait',
+    'Historical',
+    'Nude / Anatomy',
+    'Allegory',
   ];
 
   // Week 3: Offline UI messages
