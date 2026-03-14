@@ -3,38 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../models/artwork_model.dart';
 import '../../../models/user_model.dart';
-import '../../../services/aic_api_service.dart';
 import '../../../services/artwork_api_service.dart';
-import '../../../services/met_api_service.dart';
-import '../../../services/mock_artwork_service.dart';
-import '../../../services/rijks_api_service.dart';
 import '../../../services/local_storage_service.dart';
 import '../../../core/constants/app_constants.dart';
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SERVICES
 // ══════════════════════════════════════════════════════════════════════════════
-final metApiServiceProvider = Provider<MetApiService>((_) => MetApiService());
-final aicApiServiceProvider = Provider<AicApiService>((_) => AicApiService());
-final rijksApiServiceProvider =
-    Provider<RijksApiService>((_) => RijksApiService());
-final mockArtworkServiceProvider = Provider<MockArtworkService>(
-  (_) => MockArtworkService.instance,
-);
 final storageProvider = Provider<LocalStorageService>(
   (_) => LocalStorageService.instance,
 );
 
-/// Unified data source — routes to AIC / Rijksmuseum / Met / Mock based on
-/// [AppConstants.activeSource] and falls back to mock on any error.
 final artworkApiServiceProvider = Provider<ArtworkApiService>((ref) {
-  return ArtworkApiService(
-    source: AppConstants.activeSource,
-    aicService: ref.watch(aicApiServiceProvider),
-    rijksService: ref.watch(rijksApiServiceProvider),
-    metService: ref.watch(metApiServiceProvider),
-    mockService: ref.watch(mockArtworkServiceProvider),
-  );
+  return ArtworkApiService(source: AppConstants.activeSource);
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -385,54 +366,8 @@ final searchResultsProvider =
   final periodFilter = ref.watch(searchPeriodFilterProvider);
   final mediumFilter = ref.watch(searchMediumFilterProvider);
   final storage = ref.watch(storageProvider);
-  final isOnline = ref.watch(isOnlineProvider);
   final hasAnyFilter =
       artistFilter != null || periodFilter != null || mediumFilter != null;
-
-  if (AppConstants.useMockData) {
-    // Mock mode uses the unified service (which routes to MockArtworkService internally)
-    final api = ref.watch(artworkApiServiceProvider);
-    var results = (await api.fetchRenaissanceFeed(count: 80))
-        .where(_isFilterableRenaissanceArtwork)
-        .toList();
-
-    if (query.isNotEmpty) {
-      final normalizedQuery = query.toLowerCase();
-      results = results.where((artwork) {
-        return artwork.title.toLowerCase().contains(normalizedQuery) ||
-            artwork.artist.toLowerCase().contains(normalizedQuery) ||
-            artwork.period.toLowerCase().contains(normalizedQuery) ||
-            artwork.medium.toLowerCase().contains(normalizedQuery);
-      }).toList();
-    }
-
-    if (artistFilter != null) {
-      final normalizedArtist = artistFilter.toLowerCase();
-      results = results
-          .where((artwork) => artwork.artist.toLowerCase().contains(normalizedArtist))
-          .toList();
-    }
-
-    if (periodFilter != null) {
-      final normalizedPeriod = periodFilter.toLowerCase();
-      results = results
-          .where((artwork) => artwork.period.toLowerCase().contains(normalizedPeriod))
-          .toList();
-    }
-
-    if (mediumFilter != null) {
-      final normalizedMedium = mediumFilter.toLowerCase();
-      results = results
-          .where((artwork) => artwork.department.toLowerCase().contains(normalizedMedium))
-          .toList();
-    }
-
-    if ((query.isNotEmpty || hasAnyFilter) && results.isNotEmpty) {
-      await storage.cacheArtworks(results);
-    }
-
-    return results;
-  }
 
   if (query.isEmpty && !hasAnyFilter) {
     return storage.getAllCachedArtworks();
