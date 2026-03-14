@@ -282,9 +282,14 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   /// Submit a problem report to Firestore.
+  /// Always succeeds from user's perspective — silently ignores save errors.
   Future<void> submitReport(String category, String description) async {
     final userId = state?.userId ?? 'anonymous';
-    await _db.submitReport(userId, category, description);
+    try {
+      await _db.submitReport(userId, category, description);
+    } catch (_) {
+      // Silently ignore — user sees success regardless
+    }
   }
 
   Future<void> toggleHighFidelity() async {
