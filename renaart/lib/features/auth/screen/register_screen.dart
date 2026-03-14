@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
 import '../../home/providers/app_providers.dart';
+import '../widgets/art_mosaic_bg.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -54,10 +55,12 @@ class _RegState extends ConsumerState<RegisterScreen> {
 
     return Scaffold(
       backgroundColor: bg,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      body: Stack(children: [
+        ArtMosaicBackground(isDark: isDark),
+        SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const SizedBox(height: 16),
             IconButton(onPressed: () => context.pop(),
                 icon: Icon(Icons.arrow_back, color: text), padding: EdgeInsets.zero),
@@ -140,7 +143,8 @@ class _RegState extends ConsumerState<RegisterScreen> {
             const SizedBox(height: 32),
           ]),
         ),
-      ),
+        ),
+      ]),
     );
   }
 }
