@@ -181,7 +181,7 @@ class _Body extends ConsumerWidget {
                   if (!ok) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: const Text(AppStrings.offlineStorageFull,
-                          style: TextStyle(fontFamily: 'Jost')),
+                          style: TextStyle(fontFamily: 'Jost', color: Colors.white)),
                       backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
                       duration: const Duration(seconds: 3)));
                   }

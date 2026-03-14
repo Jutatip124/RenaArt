@@ -155,6 +155,10 @@ class AppTheme {
     ),
     dividerTheme: const DividerThemeData(
         color: AppColors.lightBorder, thickness: 0.8, space: 0),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: AppColors.lightText,
+      contentTextStyle: TextStyle(fontFamily: 'Jost', fontSize: 13, color: Colors.white),
+    ),
   );
 
   // ─── DARK ─────────────────────────────────────────────────────────
@@ -244,5 +248,9 @@ class AppTheme {
     ),
     dividerTheme: const DividerThemeData(
         color: AppColors.darkBorder, thickness: 0.8, space: 0),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: AppColors.darkRaised,
+      contentTextStyle: TextStyle(fontFamily: 'Jost', fontSize: 13, color: Colors.white),
+    ),
   );
 }

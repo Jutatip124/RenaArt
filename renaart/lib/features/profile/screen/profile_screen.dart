@@ -272,7 +272,7 @@ class ProfileScreen extends ConsumerWidget {
                         Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 18),
                         SizedBox(width: 8),
                         Expanded(child: Text('Account deleted successfully.',
-                            style: TextStyle(fontFamily: 'Jost', fontSize: 13))),
+                            style: TextStyle(fontFamily: 'Jost', fontSize: 13, color: Colors.white))),
                       ]),
                       backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
                     ));
@@ -586,7 +586,7 @@ class ProfileScreen extends ConsumerWidget {
                           Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 18),
                           SizedBox(width: 8),
                           Expanded(child: Text('Password updated successfully',
-                              style: TextStyle(fontFamily: 'Jost', fontSize: 13))),
+                              style: TextStyle(fontFamily: 'Jost', fontSize: 13, color: Colors.white))),
                         ]),
                         backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
                       ));
@@ -710,7 +710,7 @@ class ProfileScreen extends ConsumerWidget {
                         Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 18),
                         SizedBox(width: 8),
                         Expanded(child: Text('Report submitted successfully. Thank you!',
-                            style: TextStyle(fontFamily: 'Jost', fontSize: 13))),
+                            style: TextStyle(fontFamily: 'Jost', fontSize: 13, color: Colors.white))),
                       ]),
                       backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
                     ));
