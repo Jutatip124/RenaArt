@@ -267,8 +267,10 @@ final homeFeedProvider = Provider.autoDispose<AsyncValue<List<Artwork>>>((ref) {
   final period = ref.watch(selectedPeriodProvider);
 
   return feedAsync.whenData((artworks) {
-    if (period == 'All') return artworks;
-    return artworks.where((a) => a.period == period).toList();
+    // Filter out stale non-Renaissance cache entries (e.g. old AIC data)
+    final filtered = artworks.where((a) => a.id.startsWith('local_')).toList();
+    if (period == 'All') return filtered;
+    return filtered.where((a) => a.period == period).toList();
   });
 });
 
@@ -300,6 +302,9 @@ final searchPeriodFilterProvider = StateProvider<String?>((ref) => null);
 final searchMediumFilterProvider = StateProvider<String?>((ref) => null);
 
 bool _isFilterableRenaissanceArtwork(Artwork artwork) {
+  // Only include curated local artworks (filter out stale AIC/Met/Rijks cache)
+  if (!artwork.id.startsWith('local_')) return false;
+
   final artist = artwork.artist.trim().toLowerCase();
   if (artist.isEmpty || artist == 'unknown artist' || artist == 'anonymous') {
     return false;
@@ -399,7 +404,8 @@ final searchResultsProvider =
       artistFilter != null || periodFilter != null || mediumFilter != null;
 
   if (query.isEmpty && !hasAnyFilter) {
-    return storage.getAllCachedArtworks();
+    return storage.getAllCachedArtworks()
+        .where(_isFilterableRenaissanceArtwork).toList();
   }
 
   List<Artwork> results;
