@@ -78,46 +78,54 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   Future<void> _load() async {
     try {
       final auth = _auth;
-      // Check for Google redirect result first
-      if (auth != null) {
-        try {
-          final redirectResult = await auth.getRedirectResult();
-          if (redirectResult.user != null) {
-            final fbUser = redirectResult.user!;
-            final email = fbUser.email ?? '';
-            var profile = await _db.loadProfile(fbUser.uid, email);
-            if (profile == null) {
-              final username = email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
-              profile = UserModel(
-                userId: fbUser.uid,
-                name: fbUser.displayName ?? username,
-                nickname: fbUser.displayName ?? username,
-                username: username,
-                email: email,
-                createdAt: DateTime.now().toIso8601String(),
-              );
-              await _db.saveProfile(profile);
-              await _db.claimUsername(username, fbUser.uid);
-            }
-            await LocalStorageService.instance.saveUser(profile);
-            state = profile;
-            return;
-          }
-        } catch (_) {}
+      if (auth == null) {
+        state = await LocalStorageService.instance.loadUser();
+        return;
       }
-      final fbUser = auth?.currentUser;
-      if (fbUser != null) {
-        final profile = await _db.loadProfile(fbUser.uid, fbUser.email ?? '');
-        if (profile != null) {
-          await LocalStorageService.instance.saveUser(profile);
-          state = profile;
+
+      // Check for Google redirect result first
+      try {
+        final redirectResult = await auth.getRedirectResult();
+        if (redirectResult.user != null) {
+          await _handleFirebaseUser(redirectResult.user!);
           return;
         }
+      } catch (_) {}
+
+      // Check if user is already signed in (persistent Firebase session)
+      final fbUser = auth.currentUser;
+      if (fbUser != null) {
+        await _handleFirebaseUser(fbUser);
+        return;
       }
+
       state = await LocalStorageService.instance.loadUser();
     } catch (_) {
       // Init failed — user stays null, app shows login
     }
+  }
+
+  /// Shared helper: load or create profile from a Firebase user.
+  Future<void> _handleFirebaseUser(User fbUser) async {
+    final email = fbUser.email ?? '';
+    var profile = await _db.loadProfile(fbUser.uid, email);
+    if (profile == null) {
+      final username = email.isNotEmpty
+          ? email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')
+          : 'user_${fbUser.uid.substring(0, 8)}';
+      profile = UserModel(
+        userId: fbUser.uid,
+        name: fbUser.displayName ?? username,
+        nickname: fbUser.displayName ?? username,
+        username: username,
+        email: email,
+        createdAt: DateTime.now().toIso8601String(),
+      );
+      await _db.saveProfile(profile);
+      await _db.claimUsername(username, fbUser.uid);
+    }
+    await LocalStorageService.instance.saveUser(profile);
+    state = profile;
   }
 
   /// Sign in with email/password. Throws [String] on error.
