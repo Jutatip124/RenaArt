@@ -300,6 +300,8 @@ final searchQueryProvider = StateProvider<String>((ref) => '');
 final searchArtistFilterProvider = StateProvider<String?>((ref) => null);
 final searchPeriodFilterProvider = StateProvider<String?>((ref) => null);
 final searchMediumFilterProvider = StateProvider<String?>((ref) => null);
+final searchSubjectFilterProvider = StateProvider<String?>((ref) => null);
+final searchRegionFilterProvider = StateProvider<String?>((ref) => null);
 
 bool _isFilterableRenaissanceArtwork(Artwork artwork) {
   // Only include curated local artworks (filter out stale AIC/Met/Rijks cache)
@@ -399,9 +401,11 @@ final searchResultsProvider =
   final artistFilter = ref.watch(searchArtistFilterProvider);
   final periodFilter = ref.watch(searchPeriodFilterProvider);
   final mediumFilter = ref.watch(searchMediumFilterProvider);
+  final subjectFilter = ref.watch(searchSubjectFilterProvider);
+  final regionFilter = ref.watch(searchRegionFilterProvider);
   final storage = ref.watch(storageProvider);
-  final hasAnyFilter =
-      artistFilter != null || periodFilter != null || mediumFilter != null;
+  final hasAnyFilter = artistFilter != null || periodFilter != null
+      || mediumFilter != null || subjectFilter != null || regionFilter != null;
 
   if (query.isEmpty && !hasAnyFilter) {
     return storage.getAllCachedArtworks()
@@ -417,9 +421,9 @@ final searchResultsProvider =
     try {
       final api = ref.watch(artworkApiServiceProvider);
       if (query.isNotEmpty) {
-        results = await api.searchArtworks(query, maxCount: 200);
+        results = await api.searchArtworks(query, maxCount: 300);
       } else {
-        results = await api.fetchRenaissanceFeed(count: 200);
+        results = await api.fetchRenaissanceFeed(count: 300);
       }
       if (results.isNotEmpty) {
         try { await storage.cacheArtworks(results); } catch (_) {}
@@ -429,15 +433,15 @@ final searchResultsProvider =
       try {
         final local = LocalArtworkService.instance;
         results = query.isNotEmpty
-            ? await local.searchArtworks(query, maxCount: 200)
-            : await local.fetchRenaissanceFeed(count: 200);
+            ? await local.searchArtworks(query, maxCount: 300)
+            : await local.fetchRenaissanceFeed(count: 300);
       } catch (_) {}
     }
   }
 
   results = results.where(_isFilterableRenaissanceArtwork).toList();
 
-  // Apply query text filtering locally (works for both online/offline sources)
+  // Apply query text filtering locally
   if (query.isNotEmpty) {
     final q = query.toLowerCase();
     results = results.where((a) {
@@ -447,7 +451,7 @@ final searchResultsProvider =
     }).toList();
   }
 
-  // Apply local filters (Week 3 Local State)
+  // Apply local filters
   if (artistFilter != null) {
     final normalizedArtist = artistFilter.toLowerCase();
     results = results
@@ -461,8 +465,20 @@ final searchResultsProvider =
         .toList();
   }
   if (mediumFilter != null) {
+    // type field is stored as 'department' in Artwork model
     results = results.where((a) =>
-        a.department.toLowerCase().contains(mediumFilter.toLowerCase())).toList();
+        a.department.toLowerCase() == mediumFilter.toLowerCase()).toList();
+  }
+  if (subjectFilter != null) {
+    final normalizedSubject = subjectFilter.toLowerCase();
+    results = results.where((a) =>
+        a.subject.toLowerCase().contains(normalizedSubject)).toList();
+  }
+  if (regionFilter != null) {
+    final normalizedRegion = regionFilter.toLowerCase();
+    // origin field is stored as 'location' in Artwork model
+    results = results.where((a) =>
+        a.location.toLowerCase().contains(normalizedRegion)).toList();
   }
 
   return results;

@@ -67,16 +67,25 @@ class AppStrings {
     'Michelangelo',
     'Raphael',
     'Sandro Botticelli',
-    'Jan van Eyck',
     'Titian',
     'Albrecht Dürer',
-    'Fra Angelico',
+    'Caravaggio',
+    'Giovanni Bellini',
+    'Andrea Mantegna',
+    'Tintoretto',
+    'Jan van Eyck',
+    'Correggio',
+    'Domenico Ghirlandaio',
+    'Lucas Cranach the Elder',
+    'El Greco',
+    'Donatello',
   ];
 
   // Art Form categories (museum standard classification)
   static const List<String> artForms = [
     'Painting',
     'Sculpture',
+    'Fresco',
     'Drawing',
     'Print',
   ];
@@ -84,11 +93,20 @@ class AppStrings {
   // Subject categories for content-based filtering
   static const List<String> subjects = [
     'Religious',
-    'Mythology',
     'Portrait',
-    'Historical',
-    'Nude / Anatomy',
+    'Mythology',
     'Allegory',
+    'Historical',
+  ];
+
+  // Region / origin for geographic filtering
+  static const List<String> regions = [
+    'Florence',
+    'Rome',
+    'Venice',
+    'Milan',
+    'Germany',
+    'Flanders',
   ];
 
   // Week 3: Offline UI messages

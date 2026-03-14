@@ -43,7 +43,9 @@ class _SearchState extends ConsumerState<SearchScreen> {
 
     final hasFilters = ref.watch(searchArtistFilterProvider) != null
         || ref.watch(searchPeriodFilterProvider) != null
-        || ref.watch(searchMediumFilterProvider) != null;
+        || ref.watch(searchMediumFilterProvider) != null
+        || ref.watch(searchSubjectFilterProvider) != null
+        || ref.watch(searchRegionFilterProvider) != null;
 
     return Scaffold(
       backgroundColor: bg,
@@ -141,6 +143,8 @@ class _SearchState extends ConsumerState<SearchScreen> {
                   ref.read(searchArtistFilterProvider.notifier).state = null;
                   ref.read(searchPeriodFilterProvider.notifier).state = null;
                   ref.read(searchMediumFilterProvider.notifier).state = null;
+                  ref.read(searchSubjectFilterProvider.notifier).state = null;
+                  ref.read(searchRegionFilterProvider.notifier).state = null;
                 },
                 child: Text('Clear all', style: TextStyle(fontFamily: 'Jost',
                     fontSize: 11, fontWeight: FontWeight.w600,
@@ -188,10 +192,12 @@ class _FilterPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final artistF = ref.watch(searchArtistFilterProvider);
-    final periodF = ref.watch(searchPeriodFilterProvider);
-    final mediumF = ref.watch(searchMediumFilterProvider);
-    final faint   = isDark ? AppColors.darkFaint : AppColors.inkLight;
+    final artistF  = ref.watch(searchArtistFilterProvider);
+    final periodF  = ref.watch(searchPeriodFilterProvider);
+    final mediumF  = ref.watch(searchMediumFilterProvider);
+    final subjectF = ref.watch(searchSubjectFilterProvider);
+    final regionF  = ref.watch(searchRegionFilterProvider);
+    final faint    = isDark ? AppColors.darkFaint : AppColors.inkLight;
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
@@ -203,8 +209,8 @@ class _FilterPanel extends ConsumerWidget {
             color: isDark ? AppColors.darkBorder : AppColors.inkHair,
             width: isDark ? 0.5 : 0.8),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _FilterGroup('CREATOR', faint, AppStrings.popularArtists.take(6).map((a) =>
+      child: SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _FilterGroup('ARTIST', faint, AppStrings.popularArtists.map((a) =>
           _Chip(a, artistF == a, isDark, () => ref.read(searchArtistFilterProvider.notifier)
               .state = artistF == a ? null : a)).toList()),
         const SizedBox(height: 12),
@@ -215,7 +221,15 @@ class _FilterPanel extends ConsumerWidget {
         _FilterGroup('ART FORM', faint, AppStrings.artForms.map((m) =>
           _Chip(m, mediumF == m, isDark, () => ref.read(searchMediumFilterProvider.notifier)
               .state = mediumF == m ? null : m)).toList()),
-      ]),
+        const SizedBox(height: 12),
+        _FilterGroup('SUBJECT', faint, AppStrings.subjects.map((s) =>
+          _Chip(s, subjectF == s, isDark, () => ref.read(searchSubjectFilterProvider.notifier)
+              .state = subjectF == s ? null : s)).toList()),
+        const SizedBox(height: 12),
+        _FilterGroup('REGION', faint, AppStrings.regions.map((r) =>
+          _Chip(r, regionF == r, isDark, () => ref.read(searchRegionFilterProvider.notifier)
+              .state = regionF == r ? null : r)).toList()),
+      ])),
     );
   }
 }
