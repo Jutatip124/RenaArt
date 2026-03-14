@@ -199,17 +199,21 @@ class _FilterPanel extends ConsumerWidget {
     final regionF  = ref.watch(searchRegionFilterProvider);
     final faint    = isDark ? AppColors.darkFaint : AppColors.inkLight;
 
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : AppColors.canvasCard,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.inkHair,
-            width: isDark ? 0.5 : 0.8),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.45,
       ),
-      child: SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkCard : AppColors.canvasCard,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+              color: isDark ? AppColors.darkBorder : AppColors.inkHair,
+              width: isDark ? 0.5 : 0.8),
+        ),
+        child: SingleChildScrollView(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _FilterGroup('ARTIST', faint, AppStrings.popularArtists.map((a) =>
           _Chip(a, artistF == a, isDark, () => ref.read(searchArtistFilterProvider.notifier)
               .state = artistF == a ? null : a)).toList()),
@@ -230,6 +234,7 @@ class _FilterPanel extends ConsumerWidget {
           _Chip(r, regionF == r, isDark, () => ref.read(searchRegionFilterProvider.notifier)
               .state = regionF == r ? null : r)).toList()),
       ])),
+      ),
     );
   }
 }
