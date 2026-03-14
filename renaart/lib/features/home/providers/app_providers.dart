@@ -334,6 +334,37 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     state = null;
   }
 
+  /// Delete the user's account permanently. Requires password re-auth.
+  Future<void> deleteAccount(String password) async {
+    final auth = _auth;
+    final fbUser = auth?.currentUser;
+    if (fbUser == null) throw 'No authenticated user found.';
+    try {
+      // Re-authenticate first
+      if (fbUser.email != null) {
+        final cred = EmailAuthProvider.credential(
+            email: fbUser.email!, password: password);
+        await fbUser.reauthenticateWithCredential(cred);
+      }
+      // Clean up Firestore data
+      final username = state?.username;
+      if (username != null) {
+        await _db.releaseUsername(username);
+      }
+      await _db.deleteProfile(fbUser.uid);
+      // Delete Firebase Auth account
+      await fbUser.delete();
+      // Clear local data
+      await LocalStorageService.instance.clearUser();
+      state = null;
+    } on FirebaseAuthException catch (e) {
+      throw _mapAuthError(e.code);
+    } catch (e) {
+      if (e is String) rethrow;
+      throw 'Could not delete account. Please try again.';
+    }
+  }
+
   String _mapAuthError(String code) {
     switch (code) {
       case 'user-not-found':

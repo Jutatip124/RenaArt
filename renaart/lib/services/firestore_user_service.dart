@@ -79,6 +79,13 @@ class FirestoreUserService {
     } catch (_) {}
   }
 
+  /// Delete a user's profile from Firestore.
+  Future<void> deleteProfile(String uid) async {
+    try {
+      await _col.doc(uid).delete();
+    } catch (_) {}
+  }
+
   /// Submit a problem report to Firestore.
   Future<void> submitReport(String userId, String category, String description) async {
     try {

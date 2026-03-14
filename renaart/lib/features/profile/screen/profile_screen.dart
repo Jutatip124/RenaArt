@@ -180,11 +180,110 @@ class ProfileScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            if (!user.isGuest) ...[
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => _deleteAccountDialog(context, ref, isDark),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.errorRed,
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      textStyle: const TextStyle(
+                          fontFamily: 'Jost',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.3),
+                    ),
+                    child: const Text('Delete Account'),
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 36),
           ],
         ),
       ),
       ),
+    );
+  }
+
+  void _deleteAccountDialog(BuildContext ctx, WidgetRef ref, bool isDark) {
+    final passCtrl = TextEditingController();
+    String? dialogErr;
+    bool loading = false;
+
+    showDialog(
+      context: ctx,
+      builder: (_) => StatefulBuilder(builder: (dialogCtx, setDialogState) => AlertDialog(
+        backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        title: Text('Delete Account',
+            style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
+                fontWeight: FontWeight.w600, color: AppColors.errorRed)),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+                color: AppColors.errorRed.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6)),
+            child: Row(children: [
+              const Icon(Icons.warning_amber_rounded, size: 16, color: AppColors.errorRed),
+              const SizedBox(width: 8),
+              Expanded(child: Text(
+                  'This action is permanent and cannot be undone. All your data will be deleted.',
+                  style: TextStyle(fontFamily: 'Jost', fontSize: 12,
+                      color: isDark ? AppColors.darkText : AppColors.ink))),
+            ]),
+          ),
+          const SizedBox(height: 14),
+          TextField(controller: passCtrl, obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Enter your password to confirm',
+              labelStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                  color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+            )),
+          if (dialogErr != null) ...[
+            const SizedBox(height: 8),
+            Text(dialogErr!, style: const TextStyle(fontFamily: 'Jost',
+                fontSize: 12, color: AppColors.errorRed)),
+          ],
+        ]),
+        actions: [
+          TextButton(
+              onPressed: loading ? null : () => Navigator.pop(dialogCtx),
+              child: Text('Cancel', style: TextStyle(fontFamily: 'Jost',
+                  color: isDark ? AppColors.darkFaint : AppColors.inkLight))),
+          TextButton(
+              onPressed: loading ? null : () async {
+                if (passCtrl.text.isEmpty) {
+                  setDialogState(() => dialogErr = 'Please enter your password.');
+                  return;
+                }
+                setDialogState(() { loading = true; dialogErr = null; });
+                try {
+                  await ref.read(authProvider.notifier).deleteAccount(passCtrl.text);
+                  if (dialogCtx.mounted) Navigator.pop(dialogCtx);
+                  if (ctx.mounted) {
+                    ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
+                      content: Text('Account deleted successfully.'),
+                      backgroundColor: Color(0xFF4CAF50),
+                    ));
+                    GoRouter.of(ctx).go(AppRoutes.login);
+                  }
+                } catch (e) {
+                  setDialogState(() { loading = false; dialogErr = e.toString(); });
+                }
+              },
+              child: loading
+                  ? const SizedBox(width: 14, height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 1.5))
+                  : const Text('DELETE', style: TextStyle(fontFamily: 'Jost',
+                      fontWeight: FontWeight.w600, color: AppColors.errorRed))),
+        ],
+      )),
     );
   }
 
