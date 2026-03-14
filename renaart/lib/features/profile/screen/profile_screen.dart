@@ -267,9 +267,14 @@ class ProfileScreen extends ConsumerWidget {
                   await ref.read(authProvider.notifier).deleteAccount(passCtrl.text);
                   if (dialogCtx.mounted) Navigator.pop(dialogCtx);
                   if (ctx.mounted) {
-                    ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
-                      content: Text('Account deleted successfully.'),
-                      backgroundColor: Color(0xFF4CAF50),
+                    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+                      content: const Row(children: [
+                        Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 18),
+                        SizedBox(width: 8),
+                        Expanded(child: Text('Account deleted successfully.',
+                            style: TextStyle(fontFamily: 'Jost', fontSize: 13))),
+                      ]),
+                      backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
                     ));
                     GoRouter.of(ctx).go(AppRoutes.login);
                   }
@@ -576,9 +581,14 @@ class ProfileScreen extends ConsumerWidget {
                     await ref.read(authProvider.notifier).updatePassword(newCtrl.text);
                     if (dialogCtx.mounted) {
                       Navigator.pop(dialogCtx);
-                      ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
-                        content: Text('Password updated successfully'),
-                        backgroundColor: Color(0xFF4CAF50),
+                      ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+                        content: const Row(children: [
+                          Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 18),
+                          SizedBox(width: 8),
+                          Expanded(child: Text('Password updated successfully',
+                              style: TextStyle(fontFamily: 'Jost', fontSize: 13))),
+                        ]),
+                        backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
                       ));
                     }
                   } catch (e) {
@@ -695,9 +705,14 @@ class ProfileScreen extends ConsumerWidget {
                   await ref.read(authProvider.notifier).submitReport(cat, descCtrl.text.trim());
                   if (dialogCtx.mounted) {
                     Navigator.pop(dialogCtx);
-                    ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(
-                      content: Text('Report submitted successfully. Thank you!'),
-                      backgroundColor: Color(0xFF4CAF50),
+                    ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+                      content: const Row(children: [
+                        Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 18),
+                        SizedBox(width: 8),
+                        Expanded(child: Text('Report submitted successfully. Thank you!',
+                            style: TextStyle(fontFamily: 'Jost', fontSize: 13))),
+                      ]),
+                      backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
                     ));
                   }
                 } catch (e) {

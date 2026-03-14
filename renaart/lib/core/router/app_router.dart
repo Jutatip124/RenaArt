@@ -40,6 +40,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // Always allow splash to show (it auto-navigates after delay)
       if (loc == AppRoutes.splash) return null;
       if (!isAuthed && !isAuthRoute) return AppRoutes.login;
+      if (isAuthed && isAuthRoute) return AppRoutes.home;
       return null;
     },
     routes: [

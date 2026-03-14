@@ -47,9 +47,16 @@ class _LoginState extends ConsumerState<LoginScreen> {
       await ref.read(authProvider.notifier).resetPassword(email);
       if (mounted) {
         setState(() => _loading = false);
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Password reset email sent to $email'),
-          backgroundColor: const Color(0xFF4CAF50),
+          content: Row(children: [
+            const Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 18),
+            const SizedBox(width: 8),
+            Expanded(child: Text('Reset link sent to $email\nPlease check your inbox and spam folder.',
+                style: const TextStyle(fontFamily: 'Jost', fontSize: 13))),
+          ]),
+          backgroundColor: isDark ? AppColors.darkRaised : AppColors.ink,
+          duration: const Duration(seconds: 5),
         ));
       }
     } catch (e) {

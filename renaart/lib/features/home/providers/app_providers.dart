@@ -87,25 +87,14 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       await Future.delayed(const Duration(milliseconds: 100));
 
       // Check if user is already signed in (persistent Firebase session)
-      // This also covers Google redirect: Firebase auto-restores the user
       final fbUser = auth.currentUser;
       if (fbUser != null) {
         await _handleFirebaseUser(fbUser);
         return;
       }
 
-      // Check for Google redirect result (first-time redirect sign-in)
-      try {
-        final redirectResult = await auth.getRedirectResult();
-        if (redirectResult.user != null) {
-          await _handleFirebaseUser(redirectResult.user!);
-          return;
-        }
-      } catch (_) {}
-
       state = await LocalStorageService.instance.loadUser();
     } catch (_) {
-      // Init failed — fall back to local storage
       try {
         state = await LocalStorageService.instance.loadUser();
       } catch (_) {}
@@ -181,15 +170,16 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Sign in with Google redirect (popup blocked by COOP on Firebase Hosting).
+  /// Sign in with Google via popup. Returns user directly (no page reload).
   Future<void> signInWithGoogle() async {
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
       final provider = GoogleAuthProvider();
-      // Use redirect instead of popup to avoid COOP issues on Firebase Hosting
-      await auth.signInWithRedirect(provider);
-      // After redirect, the page reloads. _load() will pick up the user.
+      final result = await auth.signInWithPopup(provider);
+      final fbUser = result.user;
+      if (fbUser == null) throw 'Google sign-in failed.';
+      await _handleFirebaseUser(fbUser);
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
     } catch (e) {
