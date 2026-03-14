@@ -7,13 +7,13 @@
 // Rijksmuseum:         free API key at data.rijksmuseum.nl, Dutch/Flemish focus
 // MetMuseum:           original source, slowest (two-step ID batch)
 // Mock:                generated seed data (no internet required)
-enum ApiSource { localAsset, artInstituteChicago, rijksmuseum, metMuseum, mock }
+enum ApiSource { localAsset, firestore, artInstituteChicago, rijksmuseum, metMuseum, mock }
 
 class AppConstants {
   AppConstants._();
 
   // ─── Active data source ────────────────────────────────────────────────────
-  static const ApiSource activeSource = ApiSource.localAsset;
+  static const ApiSource activeSource = ApiSource.firestore;
 
   // Path to the bundled artworks JSON asset (used by localAsset source)
   static const String artworksDataPath = 'assets/data/artworks.json';

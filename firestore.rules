@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Artworks collection: public read, no client write
+    match /artworks/{artworkId} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
