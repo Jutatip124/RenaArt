@@ -49,12 +49,13 @@ class FirestoreUserService {
   }
 
   /// Check if a username is available (case-insensitive).
+  /// Returns true on error (optimistic — registration will verify again).
   Future<bool> isUsernameAvailable(String username) async {
     try {
       final doc = await _usernames.doc(username.toLowerCase()).get();
       return !doc.exists;
     } catch (_) {
-      return false;
+      return true;
     }
   }
 

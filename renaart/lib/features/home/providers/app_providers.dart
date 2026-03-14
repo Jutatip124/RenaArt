@@ -94,10 +94,13 @@ class AuthNotifier extends StateNotifier<UserModel?> {
 
   /// Sign in with email/password. Throws [String] on error.
   Future<void> signIn(String email, String password) async {
+    final auth = _auth;
+    if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
-      final cred = await _auth!.signInWithEmailAndPassword(
+      final cred = await auth.signInWithEmailAndPassword(
           email: email, password: password);
-      final fbUser = cred.user!;
+      final fbUser = cred.user;
+      if (fbUser == null) throw 'Email or password is incorrect.';
       var profile = await _db.loadProfile(fbUser.uid, email);
       profile ??= UserModel(
         userId: fbUser.uid,
@@ -111,15 +114,21 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       state = profile;
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
+    } catch (e) {
+      if (e is String) rethrow;
+      throw 'Email or password is incorrect.';
     }
   }
 
   /// Sign in with Google popup. Throws [String] on error.
   Future<void> signInWithGoogle() async {
+    final auth = _auth;
+    if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
       final provider = GoogleAuthProvider();
-      final cred = await _auth!.signInWithPopup(provider);
-      final fbUser = cred.user!;
+      final cred = await auth.signInWithPopup(provider);
+      final fbUser = cred.user;
+      if (fbUser == null) throw 'Google sign-in failed. Please try again.';
       final email = fbUser.email ?? '';
       var profile = await _db.loadProfile(fbUser.uid, email);
       if (profile == null) {
@@ -140,19 +149,23 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
     } catch (e) {
+      if (e is String) rethrow;
       throw 'Google sign-in failed. Please try again.';
     }
   }
 
   /// Register with email/password + username. Throws [String] on error.
   Future<void> register(String nickname, String username, String email, String password) async {
+    final auth = _auth;
+    if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
       final available = await _db.isUsernameAvailable(username);
       if (!available) throw 'Username "@$username" is already taken.';
 
-      final cred = await _auth!.createUserWithEmailAndPassword(
+      final cred = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      final fbUser = cred.user!;
+      final fbUser = cred.user;
+      if (fbUser == null) throw 'Registration failed. Please try again.';
       await fbUser.updateDisplayName(nickname);
       final user = UserModel(
         userId: fbUser.uid,
@@ -168,6 +181,9 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       state = user;
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
+    } catch (e) {
+      if (e is String) rethrow;
+      throw 'Registration failed. Please try again.';
     }
   }
 
@@ -179,7 +195,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   Future<void> reauthenticate(String password) async {
     final fbUser = _auth?.currentUser;
     if (fbUser == null || fbUser.email == null) {
-      throw 'No authenticated user found.';
+      throw 'No authenticated user found. Please sign in again.';
     }
     try {
       final cred = EmailAuthProvider.credential(
@@ -187,15 +203,23 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       await fbUser.reauthenticateWithCredential(cred);
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
+    } catch (e) {
+      if (e is String) rethrow;
+      throw 'Authentication failed. Please try again.';
     }
   }
 
   /// Send password reset email.
   Future<void> resetPassword(String email) async {
+    final auth = _auth;
+    if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
-      await _auth!.sendPasswordResetEmail(email: email);
+      await auth.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
+    } catch (e) {
+      if (e is String) rethrow;
+      throw 'Could not send reset email. Please try again.';
     }
   }
 
