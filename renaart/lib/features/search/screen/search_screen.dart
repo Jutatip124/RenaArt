@@ -14,10 +14,25 @@ class SearchScreen extends ConsumerStatefulWidget {
 
 class _SearchState extends ConsumerState<SearchScreen> {
   final _ctrl = TextEditingController();
+  final _focusNode = FocusNode();
   bool _showFilters = false;
+  bool _showSuggestions = false;
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        // Delay hide so tap on suggestion registers first
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (mounted) setState(() => _showSuggestions = false);
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() { _ctrl.dispose(); _focusNode.dispose(); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
@@ -34,53 +49,73 @@ class _SearchState extends ConsumerState<SearchScreen> {
       backgroundColor: bg,
       body: SafeArea(child: Column(children: [
         const SizedBox(height: 16),
-        // ── Search bar ─────────────────────────────────────────────
+        // ── Search bar + autocomplete ──────────────────────────────
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(children: [
-            Expanded(
-              child: TextField(
-                controller: _ctrl,
-                onChanged: (v) =>
-                    ref.read(searchQueryProvider.notifier).state = v,
-                decoration: InputDecoration(
-                  hintText: 'Search artworks, artists...',
-                  prefixIcon: Icon(Icons.search, size: 17, color: faint),
-                  suffixIcon: _ctrl.text.isNotEmpty ? IconButton(
-                    icon: Icon(Icons.close, size: 15, color: faint),
-                    onPressed: () {
-                      _ctrl.clear();
-                      ref.read(searchQueryProvider.notifier).state = '';
-                    },
-                  ) : null,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            // Filter toggle
-            GestureDetector(
-              onTap: () => setState(() => _showFilters = !_showFilters),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 160),
-                width: 42, height: 42,
-                decoration: BoxDecoration(
-                  color: hasFilters
-                      ? (isDark ? AppColors.gold : AppColors.ink)
-                      : (isDark ? AppColors.darkCard : AppColors.canvasCard),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(
-                    color: hasFilters
-                        ? (isDark ? AppColors.gold : AppColors.ink)
-                        : (isDark ? AppColors.darkBorder : AppColors.inkHair),
-                    width: 0.8,
+          child: Column(children: [
+            Row(children: [
+              Expanded(
+                child: TextField(
+                  controller: _ctrl,
+                  focusNode: _focusNode,
+                  onChanged: (v) {
+                    ref.read(searchQueryProvider.notifier).state = v;
+                    setState(() => _showSuggestions = v.trim().isNotEmpty);
+                  },
+                  onSubmitted: (_) => setState(() => _showSuggestions = false),
+                  decoration: InputDecoration(
+                    hintText: 'Search artworks, artists...',
+                    prefixIcon: Icon(Icons.search, size: 17, color: faint),
+                    suffixIcon: _ctrl.text.isNotEmpty ? IconButton(
+                      icon: Icon(Icons.close, size: 15, color: faint),
+                      onPressed: () {
+                        _ctrl.clear();
+                        ref.read(searchQueryProvider.notifier).state = '';
+                        setState(() => _showSuggestions = false);
+                      },
+                    ) : null,
                   ),
                 ),
-                child: Icon(Icons.tune, size: 17,
-                  color: hasFilters
-                      ? (isDark ? AppColors.darkCanvas : Colors.white)
-                      : (isDark ? AppColors.darkSub : AppColors.inkMid)),
               ),
-            ),
+              const SizedBox(width: 8),
+              // Filter toggle
+              GestureDetector(
+                onTap: () => setState(() => _showFilters = !_showFilters),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 160),
+                  width: 42, height: 42,
+                  decoration: BoxDecoration(
+                    color: hasFilters
+                        ? (isDark ? AppColors.gold : AppColors.ink)
+                        : (isDark ? AppColors.darkCard : AppColors.canvasCard),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: hasFilters
+                          ? (isDark ? AppColors.gold : AppColors.ink)
+                          : (isDark ? AppColors.darkBorder : AppColors.inkHair),
+                      width: 0.8,
+                    ),
+                  ),
+                  child: Icon(Icons.tune, size: 17,
+                    color: hasFilters
+                        ? (isDark ? AppColors.darkCanvas : Colors.white)
+                        : (isDark ? AppColors.darkSub : AppColors.inkMid)),
+                ),
+              ),
+            ]),
+            // ── Autocomplete suggestions ───────────────────────────
+            if (_showSuggestions)
+              _SuggestionDropdown(
+                query: _ctrl.text.trim(),
+                isDark: isDark,
+                onSelect: (text) {
+                  _ctrl.text = text;
+                  _ctrl.selection = TextSelection.collapsed(offset: text.length);
+                  ref.read(searchQueryProvider.notifier).state = text;
+                  setState(() => _showSuggestions = false);
+                  _focusNode.unfocus();
+                },
+              ),
           ]),
         ),
         // ── Filter panel ───────────────────────────────────────────
@@ -228,4 +263,165 @@ class _Chip extends StatelessWidget {
             : (isDark ? AppColors.darkSub : AppColors.inkMid))),
     ),
   );
+}
+
+// ─── Autocomplete Suggestion Dropdown ─────────────────────────────────────────
+class _SuggestionDropdown extends ConsumerWidget {
+  final String query;
+  final bool isDark;
+  final ValueChanged<String> onSelect;
+  const _SuggestionDropdown({
+    required this.query, required this.isDark, required this.onSelect,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (query.isEmpty) return const SizedBox.shrink();
+
+    final cached = ref.watch(storageProvider).getAllCachedArtworks();
+    final q = query.toLowerCase();
+
+    // Collect unique matching titles and artists
+    final titleMatches = <String>[];
+    final artistMatches = <String>{};
+
+    for (final a in cached) {
+      if (a.title.toLowerCase().contains(q)) {
+        titleMatches.add(a.title);
+      }
+      if (a.artist.toLowerCase().contains(q) &&
+          a.artist.toLowerCase() != 'unknown artist') {
+        artistMatches.add(a.artist);
+      }
+    }
+
+    // Build suggestion list: artists first, then titles (max 6 total)
+    final suggestions = <_Suggestion>[
+      for (final artist in artistMatches.take(2))
+        _Suggestion(artist, SuggestionType.artist),
+      for (final title in titleMatches.take(4))
+        _Suggestion(title, SuggestionType.title),
+    ];
+
+    if (suggestions.isEmpty) return const SizedBox.shrink();
+
+    // Limit to 6 suggestions
+    final limited = suggestions.take(6).toList();
+
+    return Container(
+      margin: const EdgeInsets.only(top: 4),
+      decoration: BoxDecoration(
+        color: isDark ? AppColors.darkCard : AppColors.canvasCard,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark ? AppColors.darkBorder : AppColors.inkHair, width: 0.8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.1),
+            blurRadius: 12, offset: const Offset(0, 4)),
+        ],
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: limited.map((s) => _SuggestionTile(
+          suggestion: s, query: q, isDark: isDark,
+          onTap: () => onSelect(s.type == SuggestionType.artist ? s.text : s.text),
+        )).toList(),
+      ),
+    );
+  }
+}
+
+enum SuggestionType { title, artist }
+
+class _Suggestion {
+  final String text;
+  final SuggestionType type;
+  const _Suggestion(this.text, this.type);
+}
+
+class _SuggestionTile extends StatelessWidget {
+  final _Suggestion suggestion;
+  final String query;
+  final bool isDark;
+  final VoidCallback onTap;
+  const _SuggestionTile({
+    required this.suggestion, required this.query,
+    required this.isDark, required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isArtist = suggestion.type == SuggestionType.artist;
+    final text = suggestion.text;
+    final sub = isDark ? AppColors.darkSub : AppColors.inkMid;
+    final accent = isDark ? AppColors.gold : AppColors.ink;
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(
+            color: isDark ? AppColors.darkBorder : AppColors.inkHair, width: 0.4)),
+        ),
+        child: Row(children: [
+          Icon(
+            isArtist ? Icons.person_outline : Icons.image_outlined,
+            size: 16, color: sub,
+          ),
+          const SizedBox(width: 10),
+          Expanded(child: _HighlightText(
+            text: text, query: query,
+            baseStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                fontWeight: FontWeight.w400, color: sub),
+            highlightStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                fontWeight: FontWeight.w600, color: accent),
+          )),
+          if (isArtist)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: (isDark ? AppColors.gold : AppColors.ink).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Text('Artist', style: TextStyle(fontFamily: 'Jost', fontSize: 9,
+                  fontWeight: FontWeight.w600, letterSpacing: 0.5, color: accent)),
+            ),
+        ]),
+      ),
+    );
+  }
+}
+
+/// Highlights the matching portion of text in bold.
+class _HighlightText extends StatelessWidget {
+  final String text;
+  final String query;
+  final TextStyle baseStyle;
+  final TextStyle highlightStyle;
+  const _HighlightText({
+    required this.text, required this.query,
+    required this.baseStyle, required this.highlightStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (query.isEmpty) return Text(text, style: baseStyle, maxLines: 1, overflow: TextOverflow.ellipsis);
+
+    final lower = text.toLowerCase();
+    final idx = lower.indexOf(query);
+    if (idx < 0) return Text(text, style: baseStyle, maxLines: 1, overflow: TextOverflow.ellipsis);
+
+    return RichText(
+      maxLines: 1, overflow: TextOverflow.ellipsis,
+      text: TextSpan(children: [
+        if (idx > 0) TextSpan(text: text.substring(0, idx), style: baseStyle),
+        TextSpan(text: text.substring(idx, idx + query.length), style: highlightStyle),
+        if (idx + query.length < text.length)
+          TextSpan(text: text.substring(idx + query.length), style: baseStyle),
+      ]),
+    );
+  }
 }
