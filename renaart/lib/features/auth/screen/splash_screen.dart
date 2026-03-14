@@ -40,7 +40,6 @@ class _SplashState extends ConsumerState<SplashScreen>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg   = isDark ? AppColors.darkCanvas : AppColors.canvas;
-    final text = isDark ? AppColors.darkText   : AppColors.ink;
     final sub  = isDark ? AppColors.darkFaint  : AppColors.inkLight;
 
     return Scaffold(

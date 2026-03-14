@@ -220,7 +220,7 @@ class ProfileScreen extends ConsumerWidget {
       builder: (_) => StatefulBuilder(builder: (dialogCtx, setDialogState) => AlertDialog(
         backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: Text('Delete Account',
+        title: const Text('Delete Account',
             style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
                 fontWeight: FontWeight.w600, color: AppColors.errorRed)),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
