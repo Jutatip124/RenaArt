@@ -15,7 +15,16 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Mona_Lisa",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Commissioned by Francesco del Giocondo, a wealthy Florentine silk merchant, this portrait was begun around 1503-1506 during the Italian High Renaissance. Leonardo worked on it intermittently for years, carrying it with him to France where it entered the royal collection after his death in 1519.",
+    "meaning": "The painting exemplifies Leonardo's mastery of sfumato — a technique of soft, smoky transitions between colors. The enigmatic smile has been interpreted as representing the ideal of feminine beauty and mystery. The misty landscape behind the sitter symbolizes the passage of time and the vastness of nature.",
+    "keySymbols": [
+      "enigmatic smile",
+      "sfumato technique",
+      "winding path",
+      "misty landscape",
+      "folded hands"
+    ]
   },
   {
     "id": "local_002",
@@ -33,7 +42,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Sandro_Botticelli_046.jpg/1024px-Sandro_Botticelli_046.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Sandro_Botticelli_046.jpg/1024px-Sandro_Botticelli_046.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/The_Birth_of_Venus",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted for Lorenzo di Pierfrancesco de' Medici, cousin of Lorenzo the Magnificent, this masterpiece was created during the cultural flowering of Renaissance Florence. It reflects the revival of classical mythology encouraged by the Medici court and Neoplatonic philosophy.",
+    "meaning": "Venus emerges from the sea as a fully grown woman, symbolizing the birth of beauty and divine love into the world. The wind gods Zephyr and Chloris blow her to shore while a Hora prepares to clothe her. The work embodies the Neoplatonic idea that beauty is a manifestation of divine truth.",
+    "keySymbols": [
+      "Venus",
+      "seashell",
+      "roses",
+      "Zephyr wind",
+      "flowing hair",
+      "modesty pose"
+    ]
   },
   {
     "id": "local_003",
@@ -51,7 +70,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/1024px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg/1024px-Michelangelo_-_Creation_of_Adam_%28cropped%29.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/The_Creation_of_Adam",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Part of the Sistine Chapel ceiling commission by Pope Julius II, this fresco was painted between 1508 and 1512. Michelangelo initially resisted the commission, considering himself primarily a sculptor, but created one of the most iconic images in Western art.",
+    "meaning": "The near-touching fingers of God and Adam represent the moment of divine creation — the spark of life passing from Creator to humanity. Adam's languid pose contrasts with God's dynamic energy, suggesting human potential yet to be fully realized. The gap between their fingers symbolizes the space between the divine and mortal realms.",
+    "keySymbols": [
+      "reaching fingers",
+      "divine spark",
+      "red cloak",
+      "human form",
+      "angels",
+      "brain-shaped drapery"
+    ]
   },
   {
     "id": "local_004",
@@ -69,7 +98,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1024px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/1024px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/The_School_of_Athens",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted as part of the decoration of the Stanza della Segnatura in the Vatican Palace for Pope Julius II. The room served as the Pope's private library, and each wall celebrated a different branch of knowledge: theology, philosophy, poetry, and law.",
+    "meaning": "The fresco celebrates the pursuit of rational truth through philosophy. Plato points upward to the realm of ideal Forms while Aristotle gestures toward the earth, representing empirical observation. The architecture evokes the grandeur of ancient Rome, suggesting continuity between classical wisdom and Renaissance learning.",
+    "keySymbols": [
+      "Plato and Aristotle",
+      "barrel vault",
+      "classical architecture",
+      "diverse philosophers",
+      "globe",
+      "compass"
+    ]
   },
   {
     "id": "local_005",
@@ -87,7 +126,16 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/800px-Da_Vinci_Vitruve_Luc_Viatour.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/800px-Da_Vinci_Vitruve_Luc_Viatour.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Vitruvian_Man",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Created around 1490, this pen-and-ink drawing was part of Leonardo's extensive notebooks exploring the relationship between art, science, and the human body. It was inspired by the writings of the Roman architect Vitruvius, who described ideal human proportions.",
+    "meaning": "The drawing demonstrates that the human body can be inscribed in both a circle and a square — geometric shapes considered perfect by ancient mathematicians. It symbolizes the Renaissance belief that humanity is the measure of all things and that art and science are interconnected disciplines.",
+    "keySymbols": [
+      "circle",
+      "square",
+      "ideal proportions",
+      "dual pose",
+      "mathematical harmony"
+    ]
   },
   {
     "id": "local_006",
@@ -105,7 +153,16 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Michelangelo%27s_David_-_right_view_2.jpg/600px-Michelangelo%27s_David_-_right_view_2.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Michelangelo%27s_David_-_right_view_2.jpg/600px-Michelangelo%27s_David_-_right_view_2.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/David_(Michelangelo)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Carved from a single block of Carrara marble between 1501 and 1504 for the Florence Cathedral, the statue was instead placed in the Piazza della Signoria as a symbol of the Florentine Republic's strength and independence. The marble block had been abandoned by two previous sculptors.",
+    "meaning": "Unlike earlier depictions showing David after his victory, Michelangelo captures the moment before the battle — the tension and determination in his gaze toward Goliath. The oversized hands and head emphasize youthful courage. For Florence, David symbolized the city's defiance against larger, more powerful enemies.",
+    "keySymbols": [
+      "contrapposto stance",
+      "sling",
+      "intense gaze",
+      "oversized hands",
+      "nudity as heroic ideal"
+    ]
   },
   {
     "id": "local_007",
@@ -123,7 +180,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%22The_Last_Supper%22_by_Leonardo_da_Vinci.jpg/1024px-%22The_Last_Supper%22_by_Leonardo_da_Vinci.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%22The_Last_Supper%22_by_Leonardo_da_Vinci.jpg/1024px-%22The_Last_Supper%22_by_Leonardo_da_Vinci.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/The_Last_Supper_(Leonardo)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Commissioned by Duke Ludovico Sforza for the refectory of the Convent of Santa Maria delle Grazie in Milan. Leonardo used an experimental technique of tempera and oil on dry plaster rather than true fresco, which led to rapid deterioration beginning within decades of completion.",
+    "meaning": "The painting captures the dramatic moment when Christ announces that one of his disciples will betray him. Each apostle reacts with distinct emotion — shock, denial, anger, sorrow — making it a profound study of human psychology. The vanishing point converges behind Christ's head, making him both the visual and spiritual center.",
+    "keySymbols": [
+      "twelve apostles",
+      "bread and wine",
+      "groups of three",
+      "perspective lines",
+      "Judas reaching",
+      "open window"
+    ]
   },
   {
     "id": "local_008",
@@ -141,7 +208,18 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Botticelli-primavera.jpg/1024px-Botticelli-primavera.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Botticelli-primavera.jpg/1024px-Botticelli-primavera.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Primavera_(Botticelli)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted for the same patron as The Birth of Venus, this work was displayed in the Villa di Castello. It reflects the intellectual environment of Lorenzo de' Medici's Florence, where classical mythology and Neoplatonic philosophy were celebrated alongside Christian traditions.",
+    "meaning": "Set in Venus's garden, the painting is an allegory of spring and the transformative power of love. Mercury disperses clouds on the left while the Three Graces dance in flowing garments. Zephyr pursues the nymph Chloris, who transforms into Flora, scattering flowers — symbolizing nature's renewal through love.",
+    "keySymbols": [
+      "Venus",
+      "Three Graces",
+      "Flora",
+      "Zephyr and Chloris",
+      "orange grove",
+      "Mercury",
+      "Cupid"
+    ]
   },
   {
     "id": "local_009",
@@ -159,7 +237,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Raphael_-_Sistine_Madonna.jpg/800px-Raphael_-_Sistine_Madonna.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Raphael_-_Sistine_Madonna.jpg/800px-Raphael_-_Sistine_Madonna.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sistine_Madonna",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Commissioned by Pope Julius II for the Church of San Sisto in Piacenza, Italy. The painting was created during Raphael's mature Roman period when he was working simultaneously on the Vatican Stanze. It remained in Piacenza until 1754 when it was acquired by Augustus III of Saxony.",
+    "meaning": "The Madonna and Child appear on clouds between Saints Sixtus and Barbara, with two cherubs below gazing upward. The drawn-back curtains suggest a vision being revealed to the viewer. The painting achieves a perfect balance between the divine and the human, with the Christ Child showing an awareness of his future sacrifice.",
+    "keySymbols": [
+      "curtain reveal",
+      "cloud throne",
+      "two cherubs",
+      "papal tiara",
+      "Saint Barbara's tower",
+      "Christ's knowing gaze"
+    ]
   },
   {
     "id": "local_010",
@@ -177,7 +265,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Albrecht_D%C3%BCrer_-_1500_self-portrait_%28High_resolution_and_detail%29.jpg/700px-Albrecht_D%C3%BCrer_-_1500_self-portrait_%28High_resolution_and_detail%29.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Albrecht_D%C3%BCrer_-_1500_self-portrait_%28High_resolution_and_detail%29.jpg/700px-Albrecht_D%C3%BCrer_-_1500_self-portrait_%28High_resolution_and_detail%29.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Self-portrait_(Dürer,_Munich)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted when Dürer was 28 years old, this self-portrait was revolutionary in its frontal pose — a composition traditionally reserved for images of Christ. It represents the height of Dürer's confidence in the artist's elevated status in society, influenced by his travels to Italy.",
+    "meaning": "By presenting himself in a Christ-like pose with flowing hair and a direct, penetrating gaze, Dürer asserts that the artist is a creator in the divine image — a radical concept for the era. The inscription references his belief that artistic talent is God-given, connecting human creativity to divine creation.",
+    "keySymbols": [
+      "frontal pose",
+      "Christ-like appearance",
+      "fur-trimmed coat",
+      "monogram AD",
+      "direct gaze",
+      "artist as creator"
+    ]
   },
   {
     "id": "local_011",
@@ -195,7 +293,16 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Sandro_Botticelli_-_Portrait_of_a_young_woman_%28Simonetta_Vespucci%29_-_Stadel.jpg/700px-Sandro_Botticelli_-_Portrait_of_a_young_woman_%28Simonetta_Vespucci%29_-_Stadel.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Sandro_Botticelli_-_Portrait_of_a_young_woman_%28Simonetta_Vespucci%29_-_Stadel.jpg/700px-Sandro_Botticelli_-_Portrait_of_a_young_woman_%28Simonetta_Vespucci%29_-_Stadel.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Sandro_Botticelli",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "This portrait is believed to depict Simonetta Vespucci, celebrated as the most beautiful woman in Florence and rumored muse of both Botticelli and Giuliano de' Medici. She died of tuberculosis at age 22 in 1476, and Botticelli reportedly requested to be buried at her feet.",
+    "meaning": "The idealized beauty and serene expression reflect Renaissance Neoplatonic ideals, where physical beauty was considered a reflection of spiritual virtue. The elaborate hairstyle and jewelry suggest noble status, while the slightly melancholic expression may reference her early death.",
+    "keySymbols": [
+      "idealized beauty",
+      "elaborate hairstyle",
+      "pearl necklace",
+      "profile pose",
+      "Neoplatonic ideal"
+    ]
   },
   {
     "id": "local_012",
@@ -213,7 +320,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Tiziano_-_Venere_di_Urbino_-_Google_Art_Project.jpg/1024px-Tiziano_-_Venere_di_Urbino_-_Google_Art_Project.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Tiziano_-_Venere_di_Urbino_-_Google_Art_Project.jpg/1024px-Tiziano_-_Venere_di_Urbino_-_Google_Art_Project.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Venus_of_Urbino",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted for Guidobaldo II della Rovere, Duke of Urbino, possibly to celebrate his 1534 marriage. The painting directly references Giorgione's Sleeping Venus but transforms the sleeping goddess into a conscious, self-aware woman gazing directly at the viewer.",
+    "meaning": "The reclining nude became one of the most influential compositions in Western art. Unlike Giorgione's passive Venus, Titian's figure is alert and engaging, representing a shift from idealized divinity to sensual humanity. The domestic setting with servants and a dog emphasizes earthly love and fidelity.",
+    "keySymbols": [
+      "reclining nude",
+      "direct gaze",
+      "roses",
+      "sleeping dog",
+      "cassone chest",
+      "domestic interior"
+    ]
   },
   {
     "id": "local_013",
@@ -231,7 +348,18 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Van_Eyck_-_Arnolfini_Portrait.jpg/800px-Van_Eyck_-_Arnolfini_Portrait.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Van_Eyck_-_Arnolfini_Portrait.jpg/800px-Van_Eyck_-_Arnolfini_Portrait.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Arnolfini_Portrait",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted in Bruges in 1434, this is one of the earliest surviving examples of oil painting on panel. The work depicts Giovanni di Nicolao Arnolfini and his wife in their home, possibly commemorating their marriage or betrothal. It demonstrates van Eyck's revolutionary mastery of oil painting technique.",
+    "meaning": "Every detail carries symbolic weight: the single candle represents the all-seeing Christ, the dog symbolizes fidelity, the discarded shoes suggest holy ground, and the convex mirror reflects two witnesses. The painting is both a domestic portrait and a complex theological statement about the sacrament of marriage.",
+    "keySymbols": [
+      "convex mirror",
+      "single candle",
+      "small dog",
+      "removed shoes",
+      "oranges",
+      "chandelier",
+      "artist's signature"
+    ]
   },
   {
     "id": "local_014",
@@ -249,7 +377,18 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Tizian_041.jpg/700px-Tizian_041.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Tizian_041.jpg/700px-Tizian_041.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Assumption_of_the_Virgin_(Titian)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Completed for the high altar of the Basilica di Santa Maria Gloriosa dei Frari in Venice. At nearly 7 meters tall, it was the largest altarpiece in Venice and established Titian as the leading painter of the Venetian School. Its dynamic composition broke with the static tradition of Venetian altarpieces.",
+    "meaning": "The painting depicts the Virgin Mary ascending to heaven in a blaze of golden light, with apostles reaching up in astonishment below and God the Father welcoming her above. The dramatic diagonal composition and rich Venetian color create a sense of ecstatic movement connecting earth and heaven.",
+    "keySymbols": [
+      "ascending Virgin",
+      "golden light",
+      "reaching apostles",
+      "God the Father",
+      "red robe",
+      "cherubim",
+      "triangular composition"
+    ]
   },
   {
     "id": "local_015",
@@ -267,7 +406,16 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/D%C3%BCrer_-_Studie_eines_jungen_Hasen.jpg/700px-D%C3%BCrer_-_Studie_eines_jungen_Hasen.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/D%C3%BCrer_-_Studie_eines_jungen_Hasen.jpg/700px-D%C3%BCrer_-_Studie_eines_jungen_Hasen.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Young_Hare",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Created in 1502 in Nuremberg, this watercolor and gouache study exemplifies Dürer's intense observation of nature. It is part of a series of nature studies that were unprecedented in their scientific precision, predating modern naturalist illustration by centuries.",
+    "meaning": "The young hare is rendered with extraordinary attention to detail — individual hairs, the glint in the eye, the texture of fur. It represents the Renaissance ideal of studying nature directly rather than relying on stylized medieval conventions. A window reflection visible in the hare's eye adds a layer of artistic self-awareness.",
+    "keySymbols": [
+      "naturalistic detail",
+      "individual hairs",
+      "window reflection in eye",
+      "watercolor precision",
+      "direct observation"
+    ]
   },
   {
     "id": "local_016",
@@ -285,7 +433,16 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Raffaello_-_Ritratto_di_Baldassare_Castiglione.jpg/800px-Raffaello_-_Ritratto_di_Baldassare_Castiglione.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Raffaello_-_Ritratto_di_Baldassare_Castiglione.jpg/800px-Raffaello_-_Ritratto_di_Baldassare_Castiglione.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Portrait_of_Baldassare_Castiglione",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted around 1514-1515, this portrait depicts Baldassare Castiglione, a diplomat, courtier, and author of 'The Book of the Courtier,' which defined Renaissance ideals of gentlemanly behavior. Castiglione was a close friend of Raphael.",
+    "meaning": "The restrained palette of grays, blacks, and whites conveys Castiglione's dignified, understated elegance — the ideal of sprezzatura (studied carelessness) that he himself described in his famous book. The direct, warm gaze creates an intimate connection between subject and viewer.",
+    "keySymbols": [
+      "restrained palette",
+      "velvet beret",
+      "direct warm gaze",
+      "sprezzatura",
+      "dignified composure"
+    ]
   },
   {
     "id": "local_017",
@@ -303,7 +460,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Raphael_-_Madonna_del_Prato_%28Kunsthistorisches_Museum%29.jpg/800px-Raphael_-_Madonna_del_Prato_%28Kunsthistorisches_Museum%29.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Raphael_-_Madonna_del_Prato_%28Kunsthistorisches_Museum%29.jpg/800px-Raphael_-_Madonna_del_Prato_%28Kunsthistorisches_Museum%29.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Madonna_of_the_Meadow_(Raphael)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted during Raphael's Florentine period (1504-1508) when he was deeply influenced by Leonardo da Vinci's compositions. The pyramidal grouping of figures reflects Leonardo's influence, while the soft landscape shows Raphael's developing Umbrian style.",
+    "meaning": "The Madonna sits in a flowering meadow while the infant John the Baptist offers a cross to the Christ Child — a gentle foreshadowing of the Passion. The triangular composition creates stability and harmony, symbolizing the divine order. The idyllic landscape represents paradise on earth.",
+    "keySymbols": [
+      "pyramidal composition",
+      "flowering meadow",
+      "reed cross",
+      "mother and child bond",
+      "distant landscape",
+      "bare feet on earth"
+    ]
   },
   {
     "id": "local_018",
@@ -321,7 +488,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Michelangelo_Buonarroti_-_Bacchus_-_Museo_Nazionale_del_Bargello_-_Florence_Italy.jpg/600px-Michelangelo_Buonarroti_-_Bacchus_-_Museo_Nazionale_del_Bargello_-_Florence_Italy.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Michelangelo_Buonarroti_-_Bacchus_-_Museo_Nazionale_del_Bargello_-_Florence_Italy.jpg/600px-Michelangelo_Buonarroti_-_Bacchus_-_Museo_Nazionale_del_Bargello_-_Florence_Italy.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Bacchus_(Michelangelo)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Sculpted between 1496 and 1497 during Michelangelo's first stay in Rome, this marble statue was originally commissioned as a garden sculpture. The youthful figure reflects the influence of classical antiquity that Michelangelo studied during this formative period.",
+    "meaning": "The figure of Bacchus, the god of wine, sways slightly as if intoxicated, with a satyr eating grapes behind him. The unstable pose and glazed expression represent the effects of wine, while the classical nude form demonstrates Michelangelo's early mastery of human anatomy and his deep study of ancient Roman sculpture.",
+    "keySymbols": [
+      "wine cup",
+      "grape crown",
+      "swaying pose",
+      "satyr",
+      "classical nudity",
+      "intoxication"
+    ]
   },
   {
     "id": "local_019",
@@ -339,7 +516,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Lady_with_an_Ermine_-_Leonardo_da_Vinci_-_Google_Art_Project.jpg/700px-Lady_with_an_Ermine_-_Leonardo_da_Vinci_-_Google_Art_Project.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Lady_with_an_Ermine_-_Leonardo_da_Vinci_-_Google_Art_Project.jpg/700px-Lady_with_an_Ermine_-_Leonardo_da_Vinci_-_Google_Art_Project.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Lady_with_an_Ermine",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted for Ludovico Sforza, Duke of Milan, the portrait depicts his young mistress Cecilia Gallerani. It was revolutionary for its time, showing the subject turned in three-quarter view with a living animal, creating a sense of arrested movement and psychological depth.",
+    "meaning": "The ermine (actually a white stoat) carries multiple meanings: it was a symbol of purity and moderation, referenced Cecilia's surname (the Greek word for ermine is 'galee'), and was also an emblem of Ludovico Sforza who belonged to the Order of the Ermine. The animal's alert tension mirrors the subject's poised intelligence.",
+    "keySymbols": [
+      "ermine",
+      "three-quarter pose",
+      "alert expression",
+      "dark background",
+      "elegant hand",
+      "turning motion"
+    ]
   },
   {
     "id": "local_020",
@@ -357,7 +544,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Raffaello_Sanzio_-_Pope_Julius_II_-_National_Gallery.jpg/700px-Raffaello_Sanzio_-_Pope_Julius_II_-_National_Gallery.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Raffaello_Sanzio_-_Pope_Julius_II_-_National_Gallery.jpg/700px-Raffaello_Sanzio_-_Pope_Julius_II_-_National_Gallery.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Portrait_of_Pope_Julius_II",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted in 1511 during Raphael's years working for Pope Julius II in the Vatican. Julius II was a formidable patron known as the 'Warrior Pope' who commissioned both Michelangelo's Sistine Chapel ceiling and Raphael's Vatican Stanze simultaneously.",
+    "meaning": "This portrait captures the aging pope in a moment of contemplation, his powerful personality tempered by weariness. The acorns on the chair finials reference the della Rovere family crest. The remarkably lifelike depiction was so convincing that contemporary viewers reportedly trembled before it as if the pope himself were present.",
+    "keySymbols": [
+      "papal vestments",
+      "contemplative mood",
+      "acorn finials",
+      "rings of office",
+      "red mozzetta",
+      "aging authority"
+    ]
   },
   {
     "id": "local_021",
@@ -375,7 +572,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Albrecht_D%C3%BCrer_-_The_Four_Apostles%2C_1526_-_WGA07069.jpg/700px-Albrecht_D%C3%BCrer_-_The_Four_Apostles%2C_1526_-_WGA07069.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Albrecht_D%C3%BCrer_-_The_Four_Apostles%2C_1526_-_WGA07069.jpg/700px-Albrecht_D%C3%BCrer_-_The_Four_Apostles%2C_1526_-_WGA07069.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Four_Apostles",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Completed in 1526, near the end of Dürer's life, these two panels were donated to the city of Nuremberg. They were created during the religious upheaval of the Reformation, reflecting Dürer's deep engagement with Lutheran theology and his concern about religious extremism.",
+    "meaning": "The four apostles — John, Peter, Mark, and Paul — represent the four temperaments (sanguine, phlegmatic, choleric, melancholic) and serve as a warning against false prophets. Inscriptions at the bottom quote scripture cautioning worldly rulers against replacing God's word with human doctrine.",
+    "keySymbols": [
+      "four temperaments",
+      "scriptural inscriptions",
+      "John's gospel",
+      "Paul's sword",
+      "Protestant theology",
+      "monumental scale"
+    ]
   },
   {
     "id": "local_022",
@@ -393,7 +600,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Michelangelo%27s_Pieta_5450_cropncleaned_edit.jpg/700px-Michelangelo%27s_Pieta_5450_cropncleaned_edit.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Michelangelo%27s_Pieta_5450_cropncleaned_edit.jpg/700px-Michelangelo%27s_Pieta_5450_cropncleaned_edit.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Pietà_(Michelangelo)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Carved when Michelangelo was only 24 years old, this was his first major commission in Rome. It was originally placed in the Chapel of Santa Petronilla in Old St. Peter's Basilica and is now in the main basilica. It is the only work Michelangelo ever signed.",
+    "meaning": "The sculpture depicts the Virgin Mary cradling the dead Christ after the Crucifixion. Mary appears remarkably youthful — Michelangelo explained that her purity preserved her beauty. The triangular composition creates perfect balance between grief and serenity, expressing the Christian paradox of sorrow and hope in the Resurrection.",
+    "keySymbols": [
+      "youthful Mary",
+      "draped fabric",
+      "triangular composition",
+      "limp Christ",
+      "Michelangelo's signature",
+      "polished marble"
+    ]
   },
   {
     "id": "local_023",
@@ -411,7 +628,16 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Van_Eyck_Portrait_of_a_Man_-_Possibly_self-portrait.jpg/700px-Van_Eyck_Portrait_of_a_Man_-_Possibly_self-portrait.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Van_Eyck_Portrait_of_a_Man_-_Possibly_self-portrait.jpg/700px-Van_Eyck_Portrait_of_a_Man_-_Possibly_self-portrait.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Portrait_of_a_Man_(Jan_van_Eyck,_London)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted in 1433, this small oil painting is one of the earliest known European self-portraits to survive and one of the first to depict a secular subject in three-quarter view. The red turban may indicate van Eyck's status or simply be a fashionable head covering of the period.",
+    "meaning": "The penetrating gaze and highly realistic rendering demonstrate van Eyck's revolutionary technique of layering transparent oil glazes to achieve luminous, lifelike effects. The inscription 'As I can' (Als ich kan) is both a motto of humility and a bold statement of artistic confidence.",
+    "keySymbols": [
+      "red turban",
+      "direct gaze",
+      "Als ich kan motto",
+      "oil glazing technique",
+      "three-quarter view"
+    ]
   },
   {
     "id": "local_024",
@@ -429,7 +655,19 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Melancholia_I%2C_by_Albrecht_D%C3%BCrer%2C_1514.jpg/800px-Melancholia_I%2C_by_Albrecht_D%C3%BCrer%2C_1514.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Melancholia_I%2C_by_Albrecht_D%C3%BCrer%2C_1514.jpg/800px-Melancholia_I%2C_by_Albrecht_D%C3%BCrer%2C_1514.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Melencolia_I",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Created in 1514 as part of a series of 'master engravings' alongside Knight, Death and the Devil and Saint Jerome in His Study. The three prints together represent the intellectual, moral, and theological ideals of the Renaissance humanist.",
+    "meaning": "The winged figure of Melancholy sits surrounded by unused tools of geometry, carpentry, and science, brooding over the limitations of human knowledge. The magic square, comet, and rainbow represent cosmic order beyond human comprehension. It expresses the Renaissance artist's frustration that intellectual ambition cannot penetrate all mysteries.",
+    "keySymbols": [
+      "magic square",
+      "hourglass",
+      "compass",
+      "truncated polyhedron",
+      "comet",
+      "rainbow",
+      "sleeping dog",
+      "bell"
+    ]
   },
   {
     "id": "local_025",
@@ -447,7 +685,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Verrocchio%2C_Leonardo_da_Vinci_-_Battesimo_di_Cristo.jpg/700px-Verrocchio%2C_Leonardo_da_Vinci_-_Battesimo_di_Cristo.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Verrocchio%2C_Leonardo_da_Vinci_-_Battesimo_di_Cristo.jpg/700px-Verrocchio%2C_Leonardo_da_Vinci_-_Battesimo_di_Cristo.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Baptism_of_Christ_(Verrocchio_and_Leonardo)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Begun by Andrea del Verrocchio with his young apprentice Leonardo contributing the left angel and parts of the landscape. According to Vasari, Verrocchio was so impressed by Leonardo's angel that he vowed never to paint again, recognizing his pupil's superior talent.",
+    "meaning": "The scene depicts Christ's baptism in the Jordan River by John the Baptist, with the Holy Spirit descending as a dove. Leonardo's angel, kneeling at left, shows a softness and naturalism that surpasses Verrocchio's harder, more sculptural style, marking the emergence of a revolutionary new approach to painting.",
+    "keySymbols": [
+      "dove of Holy Spirit",
+      "river Jordan",
+      "Leonardo's angel",
+      "palm tree",
+      "divine light",
+      "master and pupil contrast"
+    ]
   },
   {
     "id": "local_026",
@@ -465,7 +713,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Leonardo_da_Vinci_-_Ginevra_de%27_Benci_-_Google_Art_Project.jpg/700px-Leonardo_da_Vinci_-_Ginevra_de%27_Benci_-_Google_Art_Project.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Leonardo_da_Vinci_-_Ginevra_de%27_Benci_-_Google_Art_Project.jpg/700px-Leonardo_da_Vinci_-_Ginevra_de%27_Benci_-_Google_Art_Project.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ginevra_de%27_Benci",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted around 1474-1478, this is the only painting by Leonardo to remain in the Americas. It depicts Ginevra de' Benci, a young Florentine aristocrat and poet. The reverse bears a wreath of laurel and palm with the motto 'Virtutem Forma Decorat' (Beauty adorns virtue).",
+    "meaning": "The juniper bush (ginepro) behind the sitter is a visual pun on her name. The somber expression and pale complexion reflect the Flemish influence on Leonardo's early portraiture. The atmospheric landscape dissolving into mist foreshadows Leonardo's later mastery of sfumato.",
+    "keySymbols": [
+      "juniper bush",
+      "pale complexion",
+      "misty landscape",
+      "reverse motto",
+      "Flemish influence",
+      "early sfumato"
+    ]
   },
   {
     "id": "local_027",
@@ -483,7 +741,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Michelangelo%2C_tormento_di_sant%27antonio%2C_1487-88.jpg/700px-Michelangelo%2C_tormento_di_sant%27antonio%2C_1487-88.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Michelangelo%2C_tormento_di_sant%27antonio%2C_1487-88.jpg/700px-Michelangelo%2C_tormento_di_sant%27antonio%2C_1487-88.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/The_Torment_of_Saint_Anthony_(Michelangelo)",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Created when Michelangelo was approximately 12 or 13 years old, this small painting after an engraving by Martin Schongauer demonstrates his extraordinary precocity. Giorgio Vasari recorded that the young artist studied real fish and insects to make the demons more convincingly grotesque.",
+    "meaning": "The torment of Saint Anthony by demons was a popular subject symbolizing the spiritual battle against temptation. The young Michelangelo transformed Schongauer's composition by adding naturalistic details and vivid coloring, showing his early fascination with the human figure under stress.",
+    "keySymbols": [
+      "demons",
+      "Saint Anthony",
+      "aerial torment",
+      "grotesque creatures",
+      "youthful prodigy",
+      "copied engraving"
+    ]
   },
   {
     "id": "local_028",
@@ -501,7 +769,18 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/The_Ghent_Altarpiece_-_The_Adoration_of_the_Mystic_Lamb.jpg/1024px-The_Ghent_Altarpiece_-_The_Adoration_of_the_Mystic_Lamb.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/The_Ghent_Altarpiece_-_The_Adoration_of_the_Mystic_Lamb.jpg/1024px-The_Ghent_Altarpiece_-_The_Adoration_of_the_Mystic_Lamb.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Ghent_Altarpiece",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Begun by Hubert van Eyck and completed by his brother Jan in 1432 for the Cathedral of Saint Bavo in Ghent. This monumental polyptych of 12 panels is considered one of the most important artworks in European history and a founding work of Early Netherlandish painting.",
+    "meaning": "The outer panels show the Annunciation and donor portraits, while the interior reveals a celestial vision centered on the Adoration of the Mystic Lamb (Christ's sacrifice). The extraordinary detail — individual plants, jewels, fabric textures — creates a vision of paradise as intensely real and tangible.",
+    "keySymbols": [
+      "Mystic Lamb",
+      "Annunciation",
+      "Adam and Eve",
+      "singing angels",
+      "fountain of life",
+      "botanical accuracy",
+      "jeweled vestments"
+    ]
   },
   {
     "id": "local_029",
@@ -519,7 +798,17 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Giovanni_Bellini%2C_Doge_Leonardo_Loredan.jpg/700px-Giovanni_Bellini%2C_Doge_Leonardo_Loredan.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Giovanni_Bellini%2C_Doge_Leonardo_Loredan.jpg/700px-Giovanni_Bellini%2C_Doge_Leonardo_Loredan.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/Portrait_of_Doge_Leonardo_Loredan",
-    "isPublicDomain": true
+    "isPublicDomain": true,
+    "historicalContext": "Painted around 1501-1502, this portrait depicts Leonardo Loredan shortly after his election as Doge of Venice. Bellini served as the official painter of the Venetian Republic and created this work as a state portrait, establishing a model followed for subsequent doges.",
+    "meaning": "The frontal pose and ceremonial robes project the authority and stability of the Venetian state rather than individual personality. The exquisite rendering of the brocade fabric and the serene, dignified expression embody Venice's self-image as a serene republic. The blue background evokes the Venetian lagoon.",
+    "keySymbols": [
+      "ducal corno hat",
+      "brocade robes",
+      "frontal authority",
+      "serene expression",
+      "blue background",
+      "buttons of office"
+    ]
   },
   {
     "id": "local_030",
@@ -537,6 +826,869 @@
     "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg/800px-Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg",
     "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg/800px-Hans_Holbein_the_Younger_-_The_Ambassadors_-_Google_Art_Project.jpg",
     "sourceUrl": "https://en.wikipedia.org/wiki/The_Ambassadors_(Holbein)",
+    "isPublicDomain": true,
+    "historicalContext": "Painted in 1533 during the French ambassador Jean de Dinteville's visit to London. The work was created during a period of religious and political upheaval — Henry VIII's break with Rome — and contains hidden references to these tensions.",
+    "meaning": "The two men stand amid objects of learning, trade, and religion, representing worldly achievement. The most famous feature is the anamorphic skull stretched across the bottom — when viewed from a sharp angle, it resolves into a perfect death's head, reminding viewers that all earthly knowledge and power are temporary.",
+    "keySymbols": [
+      "anamorphic skull",
+      "globe",
+      "lute with broken string",
+      "celestial instruments",
+      "hymn book",
+      "crucifix",
+      "memento mori"
+    ]
+  },
+  {
+    "id": "local_031",
+    "title": "The Lamentation (Scrovegni Chapel)",
+    "artist": "Giotto di Bondone",
+    "year": 1305,
+    "period": "Early Renaissance",
+    "style": "Proto-Renaissance",
+    "medium": "Fresco",
+    "dimensions": "200 × 185 cm",
+    "origin": "Padua, Italy",
+    "type": "Fresco",
+    "description": "A deeply emotional fresco depicting the mourning over the dead Christ, considered one of Giotto's masterpieces and a turning point in Western art history.",
+    "historicalContext": "Part of the fresco cycle in the Scrovegni (Arena) Chapel in Padua, commissioned by Enrico Scrovegni around 1303-1305. Giotto's work here broke decisively from the flat, stylized Byzantine tradition, introducing naturalistic space, emotion, and human weight to painting.",
+    "meaning": "The diagonal line of the rocky landscape directs the viewer's eye downward to Christ's body, while angels overhead express individual grief in unprecedented ways. The human emotion displayed — Mary cradling her son, Mary Magdalene holding his feet — transformed religious art from icon to narrative drama.",
+    "keySymbols": [
+      "mourning angels",
+      "diagonal rock",
+      "bare tree",
+      "embracing Mary",
+      "Mary Magdalene",
+      "grief expressions"
+    ],
+    "creditLine": "Scrovegni Chapel, Padua. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Giotto_-_Scrovegni_-_-36-_-_Lamentation_%28The_Mourning_of_Christ%29_adj.jpg/800px-Giotto_-_Scrovegni_-_-36-_-_Lamentation_%28The_Mourning_of_Christ%29_adj.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Giotto_-_Scrovegni_-_-36-_-_Lamentation_%28The_Mourning_of_Christ%29_adj.jpg/400px-Giotto_-_Scrovegni_-_-36-_-_Lamentation_%28The_Mourning_of_Christ%29_adj.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Lamentation_(Giotto)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_032",
+    "title": "Ognissanti Madonna (Maestà)",
+    "artist": "Giotto di Bondone",
+    "year": 1310,
+    "period": "Early Renaissance",
+    "style": "Proto-Renaissance",
+    "medium": "Tempera on wood",
+    "dimensions": "325 × 204 cm",
+    "origin": "Florence, Italy",
+    "type": "Painting",
+    "description": "A monumental altarpiece showing the Madonna and Child enthroned, surrounded by angels and saints, marking a revolutionary departure from Byzantine tradition toward naturalism.",
+    "historicalContext": "Painted for the Church of Ognissanti in Florence, this altarpiece demonstrates Giotto's groundbreaking approach to creating the illusion of three-dimensional space. Compared with similar works by Cimabue and Duccio, Giotto's Madonna sits on a throne with convincing depth and solidity.",
+    "meaning": "The Virgin's body has real weight beneath her robes, and the throne recedes in space with a sense of perspective that was revolutionary for 1310. The angels and saints occupy distinct positions in space rather than being stacked in flat rows, creating a natural scene rather than a symbolic arrangement.",
+    "keySymbols": [
+      "Gothic throne",
+      "three-dimensional space",
+      "gold background",
+      "kneeling angels",
+      "solid forms",
+      "naturalistic drapery"
+    ],
+    "creditLine": "Uffizi Gallery, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Giotto_di_Bondone_090.jpg/800px-Giotto_di_Bondone_090.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/Giotto_di_Bondone_090.jpg/400px-Giotto_di_Bondone_090.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Ognissanti_Madonna_(Giotto)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_033",
+    "title": "Maestà (Duccio)",
+    "artist": "Duccio di Buoninsegna",
+    "year": 1311,
+    "period": "Early Renaissance",
+    "style": "Proto-Renaissance / Sienese",
+    "medium": "Tempera and gold on wood",
+    "dimensions": "214 × 412 cm",
+    "origin": "Siena, Italy",
+    "type": "Painting",
+    "description": "The largest and most important work of Sienese painting, this double-sided altarpiece was carried in procession from Duccio's workshop to Siena Cathedral accompanied by the entire city.",
+    "historicalContext": "Commissioned in 1308 for the high altar of Siena Cathedral, the Maestà was so celebrated that its completion in 1311 was marked by a civic procession with trumpets and drums. It represents the pinnacle of the Sienese school's blend of Byzantine elegance with emerging Gothic naturalism.",
+    "meaning": "The front shows the Madonna as Queen of Heaven surrounded by saints and angels, serving as Siena's civic patron. The reverse panels narrate the Passion of Christ with unprecedented emotional intensity and spatial sophistication, bridging medieval devotion and Renaissance narrative.",
+    "keySymbols": [
+      "enthroned Madonna",
+      "patron saints of Siena",
+      "gold ground",
+      "Passion narrative",
+      "civic identity",
+      "Byzantine-Gothic fusion"
+    ],
+    "creditLine": "Museo dell'Opera del Duomo, Siena. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Duccio_di_Buoninsegna_-_Maest%C3%A0_%28front%2C_central_panel%29_-_WGA06742.jpg/800px-Duccio_di_Buoninsegna_-_Maest%C3%A0_%28front%2C_central_panel%29_-_WGA06742.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Duccio_di_Buoninsegna_-_Maest%C3%A0_%28front%2C_central_panel%29_-_WGA06742.jpg/400px-Duccio_di_Buoninsegna_-_Maest%C3%A0_%28front%2C_central_panel%29_-_WGA06742.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Maest%C3%A0_(Duccio)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_034",
+    "title": "The Tribute Money",
+    "artist": "Masaccio",
+    "year": 1427,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Fresco",
+    "dimensions": "255 × 598 cm",
+    "origin": "Florence, Italy",
+    "type": "Fresco",
+    "description": "A groundbreaking fresco in the Brancacci Chapel depicting three scenes from the Gospel of Matthew, showcasing Masaccio's revolutionary use of linear perspective and chiaroscuro.",
+    "historicalContext": "Painted in the Brancacci Chapel of Santa Maria del Carmine in Florence around 1425-1427. Masaccio, who died at only 27, revolutionized painting by applying Brunelleschi's new discoveries in linear perspective and creating figures with unprecedented three-dimensional solidity.",
+    "meaning": "The fresco combines three moments from the same story: Christ telling Peter to find a coin in a fish's mouth, Peter catching the fish, and Peter paying the tax collector. The unified lighting from a single source and atmospheric perspective create a convincing illusion of real space that influenced generations of artists including Leonardo and Michelangelo.",
+    "keySymbols": [
+      "continuous narrative",
+      "single light source",
+      "vanishing point",
+      "heavy drapery",
+      "landscape perspective",
+      "coin and fish"
+    ],
+    "creditLine": "Brancacci Chapel, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Masaccio7.jpg/800px-Masaccio7.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Masaccio7.jpg/400px-Masaccio7.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Tribute_Money_(Masaccio)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_035",
+    "title": "The Expulsion from the Garden of Eden",
+    "artist": "Masaccio",
+    "year": 1427,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Fresco",
+    "dimensions": "208 × 88 cm",
+    "origin": "Florence, Italy",
+    "type": "Fresco",
+    "description": "A powerful fresco showing Adam and Eve driven from paradise, remarkable for its raw emotional intensity and naturalistic depiction of the human body in anguish.",
+    "historicalContext": "Also in the Brancacci Chapel, this fresco was paired with Masolino's more serene Temptation of Adam and Eve on the opposite wall. The contrast highlighted Masaccio's revolutionary approach to depicting human emotion and physical suffering with unprecedented realism.",
+    "meaning": "Adam covers his face in shame while Eve throws back her head in a wail of despair — expressions of genuine human suffering that were shocking in their raw intensity. The angel with the sword represents divine judgment, but the focus is entirely on the human experience of loss and shame.",
+    "keySymbols": [
+      "covering shame",
+      "wailing Eve",
+      "angel with sword",
+      "gate of paradise",
+      "naked vulnerability",
+      "shadow and light"
+    ],
+    "creditLine": "Brancacci Chapel, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Masaccio-TheExpulsionOfAdamAndEveFromEden-Restoration.jpg/800px-Masaccio-TheExpulsionOfAdamAndEveFromEden-Restoration.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Masaccio-TheExpulsionOfAdamAndEveFromEden-Restoration.jpg/400px-Masaccio-TheExpulsionOfAdamAndEveFromEden-Restoration.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Expulsion_from_the_Garden_of_Eden_(Masaccio)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_036",
+    "title": "Gates of Paradise (East Doors)",
+    "artist": "Lorenzo Ghiberti",
+    "year": 1452,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Gilded bronze",
+    "dimensions": "506 × 287 cm",
+    "origin": "Florence, Italy",
+    "type": "Sculpture",
+    "description": "Ten gilded bronze relief panels depicting Old Testament scenes for the Florence Baptistery east doors, named 'Gates of Paradise' reportedly by Michelangelo himself.",
+    "historicalContext": "Ghiberti won the famous 1401 competition for the Baptistery doors against Brunelleschi, beginning a project that consumed much of his career. The east doors (1425-1452) represent his masterpiece, employing revolutionary pictorial relief technique with convincing perspective in bronze.",
+    "meaning": "The ten panels narrate stories from Genesis through Solomon using a pictorial approach — figures diminish in size with distance, architecture recedes in perspective, and multiple scenes unfold within single panels. This transformation of sculpture into pictorial narrative was unprecedented and bridged medieval and Renaissance art.",
+    "keySymbols": [
+      "gilded bronze",
+      "perspective relief",
+      "Old Testament scenes",
+      "architectural framing",
+      "narrative panels",
+      "pictorial depth"
+    ],
+    "creditLine": "Baptistery of Florence (originals in Museo dell'Opera del Duomo). Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Ghiberti-porta.jpg/800px-Ghiberti-porta.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Ghiberti-porta.jpg/400px-Ghiberti-porta.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Gates_of_Paradise",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_037",
+    "title": "David (Donatello)",
+    "artist": "Donatello",
+    "year": 1440,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Bronze",
+    "dimensions": "158 cm height",
+    "origin": "Florence, Italy",
+    "type": "Sculpture",
+    "description": "The first free-standing nude sculpture since antiquity, depicting the young David standing over Goliath's severed head, a masterpiece of Early Renaissance bronze casting.",
+    "historicalContext": "Created for the Medici family, likely for the courtyard of their palazzo, this was the first free-standing nude statue made since the Roman era. It represents a revolutionary moment in Renaissance art — the revival of the classical nude as an independent sculptural form.",
+    "meaning": "The youthful, almost androgynous David stands in a relaxed contrapposto, his foot resting on Goliath's head. Unlike Michelangelo's later heroic David, Donatello's version emphasizes the improbability of the victory — a slender boy defeating a giant through divine favor rather than physical strength.",
+    "keySymbols": [
+      "contrapposto",
+      "Goliath's head",
+      "laurel-trimmed hat",
+      "sword",
+      "free-standing nude",
+      "youthful beauty"
+    ],
+    "creditLine": "Museo Nazionale del Bargello, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Donatello_-_David_-_Floren%C3%A7a.jpg/800px-Donatello_-_David_-_Floren%C3%A7a.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Donatello_-_David_-_Floren%C3%A7a.jpg/400px-Donatello_-_David_-_Floren%C3%A7a.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/David_(Donatello)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_038",
+    "title": "Equestrian Statue of Gattamelata",
+    "artist": "Donatello",
+    "year": 1453,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Bronze",
+    "dimensions": "340 × 390 cm",
+    "origin": "Padua, Italy",
+    "type": "Sculpture",
+    "description": "The first large-scale equestrian bronze statue of the Renaissance, depicting the mercenary general Erasmo da Narni, inspired by the Roman statue of Marcus Aurelius.",
+    "historicalContext": "Erected in the Piazza del Santo in Padua in 1453, this monument to the Venetian condottiere Erasmo da Narni (nicknamed Gattamelata, 'honeyed cat') was the first large equestrian statue cast in bronze since antiquity, directly inspired by the Roman Marcus Aurelius.",
+    "meaning": "The calm, dignified rider and powerful horse project an image of rational command and classical virtue rather than aggressive warfare. Donatello's work established the Renaissance ideal of the military leader as a figure of civic virtue and intellectual authority, influencing Verrocchio's later Colleoni monument.",
+    "keySymbols": [
+      "equestrian pose",
+      "classical armor",
+      "baton of command",
+      "powerful horse",
+      "civic virtue",
+      "Roman influence"
+    ],
+    "creditLine": "Piazza del Santo, Padua. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Donatello%2C_Monumento_equestre_al_Gattamelata_02.jpg/800px-Donatello%2C_Monumento_equestre_al_Gattamelata_02.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Donatello%2C_Monumento_equestre_al_Gattamelata_02.jpg/400px-Donatello%2C_Monumento_equestre_al_Gattamelata_02.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Equestrian_statue_of_Gattamelata",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_039",
+    "title": "The Annunciation",
+    "artist": "Fra Angelico",
+    "year": 1440,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Fresco",
+    "dimensions": "230 × 321 cm",
+    "origin": "Florence, Italy",
+    "type": "Fresco",
+    "description": "A serene fresco of the Angel Gabriel announcing to Mary, painted at the top of a dormitory staircase in the Convent of San Marco, blending spiritual devotion with Renaissance perspective.",
+    "historicalContext": "Painted for the Dominican convent of San Marco in Florence, which was renovated with Medici patronage. Fra Angelico, himself a Dominican friar, decorated the convent's cells and corridors with contemplative frescoes designed to aid monastic meditation.",
+    "meaning": "The simple, luminous composition — the angel's rainbow wings, Mary's humble acceptance, the spare loggia with its single vanishing point — was designed to inspire devotion in the friars passing by daily. The garden to the left represents the enclosed garden (hortus conclusus), a symbol of Mary's virginity.",
+    "keySymbols": [
+      "rainbow wings",
+      "loggia architecture",
+      "enclosed garden",
+      "humble Mary",
+      "single perspective",
+      "devotional simplicity"
+    ],
+    "creditLine": "Convent of San Marco, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/ANGELICO%2C_Fra_Annunciation%2C_1437-46_%282236990916%29.jpg/800px-ANGELICO%2C_Fra_Annunciation%2C_1437-46_%282236990916%29.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/ANGELICO%2C_Fra_Annunciation%2C_1437-46_%282236990916%29.jpg/400px-ANGELICO%2C_Fra_Annunciation%2C_1437-46_%282236990916%29.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Annunciation_(Fra_Angelico,_San_Marco)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_040",
+    "title": "The Flagellation of Christ",
+    "artist": "Piero della Francesca",
+    "year": 1455,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Oil and tempera on panel",
+    "dimensions": "59 × 81 cm",
+    "origin": "Urbino, Italy",
+    "type": "Painting",
+    "description": "A mathematically precise painting dividing the scene between Christ's flagellation in the background and three mysterious foreground figures, one of art history's greatest enigmas.",
+    "historicalContext": "Painted for Federico da Montefeltro, Duke of Urbino, this small panel is celebrated for its rigorous application of linear perspective. Piero della Francesca was both a painter and a mathematician who wrote treatises on perspective and geometry.",
+    "meaning": "The painting's meaning remains debated: the three foreground figures may represent contemporary political figures or allegorical concepts. The mathematical precision of the architecture creates a perfect illusionistic space, while the calm, detached mood contrasts strikingly with the violence of the flagellation scene behind.",
+    "keySymbols": [
+      "mathematical perspective",
+      "divided composition",
+      "classical architecture",
+      "three mysterious figures",
+      "geometric precision",
+      "calm detachment"
+    ],
+    "creditLine": "Galleria Nazionale delle Marche, Urbino. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Piero_della_Francesca_-_The_Flagellation_-_WGA17600.jpg/800px-Piero_della_Francesca_-_The_Flagellation_-_WGA17600.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Piero_della_Francesca_-_The_Flagellation_-_WGA17600.jpg/400px-Piero_della_Francesca_-_The_Flagellation_-_WGA17600.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Flagellation_of_Christ_(Piero_della_Francesca)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_041",
+    "title": "Camera degli Sposi (Bridal Chamber)",
+    "artist": "Andrea Mantegna",
+    "year": 1474,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Fresco",
+    "dimensions": "Room: approximately 8 × 8 m",
+    "origin": "Mantua, Italy",
+    "type": "Fresco",
+    "description": "A complete room decorated with illusionistic frescoes including the famous ceiling oculus, where painted figures appear to peer down from an open sky above.",
+    "historicalContext": "Painted for Ludovico III Gonzaga, Marquis of Mantua, between 1465 and 1474. Mantegna transformed the entire room into an illusionistic space, painting fictive architecture that appears to extend the walls and ceiling, creating one of the earliest examples of trompe-l'oeil painting.",
+    "meaning": "The ceiling's famous trompe-l'oeil oculus (round opening) shows putti, a peacock, and women peering down from a balustrade against an open sky — creating the illusion that the ceiling opens to the heavens. This was revolutionary and directly influenced the great illusionistic ceilings of the Baroque era.",
+    "keySymbols": [
+      "trompe-l'oeil oculus",
+      "putti",
+      "Gonzaga court portraits",
+      "painted architecture",
+      "peacock",
+      "illusionistic sky"
+    ],
+    "creditLine": "Ducal Palace, Mantua. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Andrea_Mantegna_-_Ceiling_Oculus_-_WGA13974.jpg/800px-Andrea_Mantegna_-_Ceiling_Oculus_-_WGA13974.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Andrea_Mantegna_-_Ceiling_Oculus_-_WGA13974.jpg/400px-Andrea_Mantegna_-_Ceiling_Oculus_-_WGA13974.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Camera_degli_Sposi",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_042",
+    "title": "Descent from the Cross",
+    "artist": "Rogier van der Weyden",
+    "year": 1435,
+    "period": "Northern Renaissance",
+    "style": "Northern Renaissance",
+    "medium": "Oil on oak panel",
+    "dimensions": "220 × 262 cm",
+    "origin": "Leuven, Belgium",
+    "type": "Painting",
+    "description": "A masterpiece of Northern Renaissance painting showing Christ being taken down from the cross, remarkable for its compressed space and intense emotional power.",
+    "historicalContext": "Originally commissioned for the Chapel of Our Lady Outside the Walls in Leuven by the crossbowmen's guild (a crossbow appears in the tracery corners). It was later acquired by Mary of Hungary and taken to Spain, where it influenced Spanish Golden Age painting.",
+    "meaning": "The figures are compressed into a shallow, gilded box-like space, eliminating landscape to focus entirely on human grief. Mary's body echoes Christ's in a swooning curve, visually linking mother and son in suffering. Each figure expresses grief differently, creating a symphony of human sorrow.",
+    "keySymbols": [
+      "swooning Mary",
+      "echoing body curves",
+      "compressed space",
+      "crossbow guild",
+      "tears",
+      "gilded background",
+      "ten mourning figures"
+    ],
+    "creditLine": "Museo del Prado, Madrid. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Weyden%2C_Rogier_van_der_-_Descent_from_the_Cross_-_Detail_central_part.jpg/800px-Weyden%2C_Rogier_van_der_-_Descent_from_the_Cross_-_Detail_central_part.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Weyden%2C_Rogier_van_der_-_Descent_from_the_Cross_-_Detail_central_part.jpg/400px-Weyden%2C_Rogier_van_der_-_Descent_from_the_Cross_-_Detail_central_part.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Descent_from_the_Cross_(van_der_Weyden)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_043",
+    "title": "The Adoration of the Magi",
+    "artist": "Gentile da Fabriano",
+    "year": 1423,
+    "period": "Early Renaissance",
+    "style": "International Gothic",
+    "medium": "Tempera on wood",
+    "dimensions": "303 × 282 cm",
+    "origin": "Florence, Italy",
+    "type": "Painting",
+    "description": "A lavish altarpiece depicting the three Magi presenting gifts to the Christ Child, representing the pinnacle of the International Gothic style in Italy with extraordinary detail and gold work.",
+    "historicalContext": "Commissioned by Palla Strozzi, the wealthiest man in Florence, for his family chapel in Santa Trinita. The opulent display of gold, exotic animals, and elaborate costumes reflected Strozzi's wealth and the International Gothic taste that was about to give way to the new Renaissance realism of Masaccio.",
+    "meaning": "The procession of the Magi winds through an elaborate landscape from the distant hills to the foreground stable, symbolizing the journey of faith. The extraordinary wealth on display — gold leaf, rich fabrics, exotic animals — celebrates both the gifts of the Magi and the magnificence of the patron.",
+    "keySymbols": [
+      "three kings",
+      "gold leaf",
+      "exotic animals",
+      "elaborate costumes",
+      "winding procession",
+      "Christ Child",
+      "star of Bethlehem"
+    ],
+    "creditLine": "Uffizi Gallery, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Gentile_da_Fabriano_-_Adoration_of_the_Magi_-_WGA08543.jpg/800px-Gentile_da_Fabriano_-_Adoration_of_the_Magi_-_WGA08543.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Gentile_da_Fabriano_-_Adoration_of_the_Magi_-_WGA08543.jpg/400px-Gentile_da_Fabriano_-_Adoration_of_the_Magi_-_WGA08543.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Adoration_of_the_Magi_(Gentile_da_Fabriano)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_044",
+    "title": "The Holy Trinity",
+    "artist": "Masaccio",
+    "year": 1427,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Fresco",
+    "dimensions": "667 × 317 cm",
+    "origin": "Florence, Italy",
+    "type": "Fresco",
+    "description": "A fresco in Santa Maria Novella that is one of the earliest known examples of systematic linear perspective in painting, creating a stunning illusionistic chapel space on a flat wall.",
+    "historicalContext": "Painted on the wall of Santa Maria Novella in Florence, this fresco is believed to be one of the first paintings to employ Brunelleschi's mathematical system of linear perspective. The painted architecture is so convincing that Vasari wrote viewers believed a real chapel had been carved into the wall.",
+    "meaning": "God the Father stands behind the cross supporting the crucified Christ, with the Holy Spirit as a dove between them. The donors kneel outside the painted chapel, and below, a skeleton lies on a sarcophagus with the inscription: 'I was once what you are, and what I am you will become' — a powerful memento mori bridging sacred and secular concerns.",
+    "keySymbols": [
+      "barrel vault",
+      "linear perspective",
+      "donor portraits",
+      "skeleton",
+      "memento mori inscription",
+      "Trinity",
+      "vanishing point"
+    ],
+    "creditLine": "Santa Maria Novella, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Masaccio%2C_trinit%C3%A0.jpg/800px-Masaccio%2C_trinit%C3%A0.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Masaccio%2C_trinit%C3%A0.jpg/400px-Masaccio%2C_trinit%C3%A0.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Holy_Trinity_(Masaccio)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_045",
+    "title": "Perseus with the Head of Medusa",
+    "artist": "Benvenuto Cellini",
+    "year": 1554,
+    "period": "Mannerism",
+    "style": "Mannerism",
+    "medium": "Bronze",
+    "dimensions": "320 cm height",
+    "origin": "Florence, Italy",
+    "type": "Sculpture",
+    "description": "A monumental bronze sculpture of Perseus triumphantly holding the severed head of Medusa, considered one of the masterpieces of Mannerist sculpture.",
+    "historicalContext": "Commissioned by Duke Cosimo I de' Medici for the Loggia dei Lanzi in the Piazza della Signoria, Florence. Cellini's autobiography describes the dramatic casting in vivid detail — including throwing his own pewter plates into the molten bronze when the metal ran short.",
+    "meaning": "Perseus, the mythological hero who slew the snake-haired Medusa, stands triumphantly on her decapitated body. The work served as a political allegory: just as Perseus vanquished a monster, Cosimo I had conquered Florence's enemies. The virtuoso casting in a single pour demonstrated Cellini's supreme technical mastery.",
+    "keySymbols": [
+      "Medusa's head",
+      "hero's stance",
+      "flowing blood (bronze)",
+      "winged sandals",
+      "political allegory",
+      "single-pour casting"
+    ],
+    "creditLine": "Loggia dei Lanzi, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Perseo-Cellini-Loggia_dei_Lanzi_2005_09_13.jpg/800px-Perseo-Cellini-Loggia_dei_Lanzi_2005_09_13.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Perseo-Cellini-Loggia_dei_Lanzi_2005_09_13.jpg/400px-Perseo-Cellini-Loggia_dei_Lanzi_2005_09_13.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Perseus_with_the_Head_of_Medusa",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_046",
+    "title": "The Last Judgment (Sistine Chapel)",
+    "artist": "Michelangelo",
+    "year": 1541,
+    "period": "Mannerism",
+    "style": "Mannerism",
+    "medium": "Fresco",
+    "dimensions": "1370 × 1200 cm",
+    "origin": "Vatican City",
+    "type": "Fresco",
+    "description": "A massive altar wall fresco in the Sistine Chapel depicting the Second Coming of Christ and the final judgment of all souls, featuring over 300 figures in a swirling composition.",
+    "historicalContext": "Painted between 1536 and 1541, over two decades after Michelangelo completed the ceiling. Commissioned by Pope Clement VII and executed under Pope Paul III, the work reflects the darker mood of the Counter-Reformation following the Sack of Rome in 1527.",
+    "meaning": "Christ appears as a powerful judge, his raised arm sending the damned to hell while drawing the saved upward to heaven. The muscular, tormented figures convey both divine power and human vulnerability. Saint Bartholomew holds his flayed skin, whose face is a self-portrait of Michelangelo — expressing the artist's own spiritual anguish.",
+    "keySymbols": [
+      "Christ as judge",
+      "flayed skin self-portrait",
+      "Charon's boat",
+      "rising and falling souls",
+      "muscular figures",
+      "trumpeting angels"
+    ],
+    "creditLine": "Sistine Chapel, Vatican City. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Last_Judgement_%28Michelangelo%29.jpg/800px-Last_Judgement_%28Michelangelo%29.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Last_Judgement_%28Michelangelo%29.jpg/400px-Last_Judgement_%28Michelangelo%29.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Last_Judgment_(Michelangelo)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_047",
+    "title": "The Wedding at Cana",
+    "artist": "Paolo Veronese",
+    "year": 1563,
+    "period": "Mannerism",
+    "style": "Venetian Renaissance",
+    "medium": "Oil on canvas",
+    "dimensions": "677 × 994 cm",
+    "origin": "Venice, Italy",
+    "type": "Painting",
+    "description": "An enormous painting depicting Christ's first miracle at the wedding feast at Cana, populated with over 130 figures in a spectacular Venetian architectural setting.",
+    "historicalContext": "Painted for the refectory of the Benedictine monastery of San Giorgio Maggiore in Venice. At nearly 70 square meters, it is the largest painting in the Louvre. Napoleon's troops seized it in 1797 and it has remained in Paris ever since, despite Italian requests for its return.",
+    "meaning": "While depicting the biblical miracle of turning water into wine, Veronese set the scene as a lavish Venetian banquet, including portraits of contemporary rulers and artists as wedding guests. The musicians in the center are said to include Veronese, Titian, Tintoretto, and Bassano — a celebration of Venetian artistic culture.",
+    "keySymbols": [
+      "water into wine",
+      "Venetian architecture",
+      "contemporary portraits",
+      "musicians",
+      "lavish banquet",
+      "hourglass",
+      "butchered lamb"
+    ],
+    "creditLine": "Musée du Louvre, Paris. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Paolo_Veronese_-_The_Wedding_at_Cana_-_WGA24853.jpg/800px-Paolo_Veronese_-_The_Wedding_at_Cana_-_WGA24853.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Paolo_Veronese_-_The_Wedding_at_Cana_-_WGA24853.jpg/400px-Paolo_Veronese_-_The_Wedding_at_Cana_-_WGA24853.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Wedding_at_Cana",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_048",
+    "title": "The Last Supper (Tintoretto)",
+    "artist": "Tintoretto",
+    "year": 1594,
+    "period": "Mannerism",
+    "style": "Venetian Mannerism",
+    "medium": "Oil on canvas",
+    "dimensions": "365 × 568 cm",
+    "origin": "Venice, Italy",
+    "type": "Painting",
+    "description": "A dramatic, diagonally composed Last Supper with supernatural lighting effects, representing a Mannerist reimagining of the traditional scene that contrasts starkly with Leonardo's version.",
+    "historicalContext": "Painted for the Church of San Giorgio Maggiore in Venice, completed in the last year of Tintoretto's life. Unlike Leonardo's calm, symmetrical composition, Tintoretto tilts the table into a dramatic diagonal and fills the scene with servants, angels, and supernatural light.",
+    "meaning": "The table recedes diagonally into deep space while ghostly angels emerge from the smoke of an oil lamp. Christ distributes communion to the apostles in a scene that emphasizes the mystical, sacramental nature of the Eucharist. The mix of earthly servants and heavenly beings creates a bridge between the mundane and the divine.",
+    "keySymbols": [
+      "diagonal composition",
+      "supernatural light",
+      "ghostly angels",
+      "oil lamp",
+      "Eucharist",
+      "servants and cats",
+      "dramatic chiaroscuro"
+    ],
+    "creditLine": "San Giorgio Maggiore, Venice. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Jacopo_Tintoretto_-_The_Last_Supper_-_WGA22649.jpg/800px-Jacopo_Tintoretto_-_The_Last_Supper_-_WGA22649.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Jacopo_Tintoretto_-_The_Last_Supper_-_WGA22649.jpg/400px-Jacopo_Tintoretto_-_The_Last_Supper_-_WGA22649.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Last_Supper_(Tintoretto)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_049",
+    "title": "Madonna with the Long Neck",
+    "artist": "Parmigianino",
+    "year": 1540,
+    "period": "Mannerism",
+    "style": "Mannerism",
+    "medium": "Oil on panel",
+    "dimensions": "216 × 132 cm",
+    "origin": "Parma, Italy",
+    "type": "Painting",
+    "description": "An iconic Mannerist painting with deliberately elongated proportions — the Madonna's impossibly long neck and fingers, and the tiny figure of St. Jerome — epitomizing the style's elegant distortion.",
+    "historicalContext": "Commissioned for the church of Santa Maria dei Servi in Parma. Parmigianino worked on it for six years but left it unfinished at his death in 1540. The painting became one of the most recognized examples of Mannerist style, which deliberately distorted Renaissance ideals of proportion.",
+    "meaning": "The elongated forms create an otherworldly elegance that goes beyond natural beauty to suggest divine grace. The Madonna's impossibly long neck was compared to a column or ivory tower (from the Song of Solomon), symbolizing her role as a pillar connecting heaven and earth. The tiny prophet in the lower right emphasizes the monumental scale of the Madonna.",
+    "keySymbols": [
+      "elongated neck",
+      "elongated fingers",
+      "tiny St. Jerome",
+      "unfinished column",
+      "crowded angels",
+      "sleeping Christ Child"
+    ],
+    "creditLine": "Uffizi Gallery, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Parmigianino_-_Madonna_with_the_Long_Neck.jpg/800px-Parmigianino_-_Madonna_with_the_Long_Neck.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Parmigianino_-_Madonna_with_the_Long_Neck.jpg/400px-Parmigianino_-_Madonna_with_the_Long_Neck.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Madonna_with_the_Long_Neck",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_050",
+    "title": "The Garden of Earthly Delights",
+    "artist": "Hieronymus Bosch",
+    "year": 1505,
+    "period": "Northern Renaissance",
+    "style": "Northern Renaissance",
+    "medium": "Oil on oak panels",
+    "dimensions": "220 × 389 cm (triptych open)",
+    "origin": "Netherlands",
+    "type": "Painting",
+    "description": "A fantastical triptych depicting Paradise, a dreamlike garden of pleasures, and a nightmarish Hell, filled with hundreds of surreal figures and bizarre imagery that continues to defy interpretation.",
+    "historicalContext": "Created around 1490-1510 for the Nassau family of the Netherlands. The triptych's fantastical imagery was unprecedented and has been interpreted through theological, alchemical, and psychological lenses. It entered the Spanish royal collection in 1591 and is now in the Prado.",
+    "meaning": "The left panel shows the Garden of Eden, the center depicts humanity indulging in earthly pleasures with surreal abandon, and the right panel presents a terrifying vision of Hell where sinners are punished. The overall message appears to warn against the fleeting nature of worldly pleasures, though scholars continue to debate its precise meaning.",
+    "keySymbols": [
+      "Garden of Eden",
+      "surreal creatures",
+      "giant fruits",
+      "musical instruments of torture",
+      "egg-man",
+      "Tree-Man of Hell",
+      "fountain of life"
+    ],
+    "creditLine": "Museo del Prado, Madrid. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/The_Garden_of_earthly_delights.jpg/800px-The_Garden_of_earthly_delights.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/The_Garden_of_earthly_delights.jpg/400px-The_Garden_of_earthly_delights.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Garden_of_Earthly_Delights",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_051",
+    "title": "Adoration of the Magi (Leonardo)",
+    "artist": "Leonardo da Vinci",
+    "year": 1481,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Oil and umber on panel (unfinished)",
+    "dimensions": "246 × 243 cm",
+    "origin": "Florence, Italy",
+    "type": "Painting",
+    "description": "An unfinished masterpiece showing the three Magi presenting gifts to the Christ Child, remarkable for its revolutionary pyramidal composition and complex figural arrangement.",
+    "historicalContext": "Commissioned by the Augustinian monks of San Donato a Scopeto near Florence in 1481. Leonardo abandoned the work when he left for Milan in 1482, leaving it in its unfinished underpainting state. The monochrome state actually reveals Leonardo's working methods more clearly than a finished painting would.",
+    "meaning": "The swirling crowd of figures around the central group of Madonna and Child creates a dynamic, almost chaotic energy that was revolutionary. In the background, horsemen battle and ruined architecture crumbles — possibly symbolizing the passing of the old pagan world with the birth of Christ.",
+    "keySymbols": [
+      "pyramidal composition",
+      "unfinished state",
+      "swirling crowd",
+      "ruined architecture",
+      "battling horsemen",
+      "adoring Magi"
+    ],
+    "creditLine": "Uffizi Gallery, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Leonardo_da_Vinci_-_Adorazione_dei_Magi_-_Google_Art_Project.jpg/800px-Leonardo_da_Vinci_-_Adorazione_dei_Magi_-_Google_Art_Project.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Leonardo_da_Vinci_-_Adorazione_dei_Magi_-_Google_Art_Project.jpg/400px-Leonardo_da_Vinci_-_Adorazione_dei_Magi_-_Google_Art_Project.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Adoration_of_the_Magi_(Leonardo)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_052",
+    "title": "The Transfiguration",
+    "artist": "Raphael",
+    "year": 1520,
+    "period": "High Renaissance",
+    "style": "High Renaissance",
+    "medium": "Oil on panel",
+    "dimensions": "405 × 278 cm",
+    "origin": "Rome, Italy",
+    "type": "Painting",
+    "description": "Raphael's final and arguably greatest painting, combining the Transfiguration of Christ on Mount Tabor with the Healing of a Possessed Boy below in a dramatic two-part composition.",
+    "historicalContext": "Commissioned by Cardinal Giulio de' Medici (later Pope Clement VII) for the Cathedral of Narbonne. Raphael was working on it in direct competition with Sebastiano del Piombo (backed by Michelangelo). Raphael died on April 6, 1520, with the painting nearly complete; it was displayed at his funeral.",
+    "meaning": "The upper half shows the radiant, floating Christ flanked by Moses and Elijah, while the lower half depicts the apostles' failure to heal a possessed boy without Christ's presence. The contrast between divine light above and human struggle below captures a fundamental tension in Christian theology between heavenly grace and earthly suffering.",
+    "keySymbols": [
+      "floating Christ",
+      "divine radiance",
+      "possessed boy",
+      "helpless apostles",
+      "Mount Tabor",
+      "Moses and Elijah",
+      "pointing gesture"
+    ],
+    "creditLine": "Vatican Pinacoteca, Vatican City. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Transfigurazione_%28Raffaello%29_September_2015-1a.jpg/800px-Transfigurazione_%28Raffaello%29_September_2015-1a.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Transfigurazione_%28Raffaello%29_September_2015-1a.jpg/400px-Transfigurazione_%28Raffaello%29_September_2015-1a.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Transfiguration_(Raphael)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_053",
+    "title": "Doni Tondo (Holy Family)",
+    "artist": "Michelangelo",
+    "year": 1507,
+    "period": "High Renaissance",
+    "style": "High Renaissance",
+    "medium": "Tempera on panel",
+    "dimensions": "120 cm diameter",
+    "origin": "Florence, Italy",
+    "type": "Painting",
+    "description": "Michelangelo's only surviving completed panel painting, a circular composition showing the Holy Family with the infant Saint John, notable for its sculptural treatment of figures and brilliant color.",
+    "historicalContext": "Painted for the wealthy Florentine merchant Agnolo Doni, possibly to celebrate his marriage to Maddalena Strozzi around 1504-1507. Still in its original carved and gilded frame attributed to Marco and Francesco del Tasso, the tondo was one of few paintings Michelangelo completed, as he preferred sculpture.",
+    "meaning": "The twisting, muscular figures demonstrate Michelangelo's sculptural approach to painting. Mary reaches back over her shoulder to take the Christ Child from Joseph in a complex spiraling motion. The nude youths in the background may represent the pagan world before grace, separated from the Holy Family by a low wall.",
+    "keySymbols": [
+      "tondo format",
+      "twisting figures",
+      "nude youths",
+      "dividing wall",
+      "sculptural forms",
+      "brilliant color",
+      "original frame"
+    ],
+    "creditLine": "Uffizi Gallery, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Michelangelo_Buonarroti_-_Tondo_Doni_-_Google_Art_Project.jpg/800px-Michelangelo_Buonarroti_-_Tondo_Doni_-_Google_Art_Project.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Michelangelo_Buonarroti_-_Tondo_Doni_-_Google_Art_Project.jpg/400px-Michelangelo_Buonarroti_-_Tondo_Doni_-_Google_Art_Project.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Doni_Tondo",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_054",
+    "title": "Moses",
+    "artist": "Michelangelo",
+    "year": 1515,
+    "period": "High Renaissance",
+    "style": "High Renaissance",
+    "medium": "Marble",
+    "dimensions": "235 cm height",
+    "origin": "Rome, Italy",
+    "type": "Sculpture",
+    "description": "A monumental marble sculpture of the biblical prophet Moses, originally intended for the tomb of Pope Julius II, notable for its terribilità — Michelangelo's ability to convey overwhelming power and intensity.",
+    "historicalContext": "Carved as the centerpiece for Pope Julius II's tomb, which was originally planned as a massive free-standing monument but was repeatedly scaled down over 40 years. The Moses figure, completed around 1513-1515, is now in the Church of San Pietro in Vincoli in Rome.",
+    "meaning": "Moses is shown seated, turning with barely contained energy, his muscular arms gripping the tablets of the Law. The famous 'horns' on his head derive from a medieval mistranslation of the Hebrew word for 'rays of light.' Legend holds that Michelangelo struck the knee with his hammer, commanding 'Now speak!'",
+    "keySymbols": [
+      "tablets of Law",
+      "horns (rays of light)",
+      "flowing beard",
+      "muscular tension",
+      "terribilità",
+      "seated energy"
+    ],
+    "creditLine": "San Pietro in Vincoli, Rome. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/%27Moses%27_by_Michelangelo_JBU160.jpg/800px-%27Moses%27_by_Michelangelo_JBU160.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/%27Moses%27_by_Michelangelo_JBU160.jpg/400px-%27Moses%27_by_Michelangelo_JBU160.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Moses_(Michelangelo)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_055",
+    "title": "The Feast of the Gods",
+    "artist": "Giovanni Bellini",
+    "year": 1514,
+    "period": "High Renaissance",
+    "style": "Venetian Renaissance",
+    "medium": "Oil on canvas",
+    "dimensions": "170 × 188 cm",
+    "origin": "Venice, Italy",
+    "type": "Painting",
+    "description": "A mythological scene showing the gods of Olympus at a woodland feast, one of the last works by Giovanni Bellini and later reworked by Titian, representing the birth of the Venetian mythological painting tradition.",
+    "historicalContext": "Painted for Alfonso I d'Este, Duke of Ferrara, for his private study (camerino d'alabastro). It was one of the last paintings by the aged Bellini, and after his death, Titian was commissioned to repaint the landscape background to harmonize it with his own contributions to the room.",
+    "meaning": "The scene from Ovid's Fasti shows the gods feasting in a pastoral setting, with the satyr Priapus attempting to surprise the sleeping nymph Lotis. The relaxed, sensual atmosphere celebrates earthly pleasures and classical mythology, embodying the humanist ideals of the Renaissance court.",
+    "keySymbols": [
+      "feasting gods",
+      "pastoral setting",
+      "wine vessels",
+      "sleeping nymph",
+      "Priapus",
+      "woodland",
+      "classical mythology"
+    ],
+    "creditLine": "National Gallery of Art, Washington D.C. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Giovanni_Bellini_and_Titian_-_The_Feast_of_the_Gods_-_Google_Art_Project.jpg/800px-Giovanni_Bellini_and_Titian_-_The_Feast_of_the_Gods_-_Google_Art_Project.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Giovanni_Bellini_and_Titian_-_The_Feast_of_the_Gods_-_Google_Art_Project.jpg/400px-Giovanni_Bellini_and_Titian_-_The_Feast_of_the_Gods_-_Google_Art_Project.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/The_Feast_of_the_Gods",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_056",
+    "title": "Adam and Eve",
+    "artist": "Albrecht Dürer",
+    "year": 1504,
+    "period": "Northern Renaissance",
+    "style": "Northern Renaissance",
+    "medium": "Engraving",
+    "dimensions": "25.2 × 19.4 cm",
+    "origin": "Nuremberg, Germany",
+    "type": "Print",
+    "description": "A masterful engraving depicting Adam and Eve in the Garden of Eden, combining Northern European engraving virtuosity with Italian Renaissance ideals of the perfect human form.",
+    "historicalContext": "Created in 1504, this engraving represents Dürer's effort to synthesize Italian Renaissance ideals of human proportion (influenced by his study of classical sculpture and Vitruvius) with the Northern tradition of meticulous naturalistic detail. It was widely copied and distributed across Europe.",
+    "meaning": "Adam and Eve stand as ideal human forms before the Fall, surrounded by symbolic animals: the cat (cruelty), rabbit (sensuality), elk (melancholy), and ox (phlegmatic temperament) represent the four humors that would become unbalanced after the Fall. The parrot on the Tree of Life symbolizes the Virgin Mary who would redeem humanity.",
+    "keySymbols": [
+      "four humors animals",
+      "serpent",
+      "Tree of Knowledge",
+      "parrot",
+      "ideal proportions",
+      "apple",
+      "monogram tablet"
+    ],
+    "creditLine": "Metropolitan Museum of Art, New York. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/D%C3%BCrer_Adam_and_Eve.jpg/800px-D%C3%BCrer_Adam_and_Eve.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/D%C3%BCrer_Adam_and_Eve.jpg/400px-D%C3%BCrer_Adam_and_Eve.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Adam_and_Eve_(D%C3%BCrer)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_057",
+    "title": "Laocoon and His Sons (study)",
+    "artist": "El Greco",
+    "year": 1610,
+    "period": "Mannerism",
+    "style": "Mannerism",
+    "medium": "Oil on canvas",
+    "dimensions": "137.5 × 172.5 cm",
+    "origin": "Toledo, Spain",
+    "type": "Painting",
+    "description": "A dramatic Mannerist painting depicting the Trojan priest Laocoön and his sons attacked by serpents, uniquely set against the skyline of Toledo, Spain rather than ancient Troy.",
+    "historicalContext": "Painted by Doménikos Theotokópoulos, known as El Greco, who brought Byzantine, Italian Renaissance, and Spanish influences together in a uniquely personal Mannerist style. The painting substitutes the walls of Toledo for Troy, drawing a parallel between the ancient and contemporary cities.",
+    "meaning": "The elongated, writhing bodies fighting the serpents express both physical agony and spiritual struggle. By setting the mythological scene in Toledo, El Greco suggests the universality of the conflict between human virtue and destructive fate. The stormy sky and pale flesh create an otherworldly, visionary atmosphere.",
+    "keySymbols": [
+      "serpents",
+      "Toledo skyline",
+      "elongated bodies",
+      "writhing agony",
+      "stormy sky",
+      "Trojan horse",
+      "classical mythology"
+    ],
+    "creditLine": "National Gallery of Art, Washington D.C. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/El_Greco_-_Laoco%C3%B6n_-_WGA10554.jpg/800px-El_Greco_-_Laoco%C3%B6n_-_WGA10554.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/El_Greco_-_Laoco%C3%B6n_-_WGA10554.jpg/400px-El_Greco_-_Laoco%C3%B6n_-_WGA10554.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Laoco%C3%B6n_(El_Greco)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_058",
+    "title": "The Arnolfini Portrait (detail study)",
+    "artist": "Petrus Christus",
+    "year": 1449,
+    "period": "Northern Renaissance",
+    "style": "Northern Renaissance",
+    "medium": "Oil on oak panel",
+    "dimensions": "42 × 33.6 cm",
+    "origin": "Bruges, Belgium",
+    "type": "Painting",
+    "description": "A portrait of a goldsmith and his customers in an elaborately detailed workshop, demonstrating the Northern Renaissance mastery of depicting everyday objects with luminous precision.",
+    "historicalContext": "Petrus Christus was a leading painter in Bruges after Jan van Eyck's death and inherited his workshop's techniques. This painting, 'A Goldsmith in his Shop,' is one of the earliest genre scenes in European art, blending portraiture with a depiction of a commercial transaction.",
+    "meaning": "The goldsmith (possibly Saint Eligius, patron of goldsmiths) weighs a ring for a young couple, perhaps for their betrothal. The convex mirror on the counter reflects figures outside the shop, echoing van Eyck's Arnolfini technique. Every object — scales, rings, coral, coins — is rendered with jewel-like precision, celebrating craft and commerce.",
+    "keySymbols": [
+      "balance scale",
+      "gold rings",
+      "convex mirror",
+      "coral",
+      "precious stones",
+      "shop interior",
+      "bridal couple"
+    ],
+    "creditLine": "Metropolitan Museum of Art, New York. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Petrus_Christus_-_A_Goldsmith_in_his_Shop_-_WGA04855.jpg/800px-Petrus_Christus_-_A_Goldsmith_in_his_Shop_-_WGA04855.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Petrus_Christus_-_A_Goldsmith_in_his_Shop_-_WGA04855.jpg/400px-Petrus_Christus_-_A_Goldsmith_in_his_Shop_-_WGA04855.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/A_Goldsmith_in_his_Shop",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_059",
+    "title": "Sacrifice of Isaac",
+    "artist": "Lorenzo Ghiberti",
+    "year": 1401,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Gilded bronze",
+    "dimensions": "53 × 44 cm",
+    "origin": "Florence, Italy",
+    "type": "Sculpture",
+    "description": "The competition panel that won Ghiberti the commission for the Florence Baptistery doors in 1401, defeating Brunelleschi and marking the symbolic beginning of the Renaissance.",
+    "historicalContext": "The 1401 competition for the Baptistery doors is often cited as the event that launched the Renaissance. Seven artists submitted bronze relief panels of the Sacrifice of Isaac. Ghiberti's winning entry demonstrated a more graceful, flowing Gothic style that the judges preferred to Brunelleschi's more dramatic and classical approach.",
+    "meaning": "Abraham raises his knife to sacrifice his son Isaac as an angel intervenes at the last moment. Ghiberti's composition elegantly balances drama with grace — the nude Isaac is rendered with classical idealism, while the drapery flows with Gothic elegance. The competition itself symbolized Florence's emerging civic pride and artistic ambition.",
+    "keySymbols": [
+      "angel intervention",
+      "sacrificial knife",
+      "nude Isaac",
+      "ram in thicket",
+      "quatrefoil frame",
+      "classical nudity"
+    ],
+    "creditLine": "Museo Nazionale del Bargello, Florence. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Ghiberti-Isaac.jpg/800px-Ghiberti-Isaac.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Ghiberti-Isaac.jpg/400px-Ghiberti-Isaac.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Sacrifice_of_Isaac_(Ghiberti)",
+    "isPublicDomain": true
+  },
+  {
+    "id": "local_060",
+    "title": "The Dead Christ (Lamentation over the Dead Christ)",
+    "artist": "Andrea Mantegna",
+    "year": 1480,
+    "period": "Early Renaissance",
+    "style": "Early Renaissance",
+    "medium": "Tempera on canvas",
+    "dimensions": "68 × 81 cm",
+    "origin": "Mantua, Italy",
+    "type": "Painting",
+    "description": "A strikingly foreshortened view of the dead Christ lying on a marble slab, seen from the feet, creating a powerful and unprecedented perspective that draws the viewer into intimate proximity with the body.",
+    "historicalContext": "Found in Mantegna's studio after his death in 1506, this painting may have been intended as a personal devotional work. Mantegna's mastery of perspective, learned from his study of classical antiquity and Florentine innovations, reaches its most dramatic expression in this radically foreshortened view.",
+    "meaning": "The extreme foreshortening places the viewer at Christ's feet, forcing an intimate confrontation with death and sacrifice. The mourning figures at left — Mary and Saint John — are cropped to emphasize the body itself. The stone of unction and the puncture wounds in the hands and feet make the suffering tangible and immediate.",
+    "keySymbols": [
+      "extreme foreshortening",
+      "marble slab",
+      "puncture wounds",
+      "mourning figures",
+      "stone of unction",
+      "crumpled shroud"
+    ],
+    "creditLine": "Pinacoteca di Brera, Milan. Public domain.",
+    "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Andrea_Mantegna_-_The_Dead_Christ_and_Three_Mourners_-_WGA13981.jpg/800px-Andrea_Mantegna_-_The_Dead_Christ_and_Three_Mourners_-_WGA13981.jpg",
+    "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/Andrea_Mantegna_-_The_Dead_Christ_and_Three_Mourners_-_WGA13981.jpg/400px-Andrea_Mantegna_-_The_Dead_Christ_and_Three_Mourners_-_WGA13981.jpg",
+    "sourceUrl": "https://en.wikipedia.org/wiki/Lamentation_of_Christ_(Mantegna)",
     "isPublicDomain": true
   }
 ]

@@ -84,6 +84,7 @@ class Artwork extends HiveObject {
   /// Instant load — no network. All images from Wikimedia Commons (public domain).
   factory Artwork.fromLocalJson(Map<String, dynamic> json) {
     final year = json['year'] as int? ?? 0;
+    final symbols = json['keySymbols'];
     return Artwork(
       id: (json['id'] as String? ?? '').isNotEmpty
           ? json['id'] as String
@@ -99,9 +100,9 @@ class Artwork extends HiveObject {
       imageUrl: (json['imageUrl'] as String? ?? '').trim(),
       thumbnailUrl: (json['thumbnailUrl'] as String? ?? json['imageUrl'] as String? ?? '').trim(),
       description: (json['description'] as String? ?? '').trim(),
-      historicalContext: '',
-      meaning: '',
-      keySymbols: const [],
+      historicalContext: (json['historicalContext'] as String? ?? '').trim(),
+      meaning: (json['meaning'] as String? ?? '').trim(),
+      keySymbols: symbols is List ? symbols.cast<String>() : const [],
       relatedArtworkIds: const [],
       department: (json['type'] as String? ?? 'Painting'),
       isPublicDomain: (json['isPublicDomain'] as bool?) ?? true,
@@ -198,10 +199,11 @@ class Artwork extends HiveObject {
 
     final year = start ?? end;
     if (year != null) {
+      if (year >= 1300 && year <= 1399) return 'Early Renaissance';
       if (year >= 1400 && year <= 1499) return 'Early Renaissance';
       if (year >= 1500 && year <= 1529) return 'High Renaissance';
-      if (year >= 1530 && year <= 1625) return 'Mannerism';
-      if (year >= 1400 && year <= 1625) return 'Renaissance';
+      if (year >= 1530 && year <= 1600) return 'Mannerism';
+      if (year >= 1300 && year <= 1625) return 'Renaissance';
     }
     return 'Other';
   }

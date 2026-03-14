@@ -13,7 +13,7 @@ import '../../models/artwork_model.dart';
 ///   ✅ 60 req/min rate limit (generous)
 ///
 /// Renaissance filter strategy:
-///   - date_start between 1400–1625
+///   - date_start between 1300–1600
 ///   - style_title contains "Renaissance" / "Flemish" / "Mannerism"
 ///   - is_public_domain = true
 class AicApiService {
@@ -63,7 +63,7 @@ class AicApiService {
               'filter': [
                 {
                   'range': {
-                    'date_start': {'gte': 1390, 'lte': 1630},
+                    'date_start': {'gte': 1300, 'lte': 1600},
                   }
                 }
               ],
@@ -75,7 +75,7 @@ class AicApiService {
       return _parseResults(response.data);
     } on DioException catch (_) {
       // Fallback: simpler keyword search
-      return _fallbackSearch('renaissance painting 1400 1600', count: count);
+      return _fallbackSearch('renaissance painting sculpture 1300 1600', count: count);
     }
   }
 
