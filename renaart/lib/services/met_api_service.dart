@@ -154,9 +154,29 @@ class MetApiService {
         rawText.contains('cinquecento');
 
     final year = _extractYear((data['objectDate'] as String?) ?? '');
-    final inRenaissanceYearRange = year != null && year >= 1400 && year <= 1625;
+    final inRenaissanceYearRange = year != null && year >= 1300 && year <= 1600;
 
-    return hasRenaissanceKeywords || inRenaissanceYearRange;
+    if (!hasRenaissanceKeywords && !inRenaissanceYearRange) return false;
+
+    // Filter by artwork type: Painting, Sculpture, Drawing, Printmaking
+    final classification = (data['classification'] as String? ?? '').toLowerCase();
+    final medium = (data['medium'] as String? ?? '').toLowerCase();
+    final objectName = (data['objectName'] as String? ?? '').toLowerCase();
+    final typeText = '$classification $medium $objectName';
+
+    final isValidType =
+        typeText.contains('painting') || typeText.contains('oil on') ||
+        typeText.contains('tempera') || typeText.contains('fresco') ||
+        typeText.contains('panel') ||
+        typeText.contains('sculpture') || typeText.contains('statue') ||
+        typeText.contains('bronze') || typeText.contains('marble') ||
+        typeText.contains('bust') || typeText.contains('relief') ||
+        typeText.contains('drawing') || typeText.contains('sketch') ||
+        typeText.contains('chalk') || typeText.contains('charcoal') ||
+        typeText.contains('print') || typeText.contains('engraving') ||
+        typeText.contains('woodcut') || typeText.contains('etching');
+
+    return isValidType;
   }
 
   int? _extractYear(String dateText) {
