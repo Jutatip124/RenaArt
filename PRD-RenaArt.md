@@ -1,7 +1,7 @@
 # PRD — RenaArt
 **Product Requirements Document**
-**Version:** 1.0
-**Date:** February 27, 2026
+**Version:** 2.0
+**Date:** March 14, 2026
 **Status:** Approved
 
 ---
@@ -18,15 +18,14 @@
 9. [Technical Stack](#9-technical-stack)
 10. [Screen Inventory & Navigation](#10-screen-inventory--navigation)
 11. [Data Model](#11-data-model)
-12. [External Integrations](#12-external-integrations)
-13. [Offline Support](#13-offline-support)
-14. [UI / Design Principles](#14-ui--design-principles)
-15. [Deployment](#15-deployment)
-    - [15.1 Firebase Hosting (Web)](#151-firebase-hosting-web)
-    - [15.2 Google Play Store (Android)](#152-google-play-store-android)
-16. [Out of Scope](#16-out-of-scope)
-17. [Risks & Mitigations](#17-risks--mitigations)
-18. [Appendix](#18-appendix)
+12. [Data Source & Firestore](#12-data-source--firestore)
+13. [Authentication](#13-authentication)
+14. [Offline Support](#14-offline-support)
+15. [UI / Design Principles](#15-ui--design-principles)
+16. [Deployment](#16-deployment)
+17. [Out of Scope](#17-out-of-scope)
+18. [Risks & Mitigations](#18-risks--mitigations)
+19. [Appendix](#19-appendix)
 
 ---
 
@@ -36,9 +35,11 @@
 **Category:** Education
 **Pitch:** A mobile app that helps users explore Renaissance artworks with clear explanations, search tools, and offline access.
 
-RenaArt is a Flutter-based cross-platform application (mobile + web) that curates artwork exclusively from the Renaissance period, sourced in real-time from the Metropolitan Museum of Art (Met Museum) public API. The app aims to lower the barrier to art appreciation for students and enthusiasts by presenting structured, beginner-friendly content in a single, cohesive experience — with the ability to save artworks locally for offline viewing.
+RenaArt is a Flutter-based web application that curates 300 artworks exclusively from the Renaissance period (c. 1300–1600), stored in **Cloud Firestore** for fast, reliable access. The app features real **Firebase Authentication** (email/password and Google Sign-In), per-user favorites and offline collections, and a modern Art Gallery UI with dark/light theme support.
 
-The web version is deployed and hosted on **Firebase Hosting**, making it accessible on any device via browser without installation.
+The artwork dataset includes paintings, sculptures, frescoes, drawings, and prints by 16 major Renaissance artists — each with detailed historical background, meaning, symbolism, and provenance.
+
+**Live URL:** https://renaart-ded29.web.app
 
 ---
 
@@ -82,6 +83,7 @@ She enjoys viewing famous artworks but often feels confused because the informat
 | Comprehension | Artwork pages deliver clear, structured explanations of history and meaning |
 | Accessibility | Core content is available offline after initial save |
 | Engagement | Users build and revisit their personal collection |
+| Personalization | Per-user favorites and collections via Firebase Auth |
 
 ### Success Metrics (KPIs)
 | Metric | Target |
@@ -90,7 +92,7 @@ She enjoys viewing famous artworks but often feels confused because the informat
 | Artworks saved to collection per active user | ≥ 5 |
 | Offline collection access rate | ≥ 30% of sessions |
 | Search-to-detail conversion | ≥ 60% |
-| App crash rate (web + mobile) | < 1% |
+| App crash rate (web) | < 1% |
 
 ---
 
@@ -98,39 +100,51 @@ She enjoys viewing famous artworks but often feels confused because the informat
 
 | # | Feature | What It Does | Why It Matters |
 |---|---|---|---|
-| F1 | **Artwork Browsing** | Displays a curated feed of Renaissance artworks from the Met Museum API | Core function to explore content |
-| F2 | **Search & Filters** | Find artworks or artists by keyword | Easy navigation for specific interests |
-| F3 | **Artwork Detail Page** | Shows the artwork image, title, artist, year, medium, dimensions, and historical explanation | Provides deeper understanding and context |
-| F4 | **Favorite & Save (My Collection)** | Save artworks locally via Hive for offline access | Creates a personal, persistent collection |
-| F5 | **Offline Access** | View saved artworks without an internet connection | Solves the connectivity pain point |
-| F6 | **Authentication** | Email-based login and registration with local session persistence | Enables personalized, stateful experience |
-| F7 | **Dark / Light Theme** | System-aware UI theme toggle | Improves accessibility and personal preference |
+| F1 | **Artwork Browsing** | Displays a curated feed of 300 Renaissance artworks from Cloud Firestore with period filters (Early Renaissance, High Renaissance, Northern Renaissance, Mannerism) | Core function to explore content |
+| F2 | **Search & Filters** | Find artworks by title, artist, medium, period, subject, or region with autocomplete suggestions | Easy navigation for specific interests |
+| F3 | **Artwork Detail Page** | Shows artwork image, title, artist, year, medium, dimensions, historical background, meaning & symbols, key symbols, and related artworks ("More to Explore") | Provides deeper understanding and context |
+| F4 | **Fullscreen Image Viewer** | Pinch-to-zoom, pan, and view artwork in immersive fullscreen mode | Appreciate visual details |
+| F5 | **Favorite & Save (My Collection)** | Save artworks locally via Hive for offline access; favorites scoped per user ID | Creates a personal, persistent collection |
+| F6 | **Offline Access** | View saved artworks (max 10) without an internet connection | Solves the connectivity pain point |
+| F7 | **Firebase Authentication** | Email/password login, Google Sign-In, guest mode, password reset, account deletion | Enables personalized, secure experience |
+| F8 | **User Profile** | Display name (editable), username (editable with re-auth), email (locked), password change, User ID (read-only), delete account | Full account management |
+| F9 | **Report a Problem** | Submit bug reports with 7 categories to Firestore | User feedback collection |
+| F10 | **Dark / Light Theme** | Dark mode by default with user toggle; adaptive UI across all screens | Improves accessibility and personal preference |
 
 ---
 
 ## 6. User Stories
 
 ### Authentication
-- As a new user, I want to register with my email so that I can create a personal account.
-- As a returning user, I want to log in so that my saved collection persists across sessions.
+- As a new user, I want to register with my email, nickname, and username so that I can create a personal account.
+- As a returning user, I want to log in with email/password or Google Sign-In so that my saved collection persists.
+- As a user, I want to continue as a guest so that I can explore without creating an account.
+- As a user, I want to reset my password via email so that I can recover my account.
+- As a user, I want to delete my account permanently so that all my data is removed.
 
 ### Browsing & Discovery
-- As a user, I want to see a curated home feed of Renaissance artworks so that I can start exploring immediately.
-- As a user, I want to search by artwork title or artist name so that I can find specific works quickly.
+- As a user, I want to see a curated home feed of Renaissance artworks with period filter chips so that I can browse by era.
+- As a user, I want to search by artwork title, artist name, or keyword with autocomplete so that I can find specific works quickly.
+- As a user, I want to filter by art form, subject, and region so that I can narrow down results.
 - As a user, I want to see a shimmer loading state while artworks load so that the experience feels smooth.
 
 ### Artwork Detail
-- As a user, I want to tap an artwork card to see its full detail page including history, medium, and artist biography so that I can understand it in context.
-- As a user, I want to see a high-quality image of the artwork so that I can appreciate the visual details.
+- As a user, I want to tap an artwork card to see its full detail page including historical background, meaning & symbols, and related artworks so that I can understand it in context.
+- As a user, I want to view the artwork in fullscreen with pinch-to-zoom so that I can appreciate the visual details.
+- As a user, I want to see "More to Explore" related artworks (same artist, period, or medium) so that I can continue browsing.
 
 ### Collection & Offline
 - As a user, I want to save an artwork to My Collection so that I can revisit it later.
-- As a user, I want to view my saved artworks offline so that I can learn while traveling without internet.
+- As a user, I want to view my saved artworks offline (max 10) so that I can learn while traveling without internet.
 - As a user, I want to remove an artwork from My Collection so that I can keep it organized.
+- As a user, I want my favorites to be scoped to my account so that different users have separate collections.
 
 ### Profile
-- As a user, I want to see my profile with the number of saved artworks so that I know my collection size.
-- As a user, I want to toggle dark/light mode so that I can use the app comfortably in any environment.
+- As a user, I want to see my profile with account info and collection stats.
+- As a user, I want to edit my display name and username (with re-authentication).
+- As a user, I want to change my password with strength indicators.
+- As a user, I want to toggle dark/light mode so that I can use the app comfortably.
+- As a user, I want to report problems via the app so that issues can be tracked.
 - As a user, I want to log out so that my session is cleared securely.
 
 ---
@@ -139,29 +153,45 @@ She enjoys viewing famous artworks but often feels confused because the informat
 
 ```
 1. Open App
-   └── Splash Screen (auto-redirect)
+   └── Splash Screen (logo animation, auto-redirect)
        ├── [Not logged in] → Login Screen
-       │   └── Register Screen (new users)
-       └── [Logged in] → Home Screen
+       │   ├── Sign In with Email/Password
+       │   ├── Sign In with Google
+       │   ├── Continue as Guest
+       │   ├── Forgot Password → Reset email sent
+       │   └── Create Account → Register Screen
+       │       ├── Nickname, Username (availability check), Email, Password (strength indicators)
+       │       └── Register → Home Screen
+       └── [Logged in / persistent session] → Home Screen
 
 2. Home Feed
-   └── Browse curated Renaissance artworks (staggered grid)
+   └── Browse 300 Renaissance artworks (staggered grid)
+       ├── Period filter chips: All | Early | High | Northern | Mannerism
        └── Tap artwork card → Artwork Detail Screen
-           ├── Read explanation, history, artist info
-           └── Tap ♥ Save → Artwork added to My Collection
+           ├── Historical Background, Meaning & Symbols
+           ├── Tap ♥ Like → Added to favorites (per-user)
+           ├── Tap Save Offline → Stored locally (max 10)
+           ├── Tap image → Fullscreen viewer (pinch-to-zoom)
+           └── More to Explore → Related artworks
 
 3. Search
-   └── Enter artist or artwork name
+   └── Enter artist, artwork, or keyword (autocomplete suggestions)
+       ├── Filter by Art Form, Subject, Region
        └── Filtered results → Tap → Artwork Detail Screen
 
 4. My Collection
-   └── View all saved artworks (offline-accessible)
+   ├── Favorites tab → All liked artworks
+   └── Offline tab → Downloaded artworks (max 10)
        └── Tap → Artwork Detail Screen (from local storage)
 
 5. Profile
-   └── View username and collection count
-       ├── Toggle dark/light theme
-       └── Log out → Back to Login Screen
+   ├── Account Info: Display Name, Username, Email (locked), User ID
+   ├── Change Password (with strength indicators)
+   ├── Toggle dark/light theme
+   ├── About RenaArt (version, GitHub link)
+   ├── Report a Problem (7 categories)
+   ├── Delete Account (with re-authentication)
+   └── Sign Out → Back to Login Screen
 ```
 
 ---
@@ -172,31 +202,49 @@ RenaArt follows a **feature-first layered architecture** with Riverpod for react
 
 ```
 lib/
-├── main.dart                   # App entry point, Hive init, ProviderScope
+├── main.dart                          # Entry point: Firebase.initializeApp, Hive init, ProviderScope
+├── firebase_options.dart              # FlutterFire CLI config (web)
 ├── core/
-│   ├── constants/              # API base URLs, app-wide constants
-│   ├── router/                 # GoRouter config with auth-guard redirects
-│   └── theme/                  # Light & dark MaterialTheme definitions
+│   ├── constants/app_constants.dart   # Data source config, Hive box names, filter lists
+│   ├── router/app_router.dart         # GoRouter with auth-guard redirects
+│   └── theme/app_theme.dart           # Light & dark theme (Modern Art Gallery aesthetic)
 ├── features/
-│   ├── auth/                   # Splash, Login, Register screens
-│   ├── home/                   # Feed screen, MainShell (bottom nav), providers
-│   ├── search/                 # Search screen
-│   ├── artwork_detail/         # Detail screen
-│   ├── collection/             # My Collection screen
-│   └── profile/                # Profile screen
+│   ├── auth/
+│   │   ├── screen/splash_screen.dart  # Logo animation, auto-redirect
+│   │   ├── screen/login_screen.dart   # Email/password, Google, guest, forgot password
+│   │   ├── screen/register_screen.dart # Nickname, username check, password strength
+│   │   └── widgets/art_mosaic_bg.dart # Decorative background
+│   ├── home/
+│   │   ├── screen/home_screen.dart    # Staggered grid feed with period chips
+│   │   ├── screen/main_shell.dart     # Bottom navigation (4 tabs)
+│   │   ├── providers/app_providers.dart # ALL providers: auth, favorites, offline, feed, search
+│   │   └── widgets/artwork_card.dart  # Reusable artwork card with heart/save buttons
+│   ├── search/screen/search_screen.dart
+│   ├── artwork_detail/
+│   │   ├── screen/artwork_detail_screen.dart # Detail + More to Explore
+│   │   └── screen/image_viewer_screen.dart   # Fullscreen pinch-to-zoom
+│   ├── collection/screen/collection_screen.dart
+│   └── profile/screen/profile_screen.dart  # Account, password, report, delete
 ├── models/
-│   ├── artwork_model.dart      # Hive-annotated Artwork data class
-│   └── user_model.dart         # User session model
+│   ├── artwork_model.dart             # Hive-annotated: Artwork, UserArtworkState, OfflineArtwork
+│   └── user_model.dart                # UserModel, UserPreferences, UserStats
 └── services/
-    ├── met_api_service.dart    # Met Museum REST API client (Dio)
-    ├── local_storage_service.  # Hive box management
-    └── mock_artwork_service.dart # Fallback mock data
+    ├── firestore_artwork_service.dart # Primary: Cloud Firestore artworks collection
+    ├── firestore_user_service.dart    # User profiles, usernames, reports
+    ├── artwork_api_service.dart       # Router: Firestore → local asset fallback
+    ├── local_artwork_service.dart     # Fallback: bundled JSON (assets/data/)
+    ├── local_storage_service.dart     # Hive boxes: cache, favorites (per-user), offline
+    ├── met_api_service.dart           # Legacy: Met Museum REST API client
+    └── aic_api_service.dart           # Legacy: Art Institute of Chicago API client
 ```
 
 ### State Management Pattern
-- **Riverpod 2 (`flutter_riverpod`)** — all state is held in `Provider` / `FutureProvider` / `StateNotifierProvider` instances
+- **Riverpod 2 (`flutter_riverpod`)** — all state in `Provider` / `FutureProvider` / `StateNotifierProvider`
 - `ProviderScope` wraps the entire widget tree at `main.dart`
-- `authProvider` drives the router's auth-guard redirect logic
+- `authProvider` (StateNotifierProvider) — Firebase Auth state, drives router redirects
+- `favoritesProvider` — per-user favorites, auto-reads userId from authProvider
+- `offlineIdsProvider` — offline save state (max 10)
+- `homeFeedProvider` — derived provider: raw feed + period filter (no API re-fetch on filter change)
 
 ---
 
@@ -208,6 +256,7 @@ lib/
 | **Language** | Dart | ≥3.3.0 |
 | **State Management** | flutter_riverpod | ^2.4.9 |
 | **Navigation** | go_router | ^13.2.0 |
+| **Backend** | Firebase (Core + Auth + Firestore) | ^4.5.0 / ^6.2.0 / ^6.1.3 |
 | **HTTP Client** | dio | ^5.4.0 |
 | **Local Storage** | hive + hive_flutter | ^2.2.3 / ^1.1.0 |
 | **Preferences** | shared_preferences | ^2.2.2 |
@@ -215,9 +264,11 @@ lib/
 | **Image Caching** | cached_network_image | ^3.3.1 |
 | **UI — Grid** | flutter_staggered_grid_view | ^0.7.0 |
 | **UI — Skeleton** | shimmer | ^3.0.0 |
-| **Fonts** | Cormorant, Jost | (bundled assets) |
-| **CI / Hosting** | Firebase Hosting | — |
-| **Data Source** | Met Museum Open API | v1 (public domain) |
+| **Fonts** | Cormorant (serif), Jost (sans-serif) | (bundled assets) |
+| **Hosting** | Firebase Hosting | — |
+| **Database** | Cloud Firestore (asia-southeast3) | — |
+| **Auth** | Firebase Authentication | Email/Password + Google |
+| **Data Source** | Cloud Firestore `artworks` collection (300 docs) | — |
 
 ---
 
@@ -227,255 +278,222 @@ lib/
 
 | Screen | Route | Description |
 |---|---|---|
-| SplashScreen | `/` | Auto-redirects based on auth state |
-| LoginScreen | `/login` | Email + password login |
-| RegisterScreen | `/register` | New user registration |
-| HomeScreen | `/home` (tab 0) | Staggered artwork feed |
-| SearchScreen | `/home` (tab 1) | Keyword search |
-| CollectionScreen | `/home` (tab 2) | Saved artworks |
-| ProfileScreen | `/home` (tab 3) | User info, theme toggle, logout |
-| ArtworkDetailScreen | `/artwork/:id` | Full artwork detail |
+| SplashScreen | `/` | Logo animation, auto-redirects based on auth state |
+| LoginScreen | `/login` | Email/password + Google Sign-In + guest + forgot password |
+| RegisterScreen | `/register` | Nickname, username (availability check), email, password (strength) |
+| HomeScreen | `/home` (tab 0) | Staggered artwork feed with period filter chips |
+| SearchScreen | `/home` (tab 1) | Keyword search with autocomplete, art form / subject / region filters |
+| CollectionScreen | `/home` (tab 2) | Favorites + Offline tabs |
+| ProfileScreen | `/home` (tab 3) | Account info, password change, report, delete, theme toggle |
+| ArtworkDetailScreen | `/artwork/:id` | Full detail: image, metadata, history, meaning, symbols, related |
+| ImageViewerScreen | `/artwork/:id/image` | Fullscreen pinch-to-zoom image viewer |
 
 ### Navigation Structure
 - **Bottom Navigation (MainShell):** Home → Search → Collection → Profile
-- **Auth Guard:** Unauthenticated users are always redirected to `/login`
-- **Deep Link:** `/artwork/:id` accepts an optional preloaded `Artwork` object via `extra` for instant display before API response
+- **Auth Guard:** Unauthenticated users redirected to `/login`; authenticated users on `/login` or `/register` redirected to `/home`
+- **Deep Link:** `/artwork/:id` accepts optional preloaded `Artwork` via `extra` for instant display
 
 ---
 
 ## 11. Data Model
 
-### `Artwork` (Hive Box)
+### `Artwork` (Hive TypeId: 0 / Firestore `artworks` collection)
 | Field | Type | Description |
 |---|---|---|
-| `objectId` | `int` | Met Museum object ID (primary key) |
+| `id` | `String` | Unique artwork identifier |
 | `title` | `String` | Artwork title |
-| `artistName` | `String` | Artist display name |
-| `artistBio` | `String?` | Artist biography |
-| `objectDate` | `String?` | Date / period string |
-| `medium` | `String?` | Materials and technique |
-| `dimensions` | `String?` | Physical dimensions |
-| `primaryImageUrl` | `String` | CDN URL of full image |
-| `smallImageUrl` | `String?` | CDN URL of thumbnail |
-| `department` | `String?` | Museum department |
-| `culture` | `String?` | Cultural attribution |
-| `isPublicDomain` | `bool` | Only `true` artworks are used |
-| `isFavorited` | `bool` | Local save flag |
+| `artist` | `String` | Artist display name |
+| `year` | `String` | Date or period string |
+| `medium` | `String` | Materials and technique (e.g., "Oil on panel") |
+| `dimensions` | `String` | Physical dimensions |
+| `location` | `String` | Current museum/gallery location |
+| `imageUrl` | `String` | Public domain image URL (Wikimedia Commons) |
+| `description` | `String` | Historical background (detailed paragraph) |
+| `meaning` | `String` | Meaning & symbolism explanation |
+| `keySymbols` | `List<String>` | Key symbols in the artwork |
+| `artForm` | `String` | Classification: Painting, Sculpture, Fresco, Drawing, Print |
+| `subject` | `String` | Subject: Religious, Portrait, Mythology, Allegory, Historical |
+| `period` | `String` | Period: Early Renaissance, High Renaissance, Northern Renaissance, Mannerism |
+| `region` | `String` | Origin: Florence, Rome, Venice, Milan, Germany, Flanders |
 
-### `User` (SharedPreferences / session)
+### `UserArtworkState` (Hive TypeId: 1 — per-user favorites)
 | Field | Type | Description |
 |---|---|---|
-| `uid` | `String` | Local unique identifier |
-| `email` | `String` | Registered email |
-| `displayName` | `String?` | Display name |
+| `artworkId` | `String` | Artwork ID |
+| `userId` | `String` | User ID (composite key: `userId_artworkId`) |
+| `isFavorited` | `bool` | Favorite flag |
+| `favoritedDate` | `String?` | ISO 8601 timestamp |
+| `viewCount` | `int` | Number of times viewed |
+| `lastViewed` | `String?` | Last viewed timestamp |
+
+### `OfflineArtwork` (Hive TypeId: 2 — max 10)
+| Field | Type | Description |
+|---|---|---|
+| `artworkId` | `String` | Artwork ID |
+| `isOfflineAvailable` | `bool` | Offline flag |
+| `downloadedDate` | `String` | Download timestamp |
+| `imageResolution` | `String` | Resolution hint |
+| `lastAccessDate` | `String` | Last access timestamp |
+
+### `UserModel` (SharedPreferences + Firestore `users` collection)
+| Field | Type | Description |
+|---|---|---|
+| `userId` | `String` | Firebase Auth UID |
+| `name` | `String` | Display name |
+| `nickname` | `String` | Nickname |
+| `username` | `String` | Unique username (alphanumeric + underscore, 3+ chars) |
+| `email` | `String` | Registered email (locked, cannot change) |
+| `createdAt` | `String` | Account creation timestamp |
+| `isGuest` | `bool` | Guest mode flag |
+| `preferences` | `UserPreferences` | Dark mode, high-fidelity settings |
+| `stats` | `UserStats` | Favorites count, offline count |
 
 ---
 
-## 12. External Integrations
+## 12. Data Source & Firestore
 
-### Met Museum Open Access API
-- **Base URL:** `https://collectionapi.metmuseum.org/public/collection/v1`
-- **Endpoints Used:**
-  - `GET /search?q={query}&hasImages=true&departmentId=11` — returns `{total, objectIDs[]}`
-  - `GET /objects/{id}` — returns full artwork JSON
-- **Department 11** corresponds to European Paintings (Renaissance focus)
-- **Security:** Custom Dio interceptor validates all image URLs originate from `*.metmuseum.org`
-- **Public Domain Only:** The app only surfaces artworks where `isPublicDomain == true`
-- **Timeouts:** Connect 10 s / Receive 15 s
+### Cloud Firestore
+- **Project:** `renaart-ded29`
+- **Region:** `asia-southeast3`
+- **Collections:**
+
+| Collection | Documents | Description |
+|---|---|---|
+| `artworks` | 300 | Complete Renaissance artwork dataset with full metadata |
+| `users` | Dynamic | User profiles (keyed by Firebase Auth UID) |
+| `usernames` | Dynamic | Username uniqueness registry (case-insensitive) |
+| `reports` | Dynamic | User-submitted problem reports |
+
+### Firestore Security Rules
+```
+artworks  → public read, no client write
+users     → owner read/write only (auth.uid == userId)
+usernames → public read, authenticated create/delete (own records only)
+reports   → authenticated create only, no read
+```
+
+### Data Flow
+1. **Primary:** Cloud Firestore `artworks` collection (300 documents, pre-populated)
+2. **Fallback:** Bundled local JSON asset (`assets/data/artworks.json`) if Firestore unavailable
+3. **Cache:** Hive `artworks_cache` box stores fetched artworks for offline access
+
+### Artwork Dataset
+- **Scope:** Renaissance period, c. 1300–1600
+- **Types:** Painting, Sculpture, Fresco, Drawing, Print
+- **Artists:** 16 major Renaissance masters including Leonardo da Vinci, Michelangelo, Raphael, Botticelli, Titian, Dürer, Caravaggio, Jan van Eyck, El Greco, Donatello, and more
+- **Images:** Public domain URLs from Wikimedia Commons
+- **Content:** Each artwork includes detailed historical background, meaning & symbolism, key symbols list
 
 ---
 
-## 13. Offline Support
+## 13. Authentication
+
+### Firebase Authentication
+- **Providers:** Email/Password, Google Sign-In
+- **Guest Mode:** Local-only session without Firebase Auth (limited features)
+
+### Auth Flow
+| Method | Implementation |
+|---|---|
+| **Email/Password** | `signInWithEmailAndPassword` / `createUserWithEmailAndPassword` |
+| **Google Sign-In** | `signInWithPopup(GoogleAuthProvider())` |
+| **Password Reset** | `sendPasswordResetEmail` — sends real reset link to email |
+| **Session Persistence** | Firebase Auth persistent session + SharedPreferences backup |
+| **Re-authentication** | Required for username change, password change, account deletion |
+| **Account Deletion** | Deletes Firestore profile, releases username, deletes Firebase Auth account |
+
+### Username System
+- Unique usernames stored in Firestore `usernames` collection
+- Availability check with debounced Firestore query during registration
+- Case-insensitive uniqueness enforcement
+
+### Password Requirements
+- Minimum 8 characters
+- At least one uppercase letter
+- At least one lowercase letter
+- At least one digit
+- At least one special character
+
+---
+
+## 14. Offline Support
 
 | Scenario | Behaviour |
 |---|---|
-| No internet on launch | App loads from Hive; My Collection fully available |
-| Artwork saved while online | Image URL + metadata stored in Hive box |
+| No internet on launch | App loads from Hive cache; My Collection fully available |
+| Artwork saved while online | Full metadata stored in Hive box (max 10 offline artworks) |
 | Search with no internet | Graceful error state with retry prompt |
 | Artwork detail from Collection | Loaded from Hive; no network request needed |
+| Storage full (10/10) | "Storage Full" message; user must remove one first |
 
-Connectivity is monitored via `connectivity_plus`. The UI reflects real-time online/offline status.
+Connectivity is monitored via `connectivity_plus`. The UI reflects real-time online/offline status with a banner.
 
 ---
 
-## 14. UI / Design Principles
+## 15. UI / Design Principles
 
 | Principle | Implementation |
 |---|---|
-| **Renaissance Aesthetic** | Cormorant (serif) for artwork titles and headings; Jost (sans-serif) for body text |
-| **Immersive Imagery** | Full-bleed artwork images with minimal chrome |
-| **Beginner-Friendly** | Short, plain-language descriptions; avoid academic jargon |
-| **Adaptive Theme** | System-aware dark/light mode; user can override in Profile |
-| **Performance** | `cached_network_image` for CDN-cached artwork photos; shimmer placeholders during load |
-| **Accessibility** | Sufficient contrast ratios in both themes; no text baked into images |
+| **Modern Art Gallery Aesthetic** | Matte black (dark) / near-white (light) backgrounds; museum-quality feel |
+| **Typography** | Cormorant (serif) for titles, headings, and branding; Jost (sans-serif) for body text and UI |
+| **Logo** | Renaissance sculpture silhouette — white in dark mode, black in light mode |
+| **Color Palette** | Dark: `#0E0E0E` bg, `#1A1A1A` surface, `#C8A84B` gold accent. Light: `#F6F6F6` bg, `#FFFFFF` surface, `#111111` text |
+| **Immersive Imagery** | Full-bleed artwork images, gradient overlays, glass-style back buttons |
+| **Beginner-Friendly** | Short, plain-language descriptions; structured content with headers |
+| **Dark Mode Default** | First-time users see dark mode; toggle available in Profile |
+| **Success Notifications** | Theme-matching SnackBars with green checkmark icon, white text |
+| **Error Handling** | Friendly error messages; no technical jargon shown to users |
+| **Performance** | `cached_network_image` with shimmer placeholders; staggered grid layout |
+| **Accessibility** | Sufficient contrast ratios; locked email field prevents accidental changes |
 
 ---
 
-## 15. Firebase Deployment
+## 16. Deployment
 
-### Overview
-The Flutter web build is deployed to **Firebase Hosting**, providing a globally distributed CDN, HTTPS by default, and SPA routing support.
+### Firebase Hosting
 
-### Firebase Hosting Configuration (`firebase.json`)
+The Flutter web build is deployed to **Firebase Hosting** with global CDN, HTTPS, and SPA routing.
+
+**Live URL:** https://renaart-ded29.web.app
+
+### Firebase Configuration (`firebase.json`)
 ```json
 {
   "hosting": {
     "public": "renaart/build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [{ "source": "**", "destination": "/index.html" }],
+    "headers": [{
+      "source": "**/*.@(js|html|css|json)",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+    }]
+  },
+  "firestore": { "rules": "firestore.rules" }
 }
 ```
 
-- **`public`:** Points to Flutter's web build output directory `renaart/build/web`
-- **`rewrites`:** All routes fall through to `index.html` — required for Flutter's single-page app routing with GoRouter
-
-### Deployment Steps
-
-#### Prerequisites
+### Build & Deploy
 ```bash
-# Install Firebase CLI (if not already installed)
-npm install -g firebase-tools
-
-# Authenticate
-firebase login
-```
-
-#### Build & Deploy
-```bash
-# 1. Navigate to the Flutter project
+# 1. Build Flutter web
 cd renaart
-
-# 2. Build Flutter web (release mode)
 flutter build web --release
 
-# 3. Return to repo root and deploy
+# 2. Copy build output and deploy
 cd ..
+cp -r renaart/build/web/* build/
 firebase deploy --only hosting
 ```
 
-#### Deploy Output
-Upon success, Firebase CLI outputs:
-```
-✔  Deploy complete!
-
-Hosting URL: https://renaart-ded29.web.app/
-```
-
-### Environment Targets
-
-| Target | Description |
+### Firebase Services Used
+| Service | Purpose |
 |---|---|
-| **Production** | `firebase deploy --only hosting` — deploys to default Firebase Hosting site |
-| **Preview Channel** | `firebase hosting:channel:deploy preview` — temporary preview URL for QA |
-
-### CI / CD (Recommended)
-
-Add the following GitHub Actions workflow for automated deploys on push to `main`:
-
-```yaml
-# .github/workflows/firebase-deploy.yml
-name: Deploy to Firebase Hosting
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - name: Install dependencies
-        run: cd renaart && flutter pub get
-      - name: Build web
-        run: cd renaart && flutter build web --release
-      - name: Deploy to Firebase
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          channelId: live
-```
+| **Firebase Hosting** | Web app hosting with CDN |
+| **Cloud Firestore** | Artwork database (300 docs), user profiles, usernames, reports |
+| **Firebase Authentication** | Email/password + Google Sign-In |
 
 ---
 
-## 15.2 Google Play Store (Android)
-
-### Overview
-The Flutter Android build is signed with a release keystore and uploaded to the **Google Play Store** as an AAB (Android App Bundle). The keystore and all credentials are stored exclusively as GitHub Secrets — they are **never committed to the repository**.
-
-### Required GitHub Secrets
-
-| Secret | How to get it |
-|---|---|
-| `KEYSTORE_BASE64` | `base64 -w 0 renaart-release.jks` |
-| `KEYSTORE_PASSWORD` | Password chosen when generating the keystore |
-| `KEY_ALIAS` | Alias chosen when generating the keystore |
-| `KEY_PASSWORD` | Key password chosen when generating the keystore |
-| `GOOGLE_PLAY_JSON_KEY` | Service account JSON from Google Play Console → Setup → API access |
-
-### One-Time Local Setup
-```bash
-# From repo root — generates keystore + writes android/key.properties locally
-bash scripts/setup-signing.sh
-```
-The script also prints the `KEYSTORE_BASE64` value ready to paste into GitHub Secrets.
-
-### Build & Sign Locally
-```bash
-cd renaart
-
-# Copy example and fill in your real values
-cp android/key.properties.example android/key.properties
-# (edit android/key.properties with your credentials)
-
-# Build signed AAB
-flutter build appbundle --release
-# Output: build/app/outputs/bundle/release/app-release.aab
-```
-
-### Automated Deploy (GitHub Actions)
-Workflow file: `.github/workflows/playstore-deploy.yml`
-
-**Trigger:** pushing a version tag (e.g. `git tag v1.0.0 && git push --tags`)
-
-Pipeline steps:
-1. Decode `KEYSTORE_BASE64` secret → write `renaart-release.jks`
-2. Write `android/key.properties` from secrets
-3. `flutter pub get` → `flutter analyze` → `flutter test`
-4. `flutter build appbundle --release` → produces signed AAB
-5. Upload AAB to Play Store **internal track** via `r0adkll/upload-google-play`
-6. **Delete keystore and key.properties** from runner (`if: always()`)
-
-### Promotion Path
-```
-internal  →  closed testing (alpha)  →  open testing (beta)  →  production
-```
-Promote manually in Google Play Console after QA at each stage.
-
-### Safety Checklist
-- [x] `*.jks`, `*.keystore`, `android/key.properties` in `.gitignore` (both root and `renaart/`)
-- [x] Keystore never stored in repo — only in GitHub Secrets as base64
-- [x] Workflow deletes keystore from runner after every run
-- [x] Play Store service account has minimum required role (Release manager only)
-- [x] AAB is signed with release keystore (not the debug key)
-
----
-
-## 16. Out of Scope
+## 17. Out of Scope
 
 The following items are explicitly **not** included in the MVP:
 
@@ -485,27 +503,27 @@ The following items are explicitly **not** included in the MVP:
 | Audio narration / guided tours | Complexity beyond MVP timeline |
 | User-generated content / reviews | Content moderation required |
 | Push notifications | Not required for core learning loop |
-| iOS App Store release | Requires Apple Developer account and macOS build environment |
+| iOS / Android native release | Web-only deployment via Firebase Hosting |
 | Social sharing | Beyond MVP feature set |
 | Multi-language support (i18n) | Single language (English) for MVP |
 
 ---
 
-## 17. Risks & Mitigations
+## 18. Risks & Mitigations
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| Met Museum API rate limits or downtime | Medium | High | Implement mock artwork service as fallback; cache responses in Hive |
-| Large image payloads degrade performance | Medium | Medium | Use `smallImageUrl` in cards; `primaryImageUrl` only on detail screen; `cached_network_image` |
-| Offline data stale / artwork removed from API | Low | Medium | Store full artwork snapshot at save time; show "archived" badge if no longer available online |
-| Firebase Hosting build deployment failure | Low | Medium | Keep build output committed or use CI artifact; test `firebase serve` locally before deploying |
-| Play Store keystore lost / corrupted | Low | Critical | Back up `renaart-release.jks` in a password manager or offline secure storage; Google cannot re-sign lost AABs |
-| Google Play service account JSON leaked | Low | High | Store only in GitHub Secrets; never log or print in CI; rotate immediately if exposed |
-| Authentication state loss on web | Medium | Medium | Persist session in `shared_preferences`; re-check on app resume |
+| Firestore quota exceeded | Low | High | Bundled local JSON fallback; Hive caching reduces reads |
+| Image URLs break (Wikimedia) | Low | Medium | `cached_network_image` with error placeholder; retry mechanism |
+| Large image payloads degrade performance | Medium | Medium | Images loaded on demand; shimmer placeholders; cached locally |
+| Firebase Auth state loss on web | Medium | Medium | Persistent Firebase session + SharedPreferences backup; defensive `_load()` with try-catch |
+| Stale browser cache after deploy | Medium | Low | `Cache-Control: no-cache` headers; users can Ctrl+Shift+R |
+| Google Sign-In COOP issues | Low | Medium | Using `signInWithPopup`; fallback error handling |
+| Hive/IndexedDB corrupted | Low | Medium | `_openBoxSafe` clears corrupted data and retries; try-catch around all Hive operations |
 
 ---
 
-## 18. Appendix
+## 19. Appendix
 
 ### A. Evaluation Summary (Original Submission)
 | Criterion | Score |
@@ -520,18 +538,20 @@ The following items are explicitly **not** included in the MVP:
 ### B. App Feature-to-Pain-Point Mapping
 | Pain Point | App Feature | Outcome |
 |---|---|---|
-| Art feels difficult to understand | Clear, structured artwork explanations | Users understand artworks more easily |
-| Information is scattered across sites | One curated app for Renaissance art | Users save time |
-| Long academic text is hard to read | Structured content with headers and short paragraphs | Learning feels simpler |
-| No internet access while traveling | Offline save via Hive local storage | Users can learn anywhere |
+| Art feels difficult to understand | Clear, structured artwork explanations with meaning & symbols | Users understand artworks more easily |
+| Information is scattered across sites | One curated app with 300 Renaissance artworks | Users save time |
+| Long academic text is hard to read | Structured content with headers, short paragraphs, symbol chips | Learning feels simpler |
+| No internet access while traveling | Offline save via Hive local storage (max 10) | Users can learn anywhere |
+| Can't personalize experience | Firebase Auth with per-user favorites and collections | Each user has their own space |
 
 ### C. Glossary
 | Term | Definition |
 |---|---|
-| **Met Museum API** | The Metropolitan Museum of Art's free, public REST API providing metadata and images for 470,000+ artworks |
+| **Cloud Firestore** | Google's serverless NoSQL document database for real-time data syncing |
+| **Firebase Auth** | Google's authentication service supporting email/password, Google Sign-In, and more |
+| **Firebase Hosting** | Google's static and dynamic web hosting service with global CDN |
 | **Hive** | A lightweight, NoSQL Flutter/Dart key-value database for local persistence |
 | **Riverpod** | A reactive state management library for Flutter |
 | **GoRouter** | A declarative URL-based routing package for Flutter |
-| **CanvasKit** | Flutter's Skia-based web renderer providing high-fidelity graphics at the cost of a larger initial load |
-| **Firebase Hosting** | Google's static and dynamic web hosting service with global CDN |
 | **SPA (Single-Page Application)** | A web app where all routing is handled client-side; requires server-side rewrite rules to serve `index.html` for all paths |
+| **Wikimedia Commons** | A media repository of free-use images, used as the source for public domain artwork images |
