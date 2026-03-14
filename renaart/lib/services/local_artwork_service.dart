@@ -33,7 +33,9 @@ class LocalArtworkService {
   // ── Home Feed ─────────────────────────────────────────────────────────────
   Future<List<Artwork>> fetchRenaissanceFeed({int count = 30}) async {
     final all = await _load();
-    return all.take(count).toList();
+    // Shuffle to show variety on each load, return up to count items
+    final shuffled = List<Artwork>.from(all)..shuffle();
+    return shuffled.take(count).toList();
   }
 
   // ── Search ────────────────────────────────────────────────────────────────

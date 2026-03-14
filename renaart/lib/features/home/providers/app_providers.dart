@@ -244,20 +244,19 @@ final selectedPeriodProvider = StateProvider<String>((ref) => 'All');
 /// Raw fetch provider — only re-runs when connectivity changes, NOT on period change
 final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) async {
   final storage = ref.watch(storageProvider);
-  final isOnline = ref.watch(isOnlineProvider);
-
-  // Offline strategy: return cache immediately with offline banner
-  if (!isOnline) {
-    return storage.getAllCachedArtworks();
-  }
-
   final api = ref.watch(artworkApiServiceProvider);
 
-  // Unified service handles AIC / Rijksmuseum / Met / Mock routing + fallback
-  final artworks = await api.fetchRenaissanceFeed(count: 30);
+  // Load all artworks from local asset and cache for search/filter
+  final artworks = await api.fetchRenaissanceFeed(count: 200);
   if (artworks.isNotEmpty) {
     await storage.cacheArtworks(artworks);
   }
+
+  // If local load failed, fallback to cache
+  if (artworks.isEmpty) {
+    return storage.getAllCachedArtworks();
+  }
+
   return artworks;
 });
 
@@ -316,15 +315,14 @@ bool _isFilterableRenaissanceArtwork(Artwork artwork) {
 final searchFilterSeedProvider =
     FutureProvider.autoDispose<List<Artwork>>((ref) async {
   final storage = ref.watch(storageProvider);
-  final isOnline = ref.watch(isOnlineProvider);
 
   var seed = storage.getAllCachedArtworks()
       .where(_isFilterableRenaissanceArtwork)
       .toList();
 
-  if (isOnline && seed.length < 24) {
+  if (seed.length < 24) {
     final api = ref.watch(artworkApiServiceProvider);
-    final fetched = await api.fetchRenaissanceFeed(count: 80);
+    final fetched = await api.fetchRenaissanceFeed(count: 200);
     if (fetched.isNotEmpty) {
       await storage.cacheArtworks(fetched);
       seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
@@ -442,23 +440,18 @@ final searchResultsProvider =
 
   List<Artwork> results;
 
-  if (!isOnline) {
-    // Offline: use cache only
-    results = storage.getAllCachedArtworks();
-  } else if (query.isNotEmpty) {
+  // Always use cached data (populated by home feed from local asset)
+  results = storage.getAllCachedArtworks();
+  if (results.isEmpty) {
+    // Fallback: load from API/local directly
     final api = ref.watch(artworkApiServiceProvider);
-    results = await api.searchArtworks(query);
-    await storage.cacheArtworks(results);
-  } else {
-    // Online + filter-only: use cache first, then fetch feed fallback
-    results = storage.getAllCachedArtworks();
-    if (results.isEmpty) {
-      final api = ref.watch(artworkApiServiceProvider);
-      final feed = await api.fetchRenaissanceFeed(count: 60);
-      if (feed.isNotEmpty) {
-        await storage.cacheArtworks(feed);
-        results = feed;
-      }
+    if (query.isNotEmpty) {
+      results = await api.searchArtworks(query, maxCount: 200);
+    } else {
+      results = await api.fetchRenaissanceFeed(count: 200);
+    }
+    if (results.isNotEmpty) {
+      await storage.cacheArtworks(results);
     }
   }
 
