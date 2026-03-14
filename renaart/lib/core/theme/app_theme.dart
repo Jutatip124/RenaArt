@@ -51,7 +51,7 @@ class AppColors {
   static const Color gold          = accent;
   static const Color goldDim       = Color(0xFF8A7230);
   static const Color heartRed      = error;
-  static const Color saveBlue      = accentBlueLight;
+  static const Color saveBlue      = accent; // gold — matches dark mode accent
   static const Color errorRed      = error;
 }
 

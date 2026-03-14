@@ -23,14 +23,12 @@ class HomeScreen extends ConsumerWidget {
       body: CustomScrollView(slivers: [
         // ── AppBar ──────────────────────────────────────────────
         SliverAppBar(
-          floating: true, snap: true,
+          pinned: true,
           backgroundColor: bg,
-          title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          
-            Text('RenaArt', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
-                fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
-                color: text, letterSpacing: -0.5, height: 1.0)),
-          ]),
+          centerTitle: true,
+          title: Text('RenaArt', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
+              fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
+              color: text, letterSpacing: -0.5, height: 1.0)),
           actions: const [],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(46),

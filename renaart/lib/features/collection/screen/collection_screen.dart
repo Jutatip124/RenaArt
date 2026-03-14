@@ -41,23 +41,21 @@ class _CollState extends ConsumerState<CollectionScreen>
         // ── Header ─────────────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.fromLTRB(18, 16, 18, 0),
-          child: Row(children: [
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('My Collection', style: TextStyle(fontFamily: 'Cormorant',
-                  fontSize: 28, fontWeight: FontWeight.w700, color: text,
-                  letterSpacing: -0.6)),
-              const SizedBox(height: 2),
-              Row(children: [
-                const Icon(Icons.favorite, size: 11, color: AppColors.heartRed),
-                const SizedBox(width: 4),
-                Text('${favs.length} liked', style: TextStyle(fontFamily: 'Jost',
-                    fontSize: 11, color: faint)),
-                const SizedBox(width: 12),
-                const Icon(Icons.download_done, size: 11, color: AppColors.saveBlue),
-                const SizedBox(width: 4),
-                Text('$oCount/${AppConstants.maxOfflineArtworks} saved', style: TextStyle(
-                    fontFamily: 'Jost', fontSize: 11, color: faint)),
-              ]),
+          child: Column(children: [
+            Center(child: Text('My Collection', style: TextStyle(fontFamily: 'Cormorant',
+                fontSize: 26, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
+                color: text, letterSpacing: -0.5))),
+            const SizedBox(height: 6),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.favorite, size: 11, color: AppColors.heartRed),
+              const SizedBox(width: 4),
+              Text('${favs.length} liked', style: TextStyle(fontFamily: 'Jost',
+                  fontSize: 11, color: faint)),
+              const SizedBox(width: 12),
+              const Icon(Icons.download_done, size: 11, color: AppColors.saveBlue),
+              const SizedBox(width: 4),
+              Text('$oCount/${AppConstants.maxOfflineArtworks} saved', style: TextStyle(
+                  fontFamily: 'Jost', fontSize: 11, color: faint)),
             ]),
           ]),
         ),
