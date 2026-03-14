@@ -13,7 +13,7 @@ class AppConstants {
   AppConstants._();
 
   // ─── Active data source ────────────────────────────────────────────────────
-  static const ApiSource activeSource = ApiSource.localAsset;
+  static const ApiSource activeSource = ApiSource.artInstituteChicago;
 
   // Path to the bundled artworks JSON asset (used by localAsset source)
   static const String artworksDataPath = 'assets/data/artworks.json';
