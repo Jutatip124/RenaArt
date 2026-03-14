@@ -20,7 +20,6 @@ class ArtworkCard extends ConsumerWidget {
     final isFav     = ref.watch(favoritesProvider.select((l) => l.contains(artwork.id)));
     final isOffline = ref.watch(offlineIdsProvider.select((l) => l.contains(artwork.id)));
     final isDark    = Theme.of(context).brightness == Brightness.dark;
-    final user      = ref.watch(authProvider);
 
     return GestureDetector(
       onTap: () => context.push(AppRoutes.artworkPath(artwork.id), extra: artwork),
@@ -78,7 +77,7 @@ class ArtworkCard extends ConsumerWidget {
                 _HeartBtn(
                   isFav: isFav, isDark: isDark,
                   onTap: () => ref.read(favoritesProvider.notifier)
-                      .toggle(artwork.id, user?.userId ?? 'guest'),
+                      .toggle(artwork.id),
                 ),
                 const SizedBox(height: 5),
                 _SaveBtn(

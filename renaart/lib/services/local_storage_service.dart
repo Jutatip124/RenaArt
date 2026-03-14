@@ -69,15 +69,16 @@ class LocalStorageService {
 
   // ─── Favorites (Week 3: Room.insert(UserArtworkState)) ───────────────────
 
-  /// Week 5 Spec: toggleFavorite(Artwork): add/remove from favorites box
+  /// Toggle favorite — uses composite key `userId_artworkId` for per-user scoping
   Future<void> toggleFavorite(String artworkId, String userId) async {
     if (_favoritesBox == null) return;
-    final existing = _favoritesBox!.get(artworkId);
+    final key = '${userId}_$artworkId';
+    final existing = _favoritesBox!.get(key);
     if (existing != null && existing.isFavorited) {
-      await _favoritesBox!.delete(artworkId);
+      await _favoritesBox!.delete(key);
     } else {
       await _favoritesBox!.put(
-        artworkId,
+        key,
         UserArtworkState(
           artworkId: artworkId,
           userId: userId,
@@ -89,16 +90,17 @@ class LocalStorageService {
     }
   }
 
-  bool isFavorite(String artworkId) {
-    final state = _favoritesBox?.get(artworkId);
+  bool isFavorite(String artworkId, String userId) {
+    final key = '${userId}_$artworkId';
+    final state = _favoritesBox?.get(key);
     return state?.isFavorited ?? false;
   }
 
   /// Week 5 Spec: getFavorites(): return List by querying artworks box with favorites keys
-  List<Artwork> getFavorites() {
+  List<Artwork> getFavorites(String userId) {
     if (!_ready) return [];
     final favoriteIds = _favoritesBox!.values
-        .where((s) => s.isFavorited)
+        .where((s) => s.isFavorited && s.userId == userId)
         .map((s) => s.artworkId)
         .toSet();
     return _artworksCache!.values
@@ -106,10 +108,10 @@ class LocalStorageService {
         .toList();
   }
 
-  List<String> getFavoriteIds() {
+  List<String> getFavoriteIds(String userId) {
     if (_favoritesBox == null) return [];
     return _favoritesBox!.values
-        .where((s) => s.isFavorited)
+        .where((s) => s.isFavorited && s.userId == userId)
         .map((s) => s.artworkId)
         .toList();
   }
@@ -168,14 +170,15 @@ class LocalStorageService {
 
   Future<void> recordView(String artworkId, String userId) async {
     if (_favoritesBox == null) return;
-    final existing = _favoritesBox!.get(artworkId);
+    final key = '${userId}_$artworkId';
+    final existing = _favoritesBox!.get(key);
     if (existing != null) {
       existing.viewCount = (existing.viewCount) + 1;
       existing.lastViewed = DateTime.now().toIso8601String();
       await existing.save();
     } else {
       await _favoritesBox!.put(
-        artworkId,
+        key,
         UserArtworkState(
           artworkId: artworkId,
           userId: userId,
@@ -187,8 +190,8 @@ class LocalStorageService {
     }
   }
 
-  int getViewCount(String artworkId) =>
-      _favoritesBox?.get(artworkId)?.viewCount ?? 0;
+  int getViewCount(String artworkId, String userId) =>
+      _favoritesBox?.get('${userId}_$artworkId')?.viewCount ?? 0;
 
   // ─── User Profile (SharedPreferences) ────────────────────────────────────
 
@@ -222,7 +225,7 @@ class LocalStorageService {
         highFidelityMode: prefs.getBool(AppConstants.keyHighFidelity) ?? true,
       ),
       stats: UserStats(
-        totalFavorites: getFavoriteIds().length,
+        totalFavorites: getFavoriteIds(userId).length,
         offlineSaved: offlineCount,
       ),
     );

@@ -45,7 +45,6 @@ class _Body extends ConsumerWidget {
     final offlineFull= ref.watch(offlineIdsProvider.select((l) =>
         l.length >= AppConstants.maxOfflineArtworks && !l.contains(artwork.id)));
     final isDark     = Theme.of(context).brightness == Brightness.dark;
-    final user       = ref.watch(authProvider);
     final bg         = isDark ? AppColors.darkCanvas : AppColors.canvas;
     final text       = isDark ? AppColors.darkText   : AppColors.ink;
     final sub        = isDark ? AppColors.darkSub    : AppColors.inkMid;
@@ -86,7 +85,7 @@ class _Body extends ConsumerWidget {
           actions: [
             GestureDetector(
               onTap: () => ref.read(favoritesProvider.notifier)
-                  .toggle(artwork.id, user?.userId ?? 'guest'),
+                  .toggle(artwork.id),
               child: Container(
                 margin: const EdgeInsets.all(8), width: 34, height: 34,
                 decoration: BoxDecoration(
@@ -169,7 +168,7 @@ class _Body extends ConsumerWidget {
                 active: isFav, activeColor: AppColors.heartRed,
                 isDark: isDark,
                 onTap: () => ref.read(favoritesProvider.notifier)
-                    .toggle(artwork.id, user?.userId ?? 'guest'),
+                    .toggle(artwork.id),
               ),
               const SizedBox(width: 8),
               _ActionPill(

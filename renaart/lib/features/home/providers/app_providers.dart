@@ -428,16 +428,20 @@ final isOnlineProvider = Provider<bool>((ref) {
 // FAVORITES — Global State (Week 3: needed in Home, Search, Detail, Collection)
 // ══════════════════════════════════════════════════════════════════════════════
 final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<String>>(
-  (ref) => FavoritesNotifier(),
+  (ref) {
+    final userId = ref.watch(authProvider)?.userId ?? 'guest';
+    return FavoritesNotifier(userId);
+  },
 );
 
 class FavoritesNotifier extends StateNotifier<List<String>> {
-  FavoritesNotifier()
-      : super(LocalStorageService.instance.getFavoriteIds());
+  final String _userId;
+  FavoritesNotifier(this._userId)
+      : super(LocalStorageService.instance.getFavoriteIds(_userId));
 
-  Future<void> toggle(String artworkId, String userId) async {
-    await LocalStorageService.instance.toggleFavorite(artworkId, userId);
-    state = LocalStorageService.instance.getFavoriteIds();
+  Future<void> toggle(String artworkId) async {
+    await LocalStorageService.instance.toggleFavorite(artworkId, _userId);
+    state = LocalStorageService.instance.getFavoriteIds(_userId);
   }
 
   bool isFavorite(String artworkId) => state.contains(artworkId);
@@ -742,7 +746,8 @@ final searchResultsProvider =
 // ══════════════════════════════════════════════════════════════════════════════
 final favoriteArtworksProvider = Provider<List<Artwork>>((ref) {
   ref.watch(favoritesProvider); // re-eval when favorites change
-  return LocalStorageService.instance.getFavorites();
+  final userId = ref.watch(authProvider)?.userId ?? 'guest';
+  return LocalStorageService.instance.getFavorites(userId);
 });
 
 final offlineArtworksProvider = Provider<List<Artwork>>((ref) {
