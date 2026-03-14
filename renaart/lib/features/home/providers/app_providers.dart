@@ -70,12 +70,14 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     _load();
   }
 
-  final _auth = FirebaseAuth.instance;
+  FirebaseAuth? get _auth {
+    try { return FirebaseAuth.instance; } catch (_) { return null; }
+  }
   final _db = FirestoreUserService.instance;
 
   Future<void> _load() async {
     try {
-      final fbUser = _auth.currentUser;
+      final fbUser = _auth?.currentUser;
       if (fbUser != null) {
         final profile = await _db.loadProfile(fbUser.uid, fbUser.email ?? '');
         if (profile != null) {
@@ -93,7 +95,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   /// Sign in with email/password. Throws [String] on error.
   Future<void> signIn(String email, String password) async {
     try {
-      final cred = await _auth.signInWithEmailAndPassword(
+      final cred = await _auth!.signInWithEmailAndPassword(
           email: email, password: password);
       final fbUser = cred.user!;
       var profile = await _db.loadProfile(fbUser.uid, email);
@@ -116,7 +118,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   Future<void> signInWithGoogle() async {
     try {
       final provider = GoogleAuthProvider();
-      final cred = await _auth.signInWithPopup(provider);
+      final cred = await _auth!.signInWithPopup(provider);
       final fbUser = cred.user!;
       final email = fbUser.email ?? '';
       var profile = await _db.loadProfile(fbUser.uid, email);
@@ -148,7 +150,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       final available = await _db.isUsernameAvailable(username);
       if (!available) throw 'Username "@$username" is already taken.';
 
-      final cred = await _auth.createUserWithEmailAndPassword(
+      final cred = await _auth!.createUserWithEmailAndPassword(
           email: email, password: password);
       final fbUser = cred.user!;
       await fbUser.updateDisplayName(nickname);
@@ -175,7 +177,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
 
   /// Re-authenticate the current user with their password.
   Future<void> reauthenticate(String password) async {
-    final fbUser = _auth.currentUser;
+    final fbUser = _auth?.currentUser;
     if (fbUser == null || fbUser.email == null) {
       throw 'No authenticated user found.';
     }
@@ -191,7 +193,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   /// Send password reset email.
   Future<void> resetPassword(String email) async {
     try {
-      await _auth.sendPasswordResetEmail(email: email);
+      await _auth!.sendPasswordResetEmail(email: email);
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
     }
@@ -229,7 +231,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   Future<void> updateEmail(String email) async {
     if (state == null) return;
     try {
-      final fbUser = _auth.currentUser;
+      final fbUser = _auth?.currentUser;
       if (fbUser != null) {
         await fbUser.verifyBeforeUpdateEmail(email);
       }
@@ -246,7 +248,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   Future<void> updatePassword(String password) async {
     if (state == null || password.isEmpty) return;
     try {
-      final fbUser = _auth.currentUser;
+      final fbUser = _auth?.currentUser;
       if (fbUser != null) {
         await fbUser.updatePassword(password);
       }
@@ -273,7 +275,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   Future<void> signOut() async {
-    try { await _auth.signOut(); } catch (_) {}
+    try { await _auth?.signOut(); } catch (_) {}
     await LocalStorageService.instance.clearUser();
     state = null;
   }

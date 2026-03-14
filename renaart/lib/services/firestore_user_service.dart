@@ -6,19 +6,24 @@ class FirestoreUserService {
   FirestoreUserService._();
   static final instance = FirestoreUserService._();
 
-  late final _col = FirebaseFirestore.instance.collection('users');
-  late final _usernames = FirebaseFirestore.instance.collection('usernames');
-  late final _reports = FirebaseFirestore.instance.collection('reports');
+  CollectionReference<Map<String, dynamic>> get _col =>
+      FirebaseFirestore.instance.collection('users');
+  CollectionReference<Map<String, dynamic>> get _usernames =>
+      FirebaseFirestore.instance.collection('usernames');
+  CollectionReference<Map<String, dynamic>> get _reports =>
+      FirebaseFirestore.instance.collection('reports');
 
   Future<void> saveProfile(UserModel user) async {
-    await _col.doc(user.userId).set({
-      'nickname': user.nickname,
-      'username': user.username,
-      'email': user.email,
-      'createdAt': user.createdAt,
-      'darkMode': user.preferences.darkMode,
-      'highFidelity': user.preferences.highFidelityMode,
-    }, SetOptions(merge: true));
+    try {
+      await _col.doc(user.userId).set({
+        'nickname': user.nickname,
+        'username': user.username,
+        'email': user.email,
+        'createdAt': user.createdAt,
+        'darkMode': user.preferences.darkMode,
+        'highFidelity': user.preferences.highFidelityMode,
+      }, SetOptions(merge: true));
+    } catch (_) {}
   }
 
   Future<UserModel?> loadProfile(String uid, String email) async {
@@ -75,11 +80,15 @@ class FirestoreUserService {
 
   /// Submit a problem report to Firestore.
   Future<void> submitReport(String userId, String category, String description) async {
-    await _reports.add({
-      'userId': userId,
-      'category': category,
-      'description': description,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    try {
+      await _reports.add({
+        'userId': userId,
+        'category': category,
+        'description': description,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (_) {
+      rethrow;
+    }
   }
 }
