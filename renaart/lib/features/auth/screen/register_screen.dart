@@ -37,10 +37,13 @@ class _RegState extends ConsumerState<RegisterScreen> {
       setState(() => _err = 'Password must be at least 6 characters.'); return;
     }
     setState(() { _loading = true; _err = null; });
-    await Future.delayed(const Duration(milliseconds: 600));
-    await ref.read(authProvider.notifier).register(
-        _nick.text.trim(), _email.text.trim(), _pass.text);
-    if (mounted) context.go(AppRoutes.home);
+    try {
+      await ref.read(authProvider.notifier).register(
+          _nick.text.trim(), _email.text.trim(), _pass.text);
+      if (mounted) context.go(AppRoutes.home);
+    } catch (e) {
+      if (mounted) setState(() { _loading = false; _err = e.toString(); });
+    }
   }
 
   @override

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../models/artwork_model.dart';
 import '../../../models/user_model.dart';
 import '../../../services/artwork_api_service.dart';
 import '../../../services/local_artwork_service.dart';
 import '../../../services/local_storage_service.dart';
+import '../../../services/firestore_user_service.dart';
 import '../../../core/constants/app_constants.dart';
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -66,39 +68,76 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     _load();
   }
 
+  final _auth = FirebaseAuth.instance;
+  final _db = FirestoreUserService.instance;
+
   Future<void> _load() async {
+    // Try Firebase Auth current user first
+    final fbUser = _auth.currentUser;
+    if (fbUser != null) {
+      final profile = await _db.loadProfile(fbUser.uid, fbUser.email ?? '');
+      if (profile != null) {
+        await LocalStorageService.instance.saveUser(profile);
+        state = profile;
+        return;
+      }
+    }
+    // Fall back to locally saved user
     state = await LocalStorageService.instance.loadUser();
   }
 
+  /// Sign in with Firebase Auth. Throws [String] on error.
   Future<void> signIn(String email, String password) async {
-    // Mock auth — replace with real backend when available
-    final userId = 'user_${DateTime.now().millisecondsSinceEpoch}';
-    final username = email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
-    final user = UserModel(
-      userId: userId,
-      name: username,
-      nickname: username,
-      username: username,
-      email: email,
-      createdAt: DateTime.now().toIso8601String(),
-    );
-    await LocalStorageService.instance.saveUser(user);
-    state = user;
+    try {
+      final cred = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      final fbUser = cred.user!;
+      var profile = await _db.loadProfile(fbUser.uid, email);
+      profile ??= UserModel(
+        userId: fbUser.uid,
+        name: fbUser.displayName ?? email.split('@').first,
+        nickname: fbUser.displayName ?? email.split('@').first,
+        username: email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_'),
+        email: email,
+        createdAt: DateTime.now().toIso8601String(),
+      );
+      await LocalStorageService.instance.saveUser(profile);
+      state = profile;
+    } on FirebaseAuthException catch (e) {
+      throw _mapAuthError(e.code);
+    }
   }
 
+  /// Register with Firebase Auth. Throws [String] on error.
   Future<void> register(String nickname, String email, String password) async {
-    final userId = 'user_${DateTime.now().millisecondsSinceEpoch}';
-    final username = email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_');
-    final user = UserModel(
-      userId: userId,
-      name: nickname,
-      nickname: nickname,
-      username: username,
-      email: email,
-      createdAt: DateTime.now().toIso8601String(),
-    );
-    await LocalStorageService.instance.saveUser(user);
-    state = user;
+    try {
+      final cred = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+      final fbUser = cred.user!;
+      await fbUser.updateDisplayName(nickname);
+      final user = UserModel(
+        userId: fbUser.uid,
+        name: nickname,
+        nickname: nickname,
+        username: email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_'),
+        email: email,
+        createdAt: DateTime.now().toIso8601String(),
+      );
+      await _db.saveProfile(user);
+      await LocalStorageService.instance.saveUser(user);
+      state = user;
+    } on FirebaseAuthException catch (e) {
+      throw _mapAuthError(e.code);
+    }
+  }
+
+  /// Send password reset email. Throws [String] on error.
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw _mapAuthError(e.code);
+    }
   }
 
   Future<void> continueAsGuest() async {
@@ -111,6 +150,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     if (state == null) return;
     final updated = state!.copyWith(nickname: nickname);
     await LocalStorageService.instance.saveUser(updated);
+    await _db.saveProfile(updated);
     state = updated;
   }
 
@@ -118,21 +158,36 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     if (state == null) return;
     final updated = state!.copyWith(username: username);
     await LocalStorageService.instance.saveUser(updated);
+    await _db.saveProfile(updated);
     state = updated;
   }
 
   Future<void> updateEmail(String email) async {
     if (state == null) return;
-    final updated = state!.copyWith(email: email);
-    await LocalStorageService.instance.saveUser(updated);
-    state = updated;
+    try {
+      final fbUser = _auth.currentUser;
+      if (fbUser != null) {
+        await fbUser.verifyBeforeUpdateEmail(email);
+      }
+      final updated = state!.copyWith(email: email);
+      await LocalStorageService.instance.saveUser(updated);
+      await _db.saveProfile(updated);
+      state = updated;
+    } on FirebaseAuthException catch (e) {
+      throw _mapAuthError(e.code);
+    }
   }
 
   Future<void> updatePassword(String password) async {
-    // Password stored locally only (mock auth)
-    // In production this would call a backend API
     if (state == null || password.isEmpty) return;
-    // No-op for now — password not stored in UserModel for security
+    try {
+      final fbUser = _auth.currentUser;
+      if (fbUser != null) {
+        await fbUser.updatePassword(password);
+      }
+    } on FirebaseAuthException catch (e) {
+      throw _mapAuthError(e.code);
+    }
   }
 
   Future<void> toggleHighFidelity() async {
@@ -147,8 +202,34 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   Future<void> signOut() async {
+    try { await _auth.signOut(); } catch (_) {}
     await LocalStorageService.instance.clearUser();
     state = null;
+  }
+
+  String _mapAuthError(String code) {
+    switch (code) {
+      case 'user-not-found':
+        return 'No account found with this email.';
+      case 'wrong-password':
+        return 'Incorrect password. Please try again.';
+      case 'invalid-credential':
+        return 'Invalid email or password.';
+      case 'email-already-in-use':
+        return 'An account already exists with this email.';
+      case 'weak-password':
+        return 'Password is too weak. Use at least 6 characters.';
+      case 'invalid-email':
+        return 'Please enter a valid email address.';
+      case 'too-many-requests':
+        return 'Too many attempts. Please try again later.';
+      case 'requires-recent-login':
+        return 'Please sign out and sign in again to update this.';
+      case 'network-request-failed':
+        return 'Network error. Check your connection.';
+      default:
+        return 'Authentication error. Please try again.';
+    }
   }
 }
 

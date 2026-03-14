@@ -28,9 +28,33 @@ class _LoginState extends ConsumerState<LoginScreen> {
       setState(() => _err = 'Please fill in all fields.'); return;
     }
     setState(() { _loading = true; _err = null; });
-    await Future.delayed(const Duration(milliseconds: 500));
-    await ref.read(authProvider.notifier).signIn(_email.text.trim(), _pass.text);
-    if (mounted) context.go(AppRoutes.home);
+    try {
+      await ref.read(authProvider.notifier).signIn(_email.text.trim(), _pass.text);
+      if (mounted) context.go(AppRoutes.home);
+    } catch (e) {
+      if (mounted) setState(() { _loading = false; _err = e.toString(); });
+    }
+  }
+
+  Future<void> _forgotPassword() async {
+    final email = _email.text.trim();
+    if (email.isEmpty) {
+      setState(() => _err = 'Enter your email above, then tap Forgot Password.');
+      return;
+    }
+    setState(() { _loading = true; _err = null; });
+    try {
+      await ref.read(authProvider.notifier).resetPassword(email);
+      if (mounted) {
+        setState(() => _loading = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Password reset email sent to $email'),
+          backgroundColor: const Color(0xFF4CAF50),
+        ));
+      }
+    } catch (e) {
+      if (mounted) setState(() { _loading = false; _err = e.toString(); });
+    }
   }
 
   Future<void> _guest() async {
@@ -99,6 +123,18 @@ class _LoginState extends ConsumerState<LoginScreen> {
                   Text(_err!, style: const TextStyle(fontFamily: 'Jost',
                       fontSize: 12, color: AppColors.errorRed)),
                 ],
+                const SizedBox(height: 6),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: _loading ? null : _forgotPassword,
+                    child: Text('Forgot Password?',
+                      style: TextStyle(fontFamily: 'Jost', fontSize: 12,
+                          color: isDark ? AppColors.gold : AppColors.ink,
+                          decoration: TextDecoration.underline,
+                          decorationColor: isDark ? AppColors.gold : AppColors.ink)),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 // Black CTA button — Arts Gallery style
                 SizedBox(width: double.infinity,

@@ -233,9 +233,10 @@ class ProfileScreen extends ConsumerWidget {
       Function(String) onSave,
       {String? note, bool isPassword = false}) {
     final ctrl = TextEditingController(text: current);
+    String? dialogErr;
     showDialog(
         context: ctx,
-        builder: (_) => AlertDialog(
+        builder: (_) => StatefulBuilder(builder: (dialogCtx, setDialogState) => AlertDialog(
               backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               title: Text('Edit $label',
@@ -268,18 +269,27 @@ class ProfileScreen extends ConsumerWidget {
                       ? const InputDecoration(hintText: 'New password')
                       : null,
                 ),
+                if (dialogErr != null) ...[
+                  const SizedBox(height: 8),
+                  Text(dialogErr!, style: const TextStyle(
+                      fontFamily: 'Jost', fontSize: 12, color: AppColors.errorRed)),
+                ],
               ]),
               actions: [
                 TextButton(
-                    onPressed: () => Navigator.pop(ctx),
+                    onPressed: () => Navigator.pop(dialogCtx),
                     child: Text('Cancel',
                         style: TextStyle(
                             fontFamily: 'Jost',
                             color: isDark ? AppColors.darkFaint : AppColors.inkLight))),
                 TextButton(
-                    onPressed: () {
-                      onSave(ctrl.text.trim());
-                      Navigator.pop(ctx);
+                    onPressed: () async {
+                      try {
+                        await onSave(ctrl.text.trim());
+                        if (dialogCtx.mounted) Navigator.pop(dialogCtx);
+                      } catch (e) {
+                        setDialogState(() => dialogErr = e.toString());
+                      }
                     },
                     child: Text('Save',
                         style: TextStyle(
@@ -287,7 +297,7 @@ class ProfileScreen extends ConsumerWidget {
                             fontWeight: FontWeight.w600,
                             color: isDark ? AppColors.gold : AppColors.ink))),
               ],
-            ));
+            )));
   }
 }
 
