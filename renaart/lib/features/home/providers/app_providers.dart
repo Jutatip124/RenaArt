@@ -308,7 +308,7 @@ bool _isFilterableRenaissanceArtwork(Artwork artwork) {
   final period = artwork.period.toLowerCase();
   return period.contains('renaissance') ||
       period.contains('mannerism') ||
-      period.contains('flemish');
+      period.contains('proto-renaissance');
 }
 
 final searchFilterSeedProvider =

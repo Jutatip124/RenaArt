@@ -59,7 +59,6 @@ class AppStrings {
     'High Renaissance',
     'Northern Renaissance',
     'Mannerism',
-    'Flemish',
   ];
 
   // Popular artists from student's app concept
@@ -80,7 +79,6 @@ class AppStrings {
     'Sculpture',
     'Drawing',
     'Print',
-    'Decorative Arts',
   ];
 
   // Subject categories for content-based filtering
