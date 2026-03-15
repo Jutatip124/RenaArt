@@ -90,7 +90,7 @@ class _PeriodChips extends StatelessWidget {
     height: 36,
     child: ListView.separated(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 2, bottom: 10),
       itemCount: AppStrings.periods.length,
       separatorBuilder: (_, __) => const SizedBox(width: 8),
       itemBuilder: (_, i) {
