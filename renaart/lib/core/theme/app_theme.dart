@@ -64,7 +64,6 @@ class AppTheme {
   /// Themed success SnackBar — floating at top, rounded, green check icon.
   static SnackBar successSnackBar(BuildContext context, String message, {Duration? duration}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final mq = MediaQuery.of(context);
     return SnackBar(
       content: Row(children: [
         const Icon(Icons.check_circle_outline, color: Color(0xFF4CAF50), size: 22),
@@ -76,10 +75,8 @@ class AppTheme {
       backgroundColor: isDark ? const Color(0xFF3A3A3A) : const Color(0xFFF0F0F0),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      margin: EdgeInsets.only(
-        bottom: mq.size.height - mq.padding.top - 100,
-        left: 16, right: 16,
-      ),
+      margin: const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 8),
+      dismissDirection: DismissDirection.up,
       elevation: 4,
       duration: duration ?? const Duration(seconds: 3),
     );

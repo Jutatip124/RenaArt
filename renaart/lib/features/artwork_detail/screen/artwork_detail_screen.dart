@@ -179,7 +179,6 @@ class _Body extends ConsumerWidget {
                 onTap: () {
                   final ok = ref.read(offlineIdsProvider.notifier).toggleOffline(artwork);
                   if (!ok) {
-                    final mq = MediaQuery.of(context);
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Row(children: [
                         Icon(Icons.info_outline, color: isDark ? Colors.white70 : AppColors.inkMid, size: 22),
@@ -191,10 +190,8 @@ class _Body extends ConsumerWidget {
                       backgroundColor: isDark ? const Color(0xFF3A3A3A) : const Color(0xFFF0F0F0),
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      margin: EdgeInsets.only(
-                        bottom: mq.size.height - mq.padding.top - 100,
-                        left: 16, right: 16,
-                      ),
+                      margin: const EdgeInsets.only(top: 8, left: 16, right: 16, bottom: 8),
+                      dismissDirection: DismissDirection.up,
                       duration: const Duration(seconds: 3)));
                   }
                 },
