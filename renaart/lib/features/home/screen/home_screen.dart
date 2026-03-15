@@ -42,7 +42,7 @@ class HomeScreen extends ConsumerWidget {
           ]),
           actions: const [],
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(46),
+            preferredSize: const Size.fromHeight(38),
             child: _PeriodChips(selected: period, isDark: isDark,
               onSelect: (p) =>
                   ref.read(selectedPeriodProvider.notifier).state = p),
@@ -85,10 +85,10 @@ class _PeriodChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: 40,
+    height: 36,
     child: ListView.separated(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       itemCount: AppStrings.periods.length,
       separatorBuilder: (_, __) => const SizedBox(width: 8),
       itemBuilder: (_, i) {

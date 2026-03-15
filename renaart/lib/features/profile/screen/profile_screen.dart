@@ -26,19 +26,22 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              // ── Header ─────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.only(top: 12, bottom: 4),
-                child: Text('Profile', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
-                    fontWeight: FontWeight.w700, color: text, letterSpacing: -0.5)),
-              ),
-              Container(
+        child: CustomScrollView(
+          slivers: [
+            // ── Pinned Header ──────────────────────────────────────────
+            SliverAppBar(
+              pinned: true,
+              backgroundColor: bg,
+              centerTitle: true,
+              toolbarHeight: 44,
+              automaticallyImplyLeading: false,
+              title: Text('Profile', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
+                  fontWeight: FontWeight.w700, color: text, letterSpacing: -0.5, height: 1.0)),
+            ),
+            SliverToBoxAdapter(child: Container(
                 width: double.infinity,
-                color: isDark ? AppColors.darkSurface : AppColors.canvasTone,
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                color: bg,
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
               child: Column(
                 children: [
                   Stack(
@@ -102,7 +105,8 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-            ),
+            )),
+            SliverToBoxAdapter(child: Column(children: [
             const SizedBox(height: 20),
             _Label('ACCOUNT', faint),
             _Card(card, isDark, [
@@ -209,9 +213,8 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ],
             const SizedBox(height: 36),
-          ],
-        ),
-      ),
+          ])),
+        ]),
       ),
     );
   }

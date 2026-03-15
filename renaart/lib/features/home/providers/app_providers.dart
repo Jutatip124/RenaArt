@@ -478,7 +478,7 @@ class OfflineNotifier extends StateNotifier<List<String>> {
 // ══════════════════════════════════════════════════════════════════════════════
 // HOME FEED — Met Museum API + Cache
 // ══════════════════════════════════════════════════════════════════════════════
-final selectedPeriodProvider = StateProvider<String>((ref) => 'All');
+final selectedPeriodProvider = StateProvider<String>((ref) => 'For You');
 
 /// Raw fetch provider — only re-runs when connectivity changes, NOT on period change
 final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) async {
@@ -526,8 +526,23 @@ final homeFeedProvider = Provider.autoDispose<AsyncValue<List<Artwork>>>((ref) {
   return feedAsync.whenData((artworks) {
     // Filter out stale non-Renaissance cache entries (e.g. old AIC data)
     final filtered = artworks.where((a) => a.id.startsWith('local_')).toList();
-    if (period == 'All') return filtered;
-    return filtered.where((a) => a.period == period).toList();
+    if (period == 'For You') return filtered;
+    // Period filter (e.g. 'Early Renaissance')
+    if (period.contains('Renaissance') || period == 'Mannerism') {
+      return filtered.where((a) => a.period == period).toList();
+    }
+    // Subject filter (e.g. 'Religious', 'Portrait', 'Mythology')
+    final subjectMatch = filtered.where((a) => a.subject == period).toList();
+    if (subjectMatch.isNotEmpty) return subjectMatch;
+    // Medium / art form filter (e.g. 'Painting' → Oil, 'Sculpture' → Marble/Bronze, 'Fresco')
+    final lp = period.toLowerCase();
+    return filtered.where((a) {
+      final m = a.medium.toLowerCase();
+      if (lp == 'painting') return m.contains('oil') || m.contains('tempera') || m.contains('panel') || m.contains('canvas');
+      if (lp == 'sculpture') return m.contains('marble') || m.contains('bronze') || m.contains('sculpture');
+      if (lp == 'fresco') return m.contains('fresco');
+      return false;
+    }).toList();
   });
 });
 

@@ -54,11 +54,17 @@ class AppStrings {
 
   // Week 3 Spec: Periods (from student's own persona design)
   static const List<String> periods = [
-    'All',
+    'For You',
     'Early Renaissance',
     'High Renaissance',
     'Northern Renaissance',
     'Mannerism',
+    'Painting',
+    'Sculpture',
+    'Fresco',
+    'Religious',
+    'Portrait',
+    'Mythology',
   ];
 
   // Popular artists from student's app concept

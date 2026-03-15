@@ -52,7 +52,7 @@ class _SearchState extends ConsumerState<SearchScreen> {
       body: SafeArea(child: Column(children: [
         // ── Header ─────────────────────────────────────────────────
         Padding(
-          padding: const EdgeInsets.only(top: 12, bottom: 8),
+          padding: const EdgeInsets.only(top: 14, bottom: 8),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             ColorFiltered(
               colorFilter: ColorFilter.mode(
