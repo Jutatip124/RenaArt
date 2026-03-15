@@ -13,8 +13,6 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider);
     final isDark = ref.watch(themeModeProvider) == ThemeMode.dark;
-    final favCount = ref.watch(favoritesProvider).length;
-    final offCount = ref.watch(offlineIdsProvider).length;
 
     if (user == null) return const SizedBox.shrink();
 
@@ -36,7 +34,8 @@ class ProfileScreen extends ConsumerWidget {
               toolbarHeight: 44,
               automaticallyImplyLeading: false,
               title: Text('Profile', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
-                  fontWeight: FontWeight.w700, color: text, letterSpacing: -0.5, height: 1.0)),
+                  fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
+                  color: text, letterSpacing: -0.5, height: 1.0)),
             ),
             SliverToBoxAdapter(child: Container(
                 width: double.infinity,
@@ -82,27 +81,13 @@ class ProfileScreen extends ConsumerWidget {
                   Text(
                       user.isGuest
                           ? 'GUEST VISITOR'
-                          : '@${user.username}  ·  GALLERY MEMBER',
+                          : '@${user.username}',
                       style: TextStyle(
                           fontFamily: 'Jost',
                           fontSize: 10,
                           letterSpacing: 1.8,
                           fontWeight: FontWeight.w400,
                           color: faint)),
-                  const SizedBox(height: 22),
-                  IntrinsicHeight(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _Stat(count: favCount, label: 'Liked', isDark: isDark),
-                        VerticalDivider(
-                            color: isDark ? AppColors.darkBorder : AppColors.inkHair,
-                            thickness: 0.8,
-                            width: 32),
-                        _Stat(count: offCount, label: 'Offline', isDark: isDark),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             )),
@@ -156,7 +141,8 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 14),
             _Label('SUPPORT', faint),
             _Card(card, isDark, [
-              _Tile(Icons.help_outline, 'Help & FAQ', null, isDark, onTap: () {}),
+              _Tile(Icons.help_outline, 'Help & FAQ', null, isDark,
+                  onTap: () => _helpFaqDialog(context, isDark)),
               _Div(isDark),
               _Tile(Icons.flag_outlined, 'Report a Problem', null, isDark,
                   onTap: () => _reportDialog(context, ref, isDark)),
@@ -368,9 +354,12 @@ class ProfileScreen extends ConsumerWidget {
                 TextField(
                   controller: ctrl,
                   obscureText: isPassword,
-                  decoration: isPassword
-                      ? const InputDecoration(hintText: 'New password')
-                      : null,
+                  decoration: InputDecoration(
+                    hintText: isPassword ? 'New password' : 'Enter $label',
+                    hintStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                        color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
                 ),
                 if (dialogErr != null) ...[
                   const SizedBox(height: 8),
@@ -604,6 +593,55 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
+  void _helpFaqDialog(BuildContext ctx, bool isDark) {
+    final text = isDark ? AppColors.darkText : AppColors.ink;
+    final sub  = isDark ? AppColors.darkSub  : AppColors.inkMid;
+    const faqs = [
+      ('What is RenaArt?', 'RenaArt is a curated gallery of 300 Renaissance artworks (1300-1600) featuring paintings, sculptures, and frescoes from the greatest masters.'),
+      ('How do I save artworks offline?', 'Open any artwork detail page and tap the download icon. You can save up to 10 artworks for offline viewing.'),
+      ('How do I like an artwork?', 'Tap the heart icon on any artwork card or detail page. Liked artworks appear in your Collection tab.'),
+      ('Can I change my display name?', 'Yes. Go to Profile > Display Name and tap to edit.'),
+      ('What does High Fidelity mode do?', 'When enabled, images load at up to 1080p resolution. Disable it to save bandwidth on slower connections.'),
+      ('How do I report a problem?', 'Go to Profile > Report a Problem. Select a category, optionally enter the Object ID, describe the issue, and submit.'),
+      ('Is my data private?', 'Your account data is stored securely in Firebase. We do not share personal information with third parties.'),
+    ];
+    showDialog(
+      context: ctx,
+      builder: (_) => AlertDialog(
+        backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        title: Text('Help & FAQ', style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
+            fontWeight: FontWeight.w600, color: text)),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemCount: faqs.length,
+            separatorBuilder: (_, __) => Divider(
+                color: isDark ? AppColors.darkBorder : AppColors.inkHair, height: 20),
+            itemBuilder: (_, i) {
+              final (q, a) = faqs[i];
+              return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(q, style: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                    fontWeight: FontWeight.w600, color: text)),
+                const SizedBox(height: 4),
+                Text(a, style: TextStyle(fontFamily: 'Jost', fontSize: 12, color: sub)),
+              ]);
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Close', style: TextStyle(fontFamily: 'Jost',
+                fontWeight: FontWeight.w600,
+                color: isDark ? AppColors.gold : AppColors.ink)),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Report a Problem dialog with categories.
   void _reportDialog(BuildContext ctx, WidgetRef ref, bool isDark) {
     const categories = [
@@ -617,6 +655,7 @@ class ProfileScreen extends ConsumerWidget {
     ];
     String? selectedCategory;
     final otherCtrl = TextEditingController();
+    final objectIdCtrl = TextEditingController();
     final descCtrl = TextEditingController();
     String? dialogErr;
     bool loading = false;
@@ -663,6 +702,24 @@ class ProfileScreen extends ConsumerWidget {
                 )),
             ],
             const SizedBox(height: 14),
+            Text('OBJECT ID (OPTIONAL)', style: TextStyle(fontFamily: 'Jost', fontSize: 10,
+                fontWeight: FontWeight.w600, letterSpacing: 1.3,
+                color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
+            const SizedBox(height: 6),
+            TextField(
+              controller: objectIdCtrl,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                prefixText: 'local_',
+                prefixStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                    color: isDark ? AppColors.darkSub : AppColors.inkMid),
+                hintText: 'e.g. 123',
+                hintStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                    color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
+            const SizedBox(height: 14),
             Text('DESCRIPTION', style: TextStyle(fontFamily: 'Jost', fontSize: 10,
                 fontWeight: FontWeight.w600, letterSpacing: 1.3,
                 color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
@@ -700,7 +757,12 @@ class ProfileScreen extends ConsumerWidget {
                     : selectedCategory!;
                 setDialogState(() { loading = true; dialogErr = null; });
                 try {
-                  await ref.read(authProvider.notifier).submitReport(cat, descCtrl.text.trim());
+                  final objId = objectIdCtrl.text.trim().isNotEmpty
+                      ? 'local_${objectIdCtrl.text.trim()}' : '';
+                  final desc = objId.isNotEmpty
+                      ? '[Object: $objId] ${descCtrl.text.trim()}'
+                      : descCtrl.text.trim();
+                  await ref.read(authProvider.notifier).submitReport(cat, desc);
                   if (dialogCtx.mounted) {
                     Navigator.pop(dialogCtx);
                     ScaffoldMessenger.of(ctx).showSnackBar(
@@ -729,27 +791,6 @@ class _PwdReq {
   const _PwdReq(this.label, this.met);
 }
 
-class _Stat extends StatelessWidget {
-  final int count;
-  final String label;
-  final bool isDark;
-  const _Stat({required this.count, required this.label, required this.isDark});
-  @override
-  Widget build(BuildContext context) => Column(children: [
-        Text(count.toString(),
-            style: TextStyle(
-                fontFamily: 'Cormorant',
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: isDark ? AppColors.darkText : AppColors.ink)),
-        Text(label,
-            style: TextStyle(
-                fontFamily: 'Jost',
-                fontSize: 10,
-                letterSpacing: 0.4,
-                color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
-      ]);
-}
 
 class _InfoRow extends StatelessWidget {
   final String label, value;

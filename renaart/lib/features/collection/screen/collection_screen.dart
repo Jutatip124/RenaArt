@@ -40,25 +40,12 @@ class _CollState extends ConsumerState<CollectionScreen>
       body: SafeArea(child: Column(children: [
         // ── Header ─────────────────────────────────────────────────
         Padding(
-          padding: const EdgeInsets.fromLTRB(18, 16, 18, 0),
-          child: Column(children: [
-            Center(child: Text('My Collection', style: TextStyle(fontFamily: 'Cormorant',
-                fontSize: 26, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
-                color: text, letterSpacing: -0.5))),
-            const SizedBox(height: 6),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Icon(Icons.favorite, size: 11, color: AppColors.heartRed),
-              const SizedBox(width: 4),
-              Text('${favs.length} liked', style: TextStyle(fontFamily: 'Jost',
-                  fontSize: 11, color: faint)),
-              const SizedBox(width: 12),
-              const Icon(Icons.download_done, size: 11, color: AppColors.saveBlue),
-              const SizedBox(width: 4),
-              Text('$oCount/${AppConstants.maxOfflineArtworks} saved', style: TextStyle(
-                  fontFamily: 'Jost', fontSize: 11, color: faint)),
-            ]),
-          ]),
+          padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
+          child: Center(child: Text('My Collection', style: TextStyle(fontFamily: 'Cormorant',
+              fontSize: 26, fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
+              color: text, letterSpacing: -0.5, height: 1.0))),
         ),
+        const SizedBox(height: 8),
         
         // ── Tabs ───────────────────────────────────────────────────
         Container(
@@ -83,7 +70,7 @@ class _CollState extends ConsumerState<CollectionScreen>
                 fontWeight: FontWeight.w600),
             unselectedLabelStyle: const TextStyle(fontFamily: 'Jost', fontSize: 13,
                 fontWeight: FontWeight.w400),
-            tabs: const [Tab(text: 'Liked'), Tab(text: 'Offline')],
+            tabs: [Tab(text: 'Liked (${favs.length})'), Tab(text: 'Offline ($oCount/${AppConstants.maxOfflineArtworks})')],
           ),
         ),
         const SizedBox(height: 10),
