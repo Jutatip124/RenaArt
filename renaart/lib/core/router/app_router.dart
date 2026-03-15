@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/screen/splash_screen.dart';
 import '../../features/auth/screen/login_screen.dart';
 import '../../features/auth/screen/register_screen.dart';
+import '../../features/landing/screen/landing_screen.dart';
 import '../../features/home/screen/main_shell.dart';
 import '../../features/artwork_detail/screen/artwork_detail_screen.dart';
 import '../../features/artwork_detail/screen/image_viewer_screen.dart';
@@ -19,6 +20,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
+  static const String landing = '/landing';
   static const String artworkDetail = '/artwork/:id';
   static const String imageViewer = '/image-viewer';
 
@@ -37,6 +39,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthRoute =
           loc == AppRoutes.login || loc == AppRoutes.register || loc == AppRoutes.splash;
 
+      // Landing page is always accessible
+      if (loc == AppRoutes.landing) return null;
       // Always allow splash to show (it auto-navigates after delay)
       if (loc == AppRoutes.splash) return null;
       if (!isAuthed && !isAuthRoute) return AppRoutes.login;
@@ -47,6 +51,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.splash,
         pageBuilder: (context, state) => const NoTransitionPage(child: SplashScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.landing,
+        pageBuilder: (context, state) => const NoTransitionPage(child: LandingScreen()),
       ),
       GoRoute(
         path: AppRoutes.login,
