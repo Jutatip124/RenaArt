@@ -66,7 +66,7 @@ class AppTheme {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return SnackBar(
       content: Row(children: [
-        const Icon(Icons.check_circle_outline, color: Color(0xFF4CAF50), size: 22),
+        const Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 22),
         const SizedBox(width: 10),
         Expanded(child: Text(message,
             style: TextStyle(fontFamily: 'Jost', fontSize: 14,
