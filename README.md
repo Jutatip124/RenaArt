@@ -18,7 +18,8 @@ RenaArt helps users explore Renaissance art in a beginner-friendly way. The app 
 - **Offline access** — Save up to 10 artworks locally via Hive for viewing without internet
 - **Fullscreen image viewer** — Pinch-to-zoom for artwork details
 - **Dark / Light mode** — Dark mode default with modern Art Gallery aesthetic
-- **Report a Problem** — In-app bug reporting with 7 categories
+- **High Fidelity mode** — Toggle full-resolution images for bandwidth-conscious users
+- **Report an Issue** — In-app bug reporting with 7 categories + optional Object ID
 
 ### Tech Stack
 
@@ -119,7 +120,6 @@ The build output is in `renaart/build/web/`.
 
 ```bash
 # From the repo root
-cp -r renaart/build/web/* build/
 firebase deploy --only hosting
 ```
 
@@ -157,9 +157,9 @@ Hosting URL: https://renaart-ded29.web.app
 | Collection | Documents | Key Fields |
 |---|---|---|
 | `artworks` | 300 | title, artist, year, medium, description, meaning, keySymbols, imageUrl, artForm, subject, period, region |
-| `users` | Dynamic | userId, name, nickname, username, email, createdAt |
+| `users` | Dynamic | userId, name, nickname, username, email, createdAt, darkMode, highFidelity |
 | `usernames` | Dynamic | userId (for uniqueness enforcement) |
-| `reports` | Dynamic | userId, category, description, createdAt |
+| `reports` | Dynamic | userId, category, description, objectId (optional), createdAt |
 
 ### Authentication Providers
 
@@ -185,9 +185,9 @@ RenaArt/
 ├── firebase.json              # Firebase Hosting + Firestore config
 ├── firestore.rules            # Firestore security rules
 ├── PRD-RenaArt.md             # Product Requirements Document
-├── RenaArt.md                 # Original project submission
+├── RenaArt.md                 # Original project submission/evaluation
 ├── README.md                  # This file
-├── build/                     # Firebase Hosting deploy directory
+├── scripts/                   # Dev utilities (data generation, Firestore upload)
 └── renaart/                   # Flutter project
     ├── pubspec.yaml
     ├── web/                   # Web assets (index.html, icons, manifest)
@@ -199,9 +199,9 @@ RenaArt/
         ├── main.dart          # Entry point
         ├── firebase_options.dart
         ├── core/              # Constants, router, theme
-        ├── features/          # Auth, home, search, detail, collection, profile
+        ├── features/          # Auth, home, search, detail, collection, profile, landing
         ├── models/            # Artwork, User data classes
-        └── services/          # Firestore, local storage, API services
+        └── services/          # Firestore, local storage, artwork API router
 ```
 
 ---

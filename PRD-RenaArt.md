@@ -100,7 +100,7 @@ She enjoys viewing famous artworks but often feels confused because the informat
 
 | # | Feature | What It Does | Why It Matters |
 |---|---|---|---|
-| F1 | **Artwork Browsing** | Displays a curated feed of 300 Renaissance artworks from Cloud Firestore with period filters (Early Renaissance, High Renaissance, Northern Renaissance, Mannerism) | Core function to explore content |
+| F1 | **Artwork Browsing** | Displays a curated feed of 300 Renaissance artworks from Cloud Firestore with category chips (For You, periods, art forms, subjects) | Core function to explore content |
 | F2 | **Search & Filters** | Find artworks by title, artist, medium, period, subject, or region with autocomplete suggestions | Easy navigation for specific interests |
 | F3 | **Artwork Detail Page** | Shows artwork image, title, artist, year, medium, dimensions, historical background, meaning & symbols, key symbols, and related artworks ("More to Explore") | Provides deeper understanding and context |
 | F4 | **Fullscreen Image Viewer** | Pinch-to-zoom, pan, and view artwork in immersive fullscreen mode | Appreciate visual details |
@@ -108,8 +108,10 @@ She enjoys viewing famous artworks but often feels confused because the informat
 | F6 | **Offline Access** | View saved artworks (max 10) without an internet connection | Solves the connectivity pain point |
 | F7 | **Firebase Authentication** | Email/password login, Google Sign-In, guest mode, password reset, account deletion | Enables personalized, secure experience |
 | F8 | **User Profile** | Display name (editable), username (editable with re-auth), email (locked), password change, User ID (read-only), delete account | Full account management |
-| F9 | **Report a Problem** | Submit bug reports with 7 categories to Firestore | User feedback collection |
+| F9 | **Report an Issue** | Submit bug reports with 7 categories + optional Object ID to Firestore | User feedback collection |
 | F10 | **Dark / Light Theme** | Dark mode by default with user toggle; adaptive UI across all screens | Improves accessibility and personal preference |
+| F11 | **High Fidelity Mode** | Toggle full-resolution artwork images; settings persist to Firestore | Bandwidth-conscious image quality control |
+| F12 | **Help & FAQ** | In-app FAQ dialog with 7 common questions and answers | Self-service user support |
 
 ---
 
@@ -144,7 +146,7 @@ She enjoys viewing famous artworks but often feels confused because the informat
 - As a user, I want to edit my display name and username (with re-authentication).
 - As a user, I want to change my password with strength indicators.
 - As a user, I want to toggle dark/light mode so that I can use the app comfortably.
-- As a user, I want to report problems via the app so that issues can be tracked.
+- As a user, I want to report issues via the app so that problems can be tracked.
 - As a user, I want to log out so that my session is cleared securely.
 
 ---
@@ -166,7 +168,7 @@ She enjoys viewing famous artworks but often feels confused because the informat
 
 2. Home Feed
    └── Browse 300 Renaissance artworks (staggered grid)
-       ├── Period filter chips: All | Early | High | Northern | Mannerism
+       ├── Category chips: For You | Early Renaissance | High Renaissance | Northern Renaissance | Mannerism | Painting | Sculpture | Fresco | Religious | Portrait | Mythology
        └── Tap artwork card → Artwork Detail Screen
            ├── Historical Background, Meaning & Symbols
            ├── Tap ♥ Like → Added to favorites (per-user)
@@ -187,9 +189,10 @@ She enjoys viewing famous artworks but often feels confused because the informat
 5. Profile
    ├── Account Info: Display Name, Username, Email (locked), User ID
    ├── Change Password (with strength indicators)
-   ├── Toggle dark/light theme
+   ├── Toggle Dark/Light mode, High Fidelity mode
+   ├── Help & FAQ
    ├── About RenaArt (version, GitHub link)
-   ├── Report a Problem (7 categories)
+   ├── Report an Issue (7 categories + optional Object ID)
    ├── Delete Account (with re-authentication)
    └── Sign Out → Back to Login Screen
 ```
@@ -214,28 +217,28 @@ lib/
 │   │   ├── screen/login_screen.dart   # Email/password, Google, guest, forgot password
 │   │   ├── screen/register_screen.dart # Nickname, username check, password strength
 │   │   └── widgets/art_mosaic_bg.dart # Decorative background
+│   ├── landing/
+│   │   └── screen/landing_screen.dart # Public intro page with Get Started CTA
 │   ├── home/
-│   │   ├── screen/home_screen.dart    # Staggered grid feed with period chips
-│   │   ├── screen/main_shell.dart     # Bottom navigation (4 tabs)
+│   │   ├── screen/home_screen.dart    # Staggered grid feed with category chips
+│   │   ├── screen/main_shell.dart     # Bottom navigation (4 tabs, icon-only)
 │   │   ├── providers/app_providers.dart # ALL providers: auth, favorites, offline, feed, search
 │   │   └── widgets/artwork_card.dart  # Reusable artwork card with heart/save buttons
 │   ├── search/screen/search_screen.dart
 │   ├── artwork_detail/
 │   │   ├── screen/artwork_detail_screen.dart # Detail + More to Explore
 │   │   └── screen/image_viewer_screen.dart   # Fullscreen pinch-to-zoom
-│   ├── collection/screen/collection_screen.dart
-│   └── profile/screen/profile_screen.dart  # Account, password, report, delete
+│   ├── collection/screen/collection_screen.dart  # Favorites + Offline with counts
+│   └── profile/screen/profile_screen.dart  # Account, settings, Help & FAQ, report
 ├── models/
 │   ├── artwork_model.dart             # Hive-annotated: Artwork, UserArtworkState, OfflineArtwork
-│   └── user_model.dart                # UserModel, UserPreferences, UserStats
+│   └── user_model.dart                # UserModel with darkMode + highFidelity fields
 └── services/
     ├── firestore_artwork_service.dart # Primary: Cloud Firestore artworks collection
     ├── firestore_user_service.dart    # User profiles, usernames, reports
     ├── artwork_api_service.dart       # Router: Firestore → local asset fallback
     ├── local_artwork_service.dart     # Fallback: bundled JSON (assets/data/)
-    ├── local_storage_service.dart     # Hive boxes: cache, favorites (per-user), offline
-    ├── met_api_service.dart           # Legacy: Met Museum REST API client
-    └── aic_api_service.dart           # Legacy: Art Institute of Chicago API client
+    └── local_storage_service.dart     # Hive boxes: cache, favorites (per-user), offline
 ```
 
 ### State Management Pattern
@@ -279,12 +282,13 @@ lib/
 | Screen | Route | Description |
 |---|---|---|
 | SplashScreen | `/` | Logo animation, auto-redirects based on auth state |
+| LandingScreen | `/landing` | Public intro page — feature highlights and Get Started CTA |
 | LoginScreen | `/login` | Email/password + Google Sign-In + guest + forgot password |
 | RegisterScreen | `/register` | Nickname, username (availability check), email, password (strength) |
-| HomeScreen | `/home` (tab 0) | Staggered artwork feed with period filter chips |
+| HomeScreen | `/home` (tab 0) | Staggered artwork feed with category filter chips |
 | SearchScreen | `/home` (tab 1) | Keyword search with autocomplete, art form / subject / region filters |
-| CollectionScreen | `/home` (tab 2) | Favorites + Offline tabs |
-| ProfileScreen | `/home` (tab 3) | Account info, password change, report, delete, theme toggle |
+| CollectionScreen | `/home` (tab 2) | Favorites + Offline tabs (with counts in tab labels) |
+| ProfileScreen | `/home` (tab 3) | Account info, password change, theme/HiFi toggle, Help & FAQ, Report, delete |
 | ArtworkDetailScreen | `/artwork/:id` | Full detail: image, metadata, history, meaning, symbols, related |
 | ImageViewerScreen | `/artwork/:id/image` | Fullscreen pinch-to-zoom image viewer |
 
@@ -345,8 +349,8 @@ lib/
 | `email` | `String` | Registered email (locked, cannot change) |
 | `createdAt` | `String` | Account creation timestamp |
 | `isGuest` | `bool` | Guest mode flag |
-| `preferences` | `UserPreferences` | Dark mode, high-fidelity settings |
-| `stats` | `UserStats` | Favorites count, offline count |
+| `darkMode` | `bool` | Dark/light theme preference (persisted to Firestore) |
+| `highFidelity` | `bool` | Full-resolution image mode (persisted to Firestore) |
 
 ---
 
@@ -362,7 +366,7 @@ lib/
 | `artworks` | 300 | Complete Renaissance artwork dataset with full metadata |
 | `users` | Dynamic | User profiles (keyed by Firebase Auth UID) |
 | `usernames` | Dynamic | Username uniqueness registry (case-insensitive) |
-| `reports` | Dynamic | User-submitted problem reports |
+| `reports` | Dynamic | User-submitted issue reports (category, description, optional Object ID) |
 
 ### Firestore Security Rules
 ```
