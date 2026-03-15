@@ -83,8 +83,8 @@ class AuthNotifier extends StateNotifier<UserModel?> {
         return;
       }
 
-      // Wait a tick for Firebase SDKs to fully initialize
-      await Future.delayed(const Duration(milliseconds: 100));
+      // Wait for Firebase Auth's internal IndexedDB operations to settle
+      await Future.delayed(const Duration(milliseconds: 500));
 
       // Check if user is already signed in (persistent Firebase session)
       final fbUser = auth.currentUser;

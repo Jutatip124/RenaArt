@@ -27,13 +27,21 @@ class AppRoutes {
   static String artworkPath(String id) => '/artwork/$id';
 }
 
+/// Listenable adapter for Riverpod → GoRouter refresh
+class _AuthRefreshNotifier extends ChangeNotifier {
+  _AuthRefreshNotifier(Ref ref) {
+    ref.listen(authProvider, (_, __) => notifyListeners());
+  }
+}
+
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final refreshNotifier = _AuthRefreshNotifier(ref);
 
   return GoRouter(
     initialLocation: AppRoutes.splash,
+    refreshListenable: refreshNotifier,
     redirect: (context, state) {
-      final isAuthed = authState != null;
+      final isAuthed = ref.read(authProvider) != null;
       final loc = state.matchedLocation;
 
       final isAuthRoute =
