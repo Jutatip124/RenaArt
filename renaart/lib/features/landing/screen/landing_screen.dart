@@ -66,7 +66,7 @@ class LandingScreen extends StatelessWidget {
               Container(width: 40, height: 2, color: gold),
               const SizedBox(height: 14),
               Text(
-                'Explore 300 masterpieces from the Renaissance era (1300–1600)\nwith rich historical context, meaning & symbolism.',
+                'Explore 300 masterpieces from the Renaissance era (1300-1600)\nwith rich historical context, meaning & symbolism.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Jost',
@@ -135,7 +135,7 @@ class LandingScreen extends StatelessWidget {
                     isWide: isWide,
                   ),
                   _FeatureCard(
-                    icon: Icons.auto_stories_outlined,
+                    icon: Icons.info_outline,
                     title: 'Rich Details',
                     desc: 'Historical background, meaning & symbolism, key symbols for every artwork.',
                     card: card, border: border, text: text, sub: sub, gold: gold,
@@ -208,11 +208,11 @@ class LandingScreen extends StatelessWidget {
             child: Column(children: [
               Container(width: 30, height: 2, color: gold),
               const SizedBox(height: 14),
-              Text('RenaArt © 2026',
+              Text('RenaArt 2026',
                   style: TextStyle(
                       fontFamily: 'Jost', fontSize: 12, color: sub)),
               const SizedBox(height: 4),
-              Text('Mobile Application Development — Mini Project',
+              Text('Mobile Application Development - Mini Project',
                   style: TextStyle(
                       fontFamily: 'Jost', fontSize: 11, color: sub)),
             ]),
