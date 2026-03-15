@@ -144,7 +144,7 @@ class ProfileScreen extends ConsumerWidget {
               _Tile(Icons.help_outline, 'Help & FAQ', null, isDark,
                   onTap: () => _helpFaqDialog(context, isDark)),
               _Div(isDark),
-              _Tile(Icons.flag_outlined, 'Report a Problem', null, isDark,
+              _Tile(Icons.flag_outlined, 'Report an Issue', null, isDark,
                   onTap: () => _reportDialog(context, ref, isDark)),
               _Div(isDark),
               _Tile(Icons.info_outline, 'About RenaArt',
@@ -602,7 +602,7 @@ class ProfileScreen extends ConsumerWidget {
       ('How do I like an artwork?', 'Tap the heart icon on any artwork card or detail page. Liked artworks appear in your Collection tab.'),
       ('Can I change my display name?', 'Yes. Go to Profile > Display Name and tap to edit.'),
       ('What does High Fidelity mode do?', 'When enabled, images load at up to 1080p resolution. Disable it to save bandwidth on slower connections.'),
-      ('How do I report a problem?', 'Go to Profile > Report a Problem. Select a category, optionally enter the Object ID, describe the issue, and submit.'),
+      ('How do I report an issue?', 'Go to Profile > Report an Issue. Select a category, optionally enter the Object ID, describe the issue, and submit.'),
       ('Is my data private?', 'Your account data is stored securely in Firebase. We do not share personal information with third parties.'),
     ];
     showDialog(
@@ -642,7 +642,7 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  /// Report a Problem dialog with categories.
+  /// Report an Issue dialog with categories.
   void _reportDialog(BuildContext ctx, WidgetRef ref, bool isDark) {
     const categories = [
       'Bug / App Crash',
@@ -665,7 +665,7 @@ class ProfileScreen extends ConsumerWidget {
       builder: (_) => StatefulBuilder(builder: (dialogCtx, setDialogState) => AlertDialog(
         backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: Text('Report a Problem',
+        title: Text('Report an Issue',
             style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: isDark ? AppColors.darkText : AppColors.ink)),
