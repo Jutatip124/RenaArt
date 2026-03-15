@@ -638,6 +638,7 @@ class ProfileScreen extends ConsumerWidget {
                 selected: selectedCategory == c,
                 onSelected: (_) => setDialogState(() => selectedCategory = c),
                 selectedColor: isDark ? AppColors.gold : AppColors.ink,
+                checkmarkColor: isDark ? AppColors.darkCanvas : Colors.white,
                 backgroundColor: isDark ? AppColors.darkRaised : AppColors.canvasTone,
                 side: BorderSide.none,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
