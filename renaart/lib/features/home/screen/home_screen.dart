@@ -63,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
               return SliverToBoxAdapter(child: _EmptyView(isDark: isDark));
             }
             return SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
               sliver: SliverMasonryGrid.count(
                 crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10,
                 childCount: artworks.length,
