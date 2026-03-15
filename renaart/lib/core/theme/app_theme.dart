@@ -61,6 +61,30 @@ class AppTheme {
   static ThemeData get light => _light();
   static ThemeData get dark  => _dark();
 
+  /// Themed success SnackBar — floating at top, rounded, green check icon.
+  static SnackBar successSnackBar(BuildContext context, String message, {Duration? duration}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final mq = MediaQuery.of(context);
+    return SnackBar(
+      content: Row(children: [
+        const Icon(Icons.check_circle_outline, color: Color(0xFF4CAF50), size: 22),
+        const SizedBox(width: 10),
+        Expanded(child: Text(message,
+            style: TextStyle(fontFamily: 'Jost', fontSize: 14,
+                color: isDark ? Colors.white : AppColors.ink))),
+      ]),
+      backgroundColor: isDark ? const Color(0xFF3A3A3A) : const Color(0xFFF0F0F0),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      margin: EdgeInsets.only(
+        bottom: mq.size.height - mq.padding.top - 100,
+        left: 16, right: 16,
+      ),
+      elevation: 4,
+      duration: duration ?? const Duration(seconds: 3),
+    );
+  }
+
   // ─── LIGHT ────────────────────────────────────────────────────────
   static ThemeData _light() => ThemeData(
     useMaterial3: true,
@@ -156,8 +180,10 @@ class AppTheme {
     dividerTheme: const DividerThemeData(
         color: AppColors.lightBorder, thickness: 0.8, space: 0),
     snackBarTheme: const SnackBarThemeData(
-      backgroundColor: AppColors.lightText,
-      contentTextStyle: TextStyle(fontFamily: 'Jost', fontSize: 13, color: Colors.white),
+      backgroundColor: Color(0xFFF0F0F0),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14))),
+      contentTextStyle: TextStyle(fontFamily: 'Jost', fontSize: 14, color: AppColors.ink),
     ),
   );
 
@@ -249,8 +275,10 @@ class AppTheme {
     dividerTheme: const DividerThemeData(
         color: AppColors.darkBorder, thickness: 0.8, space: 0),
     snackBarTheme: const SnackBarThemeData(
-      backgroundColor: AppColors.darkRaised,
-      contentTextStyle: TextStyle(fontFamily: 'Jost', fontSize: 13, color: Colors.white),
+      backgroundColor: Color(0xFF3A3A3A),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14))),
+      contentTextStyle: TextStyle(fontFamily: 'Jost', fontSize: 14, color: Colors.white),
     ),
   );
 }
