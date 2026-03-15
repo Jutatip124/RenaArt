@@ -25,21 +25,29 @@ final artworkApiServiceProvider = Provider<ArtworkApiService>((ref) {
 // THEME (Global State — affects all screens)
 // ══════════════════════════════════════════════════════════════════════════════
 final themeModeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>(
-  (ref) => ThemeNotifier(),
+  (ref) => ThemeNotifier(ref),
 );
 
 class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(ThemeMode.dark) {
+  final Ref _ref;
+  ThemeNotifier(this._ref) : super(ThemeMode.dark) {
     _load();
   }
 
   Future<void> _load() async {
     try {
       final user = await LocalStorageService.instance.loadUser();
-      if (user != null && user.preferences.darkMode) {
-        state = ThemeMode.dark;
+      if (user != null) {
+        state = user.preferences.darkMode ? ThemeMode.dark : ThemeMode.light;
       }
     } catch (_) {}
+  }
+
+  /// Called when auth loads to sync theme from Firestore profile
+  void syncFromUser(UserModel? user) {
+    if (user != null) {
+      state = user.preferences.darkMode ? ThemeMode.dark : ThemeMode.light;
+    }
   }
 
   Future<void> toggle() async {
@@ -47,11 +55,14 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
     state = isDark ? ThemeMode.light : ThemeMode.dark;
     final user = await LocalStorageService.instance.loadUser();
     if (user != null) {
-      await LocalStorageService.instance.saveUser(
-        user.copyWith(
-          preferences: user.preferences.copyWith(darkMode: !isDark),
-        ),
+      final updated = user.copyWith(
+        preferences: user.preferences.copyWith(darkMode: !isDark),
       );
+      await LocalStorageService.instance.saveUser(updated);
+      // Sync to Firestore
+      try { await FirestoreUserService.instance.saveProfile(updated); } catch (_) {}
+      // Update auth state so it stays in sync
+      _ref.read(authProvider.notifier).refreshState(updated);
     }
   }
 
@@ -62,11 +73,15 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 // AUTH (Global State)
 // ══════════════════════════════════════════════════════════════════════════════
 final authProvider = StateNotifierProvider<AuthNotifier, UserModel?>(
-  (ref) => AuthNotifier(),
+  (ref) => AuthNotifier(ref),
 );
 
+/// Whether auth has finished its initial load
+final authLoadedProvider = StateProvider<bool>((ref) => false);
+
 class AuthNotifier extends StateNotifier<UserModel?> {
-  AuthNotifier() : super(null) {
+  final Ref _ref;
+  AuthNotifier(this._ref) : super(null) {
     _load();
   }
 
@@ -80,6 +95,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       final auth = _auth;
       if (auth == null) {
         state = await LocalStorageService.instance.loadUser();
+        _syncThemeAndMarkLoaded();
         return;
       }
 
@@ -90,6 +106,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       final fbUser = auth.currentUser;
       if (fbUser != null) {
         await _handleFirebaseUser(fbUser);
+        _syncThemeAndMarkLoaded();
         return;
       }
 
@@ -99,6 +116,17 @@ class AuthNotifier extends StateNotifier<UserModel?> {
         state = await LocalStorageService.instance.loadUser();
       } catch (_) {}
     }
+    _syncThemeAndMarkLoaded();
+  }
+
+  void _syncThemeAndMarkLoaded() {
+    _ref.read(themeModeProvider.notifier).syncFromUser(state);
+    _ref.read(authLoadedProvider.notifier).state = true;
+  }
+
+  /// Update state without re-loading (used by ThemeNotifier to keep in sync)
+  void refreshState(UserModel updated) {
+    state = updated;
   }
 
   /// Shared helper: load or create profile from a Firebase user.
@@ -340,6 +368,8 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       ),
     );
     await LocalStorageService.instance.saveUser(updated);
+    // Sync to Firestore
+    try { await _db.saveProfile(updated); } catch (_) {}
     state = updated;
   }
 

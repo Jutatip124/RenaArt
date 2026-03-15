@@ -27,17 +27,31 @@ class _SplashState extends ConsumerState<SplashScreen>
     _slide = Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero)
         .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
     _ctrl.forward();
-    Future.delayed(const Duration(milliseconds: 2600), () {
+  }
+
+  @override
+  void dispose() { _ctrl.dispose(); super.dispose(); }
+
+  bool _navigated = false;
+
+  void _tryNavigate() {
+    if (_navigated || !mounted) return;
+    final loaded = ref.read(authLoadedProvider);
+    if (!loaded) return;
+    _navigated = true;
+    // Show splash for at least 2s after auth loads
+    Future.delayed(const Duration(milliseconds: 2000), () {
       if (!mounted) return;
       context.go(ref.read(authProvider) != null ? AppRoutes.home : AppRoutes.login);
     });
   }
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
-
-  @override
   Widget build(BuildContext context) {
+    // Watch authLoaded to trigger navigation
+    final authLoaded = ref.watch(authLoadedProvider);
+    if (authLoaded) _tryNavigate();
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg   = isDark ? AppColors.darkCanvas : AppColors.canvas;
     final sub  = isDark ? AppColors.darkFaint  : AppColors.inkLight;

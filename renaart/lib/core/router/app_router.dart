@@ -31,6 +31,7 @@ class AppRoutes {
 class _AuthRefreshNotifier extends ChangeNotifier {
   _AuthRefreshNotifier(Ref ref) {
     ref.listen(authProvider, (_, __) => notifyListeners());
+    ref.listen(authLoadedProvider, (_, __) => notifyListeners());
   }
 }
 
@@ -41,16 +42,19 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: AppRoutes.splash,
     refreshListenable: refreshNotifier,
     redirect: (context, state) {
-      final isAuthed = ref.read(authProvider) != null;
+      final user = ref.read(authProvider);
+      final loaded = ref.read(authLoadedProvider);
       final loc = state.matchedLocation;
-
-      final isAuthRoute =
-          loc == AppRoutes.login || loc == AppRoutes.register || loc == AppRoutes.splash;
 
       // Landing page is always accessible
       if (loc == AppRoutes.landing) return null;
-      // Always allow splash to show (it auto-navigates after delay)
+      // Always allow splash to show
       if (loc == AppRoutes.splash) return null;
+      // Auth not loaded yet — show splash
+      if (!loaded) return AppRoutes.splash;
+
+      final isAuthed = user != null;
+      final isAuthRoute = loc == AppRoutes.login || loc == AppRoutes.register;
       if (!isAuthed && !isAuthRoute) return AppRoutes.login;
       if (isAuthed && isAuthRoute) return AppRoutes.home;
       return null;
