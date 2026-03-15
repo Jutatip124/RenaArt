@@ -31,7 +31,6 @@ class ProfileScreen extends ConsumerWidget {
               pinned: true,
               backgroundColor: bg,
               centerTitle: true,
-              toolbarHeight: 44,
               automaticallyImplyLeading: false,
               title: Text('Profile', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
                   fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
@@ -659,6 +658,15 @@ class ProfileScreen extends ConsumerWidget {
     final descCtrl = TextEditingController();
     String? dialogErr;
     bool loading = false;
+    final scrollCtrl = ScrollController();
+    void scrollToEnd() {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (scrollCtrl.hasClients) {
+          scrollCtrl.animateTo(scrollCtrl.position.maxScrollExtent,
+              duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+        }
+      });
+    }
 
     showDialog(
       context: ctx,
@@ -669,7 +677,7 @@ class ProfileScreen extends ConsumerWidget {
             style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
                 fontWeight: FontWeight.w600,
                 color: isDark ? AppColors.darkText : AppColors.ink)),
-        content: SingleChildScrollView(child: Column(
+        content: SingleChildScrollView(controller: scrollCtrl, child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -695,6 +703,7 @@ class ProfileScreen extends ConsumerWidget {
             if (selectedCategory == 'Other') ...[
               const SizedBox(height: 12),
               TextField(controller: otherCtrl,
+                onTap: scrollToEnd,
                 decoration: InputDecoration(
                   labelText: 'Specify category',
                   labelStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
@@ -709,6 +718,7 @@ class ProfileScreen extends ConsumerWidget {
             TextField(
               controller: objectIdCtrl,
               keyboardType: TextInputType.number,
+              onTap: scrollToEnd,
               decoration: InputDecoration(
                 prefixText: 'local_',
                 prefixStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
@@ -727,6 +737,7 @@ class ProfileScreen extends ConsumerWidget {
             TextField(
               controller: descCtrl,
               maxLines: 4,
+              onTap: scrollToEnd,
               decoration: InputDecoration(
                 hintText: 'Describe the problem in detail...',
                 hintStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
