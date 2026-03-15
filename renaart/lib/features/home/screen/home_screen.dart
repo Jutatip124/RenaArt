@@ -42,7 +42,7 @@ class HomeScreen extends ConsumerWidget {
           ]),
           actions: const [],
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(40),
+            preferredSize: const Size.fromHeight(52),
             child: _PeriodChips(selected: period, isDark: isDark,
               onSelect: (p) =>
                   ref.read(selectedPeriodProvider.notifier).state = p),
