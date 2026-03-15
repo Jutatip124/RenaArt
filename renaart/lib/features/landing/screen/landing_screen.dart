@@ -79,20 +79,21 @@ class LandingScreen extends StatelessWidget {
               // CTA Button
               SizedBox(
                 width: isWide ? 220 : double.infinity,
-                height: 48,
                 child: ElevatedButton(
                   onPressed: () => context.go(AppRoutes.splash),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: gold,
                     foregroundColor: Colors.white,
                     shape: const StadiumBorder(),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     elevation: 0,
                   ),
                   child: const Text('Get Started',
                       style: TextStyle(
                           fontFamily: 'Jost',
                           fontSize: 16,
-                          fontWeight: FontWeight.w600)),
+                          fontWeight: FontWeight.w600,
+                          height: 1.2)),
                 ),
               ),
             ]),
