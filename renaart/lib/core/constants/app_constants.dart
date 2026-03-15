@@ -1,3 +1,5 @@
+// App-wide constants, string resources, and configuration values.
+
 // App-wide constants — aligned with Week 3 Lab Sheet specifications
 
 // ── Data Source Selection ────────────────────────────────────────────────────

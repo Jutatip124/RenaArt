@@ -1,3 +1,5 @@
+// Search screen — header, search bar with autocomplete, filter panel, and
+// masonry results grid.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';

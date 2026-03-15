@@ -1,3 +1,4 @@
+// RenaArt design system — colors, typography, and component themes for light/dark modes.
 import 'package:flutter/material.dart';
 
 // ═══════════════════════════════════════════════════════════════════

@@ -1,3 +1,4 @@
+// Bottom navigation shell — icon-only nav bar wrapping Home, Search, Collection, Profile tabs.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';

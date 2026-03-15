@@ -1,3 +1,5 @@
+// ArtworkCard — dual-mode gallery card with cached image, favorite/offline
+// actions, and dark-mode gradient scrim.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -123,6 +125,7 @@ class ArtworkCard extends ConsumerWidget {
   }
 }
 
+// ─── Action Buttons ───────────────────────────────────────────────────────────
 class _HeartBtn extends StatelessWidget {
   final bool isFav;
   final bool isDark;

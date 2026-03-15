@@ -1,3 +1,4 @@
+// Full artwork detail view — image, metadata, description, favorite/offline actions.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';

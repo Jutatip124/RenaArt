@@ -1,3 +1,4 @@
+// Public landing page at /landing — app intro, feature highlights, and Get Started CTA.
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
