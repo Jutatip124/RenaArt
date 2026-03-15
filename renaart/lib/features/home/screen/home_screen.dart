@@ -87,10 +87,10 @@ class _PeriodChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: 36,
+    height: 46,
     child: ListView.separated(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 2, bottom: 10),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 12),
       itemCount: AppStrings.periods.length,
       separatorBuilder: (_, __) => const SizedBox(width: 8),
       itemBuilder: (_, i) {
