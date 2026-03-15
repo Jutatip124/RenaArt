@@ -50,7 +50,25 @@ class _SearchState extends ConsumerState<SearchScreen> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(child: Column(children: [
-        const SizedBox(height: 16),
+        // ── Header ─────────────────────────────────────────────────
+        Padding(
+          padding: const EdgeInsets.only(top: 12, bottom: 8),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                isDark ? Colors.white : AppColors.ink,
+                BlendMode.srcIn,
+              ),
+              child: Image.asset('assets/images/logo_dark.png',
+                  width: 28, height: 28),
+            ),
+            const SizedBox(width: 8),
+            Text('RenaArt', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
+                fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
+                color: isDark ? AppColors.darkText : AppColors.ink,
+                letterSpacing: -0.5, height: 1.0)),
+          ]),
+        ),
         // ── Search bar + autocomplete ──────────────────────────────
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),

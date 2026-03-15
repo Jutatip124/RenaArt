@@ -29,6 +29,12 @@ class ProfileScreen extends ConsumerWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              // ── Header ─────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.only(top: 12, bottom: 4),
+                child: Text('Profile', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
+                    fontWeight: FontWeight.w700, color: text, letterSpacing: -0.5)),
+              ),
               Container(
                 width: double.infinity,
                 color: isDark ? AppColors.darkSurface : AppColors.canvasTone,

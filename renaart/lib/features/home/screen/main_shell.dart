@@ -35,7 +35,7 @@ class MainShell extends ConsumerWidget {
         ),
         child: SafeArea(
           top: false,
-          child: SizedBox(height: 64,
+          child: SizedBox(height: 50,
             child: Row(children: [
               _NavItem(icon: Icons.home_outlined,  activeIcon: Icons.home,
                   label: 'Home',       idx: 0, current: idx, isDark: isDark,
@@ -75,16 +75,10 @@ class _NavItem extends StatelessWidget {
 
     return Expanded(child: InkWell(
       onTap: onTap, splashColor: Colors.transparent, highlightColor: Colors.transparent,
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(active ? activeIcon : icon, size: 24,
+      child: Center(
+        child: Icon(active ? activeIcon : icon, size: 24,
             color: active ? activeColor : inactiveColor),
-        const SizedBox(height: 3),
-        Text(label,
-          style: TextStyle(fontFamily: 'Jost', fontSize: 10,
-              fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-              letterSpacing: 0.2,
-              color: active ? activeColor : inactiveColor)),
-      ]),
+      ),
     ));
   }
 }
