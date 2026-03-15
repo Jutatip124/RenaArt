@@ -48,6 +48,8 @@ class HomeScreen extends ConsumerWidget {
                   ref.read(selectedPeriodProvider.notifier).state = p),
           ),
         ),
+        // ── Spacing below chips ─────────────────────────────────
+        const SliverToBoxAdapter(child: SizedBox(height: 12)),
         // ── Offline Banner ──────────────────────────────────────
         if (!isOnline)
           SliverToBoxAdapter(child: _OfflineBanner(isDark: isDark)),
