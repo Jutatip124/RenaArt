@@ -48,3 +48,5 @@ app.*.map.json
 *.keystore
 *.jks
 android/key.properties
+.env
+.env
