@@ -25,6 +25,11 @@ jobs:
         working-directory: renaart
         run: flutter pub get
 
+      # ── 3.5 Create dummy .env file ─────────────────────────────────────────
+      - name: Create dummy .env file
+        working-directory: renaart
+        run: touch .env
+
       # ── 4. Analyze (lint check) ────────────────────────────────────────────
       - name: Analyze
         working-directory: renaart
