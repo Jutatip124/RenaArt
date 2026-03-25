@@ -49,6 +49,11 @@ jobs:
         working-directory: renaart
         run: flutter pub get
 
+      # ── 6.5. Create dummy .env file ─────────────────────────────────────────
+      - name: Create dummy .env file
+        working-directory: renaart
+        run: touch .env
+
       # ── 7. Analyze ───────────────────────────────────────────────────────────
       - name: Analyze
         working-directory: renaart
@@ -66,7 +71,7 @@ jobs:
         run: flutter build appbundle --release
 
       # ── 10. Upload to Play Store (internal track) ─────────────────────────────
-      #        Promote to alpha → beta → production manually in Play Console
+      #       Promote to alpha → beta → production manually in Play Console
       - name: Upload to Play Store
         uses: r0adkll/upload-google-play@v1
         with:
