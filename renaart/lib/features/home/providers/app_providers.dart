@@ -43,7 +43,6 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
     } catch (_) {}
   }
 
-  /// Called when auth loads to sync theme from Firestore profile
   void syncFromUser(UserModel? user) {
     if (user != null) {
       state = user.preferences.darkMode ? ThemeMode.dark : ThemeMode.light;
@@ -59,9 +58,8 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
         preferences: user.preferences.copyWith(darkMode: !isDark),
       );
       await LocalStorageService.instance.saveUser(updated);
-      // Sync to Firestore
+      // Sync to Firestore — fire-and-forget, never retry on quota error
       try { await FirestoreUserService.instance.saveProfile(updated); } catch (_) {}
-      // Update auth state so it stays in sync
       _ref.read(authProvider.notifier).refreshState(updated);
     }
   }
@@ -81,14 +79,65 @@ final authLoadedProvider = StateProvider<bool>((ref) => false);
 
 class AuthNotifier extends StateNotifier<UserModel?> {
   final Ref _ref;
+
+  // ── Quota guard ───────────────────────────────────────────────────────────
+  // Set to true when Firestore returns quota-exceeded. All subsequent writes
+  // are skipped for the lifetime of this notifier (i.e. until page reload).
+  bool _firestoreQuotaExceeded = false;
+
   AuthNotifier(this._ref) : super(null) {
     _load();
+    // NOTE: _bindAuthStateChanges removed — it triggered repeated
+    // accounts:lookup calls that exhausted Firebase Auth quota.
   }
 
   FirebaseAuth? get _auth {
     try { return FirebaseAuth.instance; } catch (_) { return null; }
   }
   final _db = FirestoreUserService.instance;
+
+  // ── Firestore helpers ─────────────────────────────────────────────────────
+
+  /// Returns true if the exception looks like a quota / resource error.
+  bool _isQuotaError(Object e) {
+    final msg = e.toString().toLowerCase();
+    return msg.contains('quota') ||
+        msg.contains('resource-exhausted') ||
+        msg.contains('insufficient');
+  }
+
+  /// Load profile from Firestore with quota guard.
+  Future<UserModel?> _safeLoadProfile(String uid, String email) async {
+    if (_firestoreQuotaExceeded) return null;
+    try {
+      return await _db.loadProfile(uid, email);
+    } catch (e) {
+      if (_isQuotaError(e)) _firestoreQuotaExceeded = true;
+      return null;
+    }
+  }
+
+  /// Save profile to Firestore with quota guard — fire-and-forget.
+  Future<void> _safeSaveProfile(UserModel profile) async {
+    if (_firestoreQuotaExceeded) return;
+    try {
+      await _db.saveProfile(profile);
+    } catch (e) {
+      if (_isQuotaError(e)) _firestoreQuotaExceeded = true;
+    }
+  }
+
+  /// Claim username with quota guard — fire-and-forget.
+  Future<void> _safeClaimUsername(String username, String uid) async {
+    if (_firestoreQuotaExceeded) return;
+    try {
+      await _db.claimUsername(username, uid);
+    } catch (e) {
+      if (_isQuotaError(e)) _firestoreQuotaExceeded = true;
+    }
+  }
+
+  // ── Internal load ─────────────────────────────────────────────────────────
 
   Future<void> _load() async {
     try {
@@ -102,7 +151,6 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       // Wait for Firebase Auth's internal IndexedDB operations to settle
       await Future.delayed(const Duration(milliseconds: 500));
 
-      // Check if user is already signed in (persistent Firebase session)
       final fbUser = auth.currentUser;
       if (fbUser != null) {
         await _handleFirebaseUser(fbUser);
@@ -124,21 +172,25 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     _ref.read(authLoadedProvider.notifier).state = true;
   }
 
-  /// Update state without re-loading (used by ThemeNotifier to keep in sync)
-  void refreshState(UserModel updated) {
-    state = updated;
-  }
+  void refreshState(UserModel updated) => state = updated;
 
   /// Shared helper: load or create profile from a Firebase user.
   Future<void> _handleFirebaseUser(User fbUser) async {
-    try {
-      final email = fbUser.email ?? '';
-      var profile = await _db.loadProfile(fbUser.uid, email);
-      if (profile == null) {
-        final username = email.isNotEmpty
-            ? email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')
-            : 'user_${fbUser.uid.substring(0, 8)}';
-        profile = UserModel(
+    // Always try local cache first to avoid Firestore reads
+    final UserModel? local = await LocalStorageService.instance.loadUser();
+    if (local != null && !local.isGuest && local.userId == fbUser.uid) {
+      state = local;
+      return;
+    }
+
+    final email = fbUser.email ?? '';
+    final username = email.isNotEmpty
+        ? email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')
+        : 'user_${fbUser.uid.substring(0, 8)}';
+
+    // Try Firestore (skipped when quota exceeded)
+    final UserModel profile = await _safeLoadProfile(fbUser.uid, email) ??
+        UserModel(
           userId: fbUser.uid,
           name: fbUser.displayName ?? username,
           nickname: fbUser.displayName ?? username,
@@ -146,31 +198,15 @@ class AuthNotifier extends StateNotifier<UserModel?> {
           email: email,
           createdAt: DateTime.now().toIso8601String(),
         );
-        try { await _db.saveProfile(profile); } catch (_) {}
-        try { await _db.claimUsername(username, fbUser.uid); } catch (_) {}
-      }
-      await LocalStorageService.instance.saveUser(profile);
-      state = profile;
-    } catch (_) {
-      // Firestore may not be ready — create local-only profile
-      final email = fbUser.email ?? '';
-      final username = email.isNotEmpty
-          ? email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')
-          : 'user_${fbUser.uid.substring(0, 8)}';
-      final profile = UserModel(
-        userId: fbUser.uid,
-        name: fbUser.displayName ?? username,
-        nickname: fbUser.displayName ?? username,
-        username: username,
-        email: email,
-        createdAt: DateTime.now().toIso8601String(),
-      );
-      await LocalStorageService.instance.saveUser(profile);
-      state = profile;
-    }
+
+    await _safeSaveProfile(profile);
+    await _safeClaimUsername(username, fbUser.uid);
+    await LocalStorageService.instance.saveUser(profile);
+    state = profile;
   }
 
-  /// Sign in with email/password. Throws [String] on error.
+  // ── Public auth actions ───────────────────────────────────────────────────
+
   Future<void> signIn(String email, String password) async {
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
@@ -179,7 +215,8 @@ class AuthNotifier extends StateNotifier<UserModel?> {
           email: email, password: password);
       final fbUser = cred.user;
       if (fbUser == null) throw 'Email or password is incorrect.';
-      var profile = await _db.loadProfile(fbUser.uid, email);
+
+      var profile = await _safeLoadProfile(fbUser.uid, email);
       profile ??= UserModel(
         userId: fbUser.uid,
         name: fbUser.displayName ?? email.split('@').first,
@@ -198,7 +235,6 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Sign in with Google via popup. Returns user directly (no page reload).
   Future<void> signInWithGoogle() async {
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
@@ -216,13 +252,14 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Register with email/password + username. Throws [String] on error.
   Future<void> register(String nickname, String username, String email, String password) async {
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
-      final available = await _db.isUsernameAvailable(username);
-      if (!available) throw 'Username "@$username" is already taken.';
+      if (!_firestoreQuotaExceeded) {
+        final available = await _db.isUsernameAvailable(username);
+        if (!available) throw 'Username "@$username" is already taken.';
+      }
 
       final cred = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -237,8 +274,8 @@ class AuthNotifier extends StateNotifier<UserModel?> {
         email: email,
         createdAt: DateTime.now().toIso8601String(),
       );
-      await _db.claimUsername(username, fbUser.uid);
-      await _db.saveProfile(user);
+      await _safeClaimUsername(username, fbUser.uid);
+      await _safeSaveProfile(user);
       await LocalStorageService.instance.saveUser(user);
       state = user;
     } on FirebaseAuthException catch (e) {
@@ -249,11 +286,11 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Check if a username is available.
-  Future<bool> isUsernameAvailable(String username) =>
-      _db.isUsernameAvailable(username);
+  Future<bool> isUsernameAvailable(String username) {
+    if (_firestoreQuotaExceeded) return Future.value(true);
+    return _db.isUsernameAvailable(username);
+  }
 
-  /// Re-authenticate the current user with their password.
   Future<void> reauthenticate(String password) async {
     final fbUser = _auth?.currentUser;
     if (fbUser == null || fbUser.email == null) {
@@ -271,7 +308,6 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Send password reset email.
   Future<void> resetPassword(String email) async {
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
@@ -295,25 +331,27 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     if (state == null) return;
     final updated = state!.copyWith(nickname: nickname);
     await LocalStorageService.instance.saveUser(updated);
-    await _db.saveProfile(updated);
+    await _safeSaveProfile(updated);
     state = updated;
   }
 
-  /// Update username — requires re-auth beforehand. Checks uniqueness.
   Future<void> updateUsername(String newUsername) async {
     if (state == null) return;
-    final available = await _db.isUsernameAvailable(newUsername);
-    if (!available) throw 'Username "@$newUsername" is already taken.';
+    if (!_firestoreQuotaExceeded) {
+      final available = await _db.isUsernameAvailable(newUsername);
+      if (!available) throw 'Username "@$newUsername" is already taken.';
+    }
     final oldUsername = state!.username;
-    await _db.claimUsername(newUsername, state!.userId);
-    await _db.releaseUsername(oldUsername);
+    await _safeClaimUsername(newUsername, state!.userId);
+    if (!_firestoreQuotaExceeded) {
+      try { await _db.releaseUsername(oldUsername); } catch (_) {}
+    }
     final updated = state!.copyWith(username: newUsername);
     await LocalStorageService.instance.saveUser(updated);
-    await _db.saveProfile(updated);
+    await _safeSaveProfile(updated);
     state = updated;
   }
 
-  /// Update email — sends verification to new email. Requires re-auth.
   Future<void> updateEmail(String email) async {
     if (state == null) return;
     try {
@@ -323,7 +361,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       }
       final updated = state!.copyWith(email: email);
       await LocalStorageService.instance.saveUser(updated);
-      await _db.saveProfile(updated);
+      await _safeSaveProfile(updated);
       state = updated;
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
@@ -333,14 +371,11 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Update password. Requires re-auth beforehand.
   Future<void> updatePassword(String password) async {
     if (state == null || password.isEmpty) return;
     try {
       final fbUser = _auth?.currentUser;
-      if (fbUser != null) {
-        await fbUser.updatePassword(password);
-      }
+      if (fbUser != null) await fbUser.updatePassword(password);
     } on FirebaseAuthException catch (e) {
       throw _mapAuthError(e.code);
     } catch (e) {
@@ -349,14 +384,14 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  /// Submit a problem report to Firestore.
-  /// Always succeeds from user's perspective — silently ignores save errors.
+  /// Submit a problem report — silently ignored when quota exceeded.
   Future<void> submitReport(String category, String description) async {
+    if (_firestoreQuotaExceeded) return;
     final userId = state?.userId ?? 'anonymous';
     try {
       await _db.submitReport(userId, category, description);
-    } catch (_) {
-      // Silently ignore — user sees success regardless
+    } catch (e) {
+      if (_isQuotaError(e)) _firestoreQuotaExceeded = true;
     }
   }
 
@@ -368,8 +403,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       ),
     );
     await LocalStorageService.instance.saveUser(updated);
-    // Sync to Firestore
-    try { await _db.saveProfile(updated); } catch (_) {}
+    await _safeSaveProfile(updated);
     state = updated;
   }
 
@@ -379,27 +413,24 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     state = null;
   }
 
-  /// Delete the user's account permanently. Requires password re-auth.
   Future<void> deleteAccount(String password) async {
     final auth = _auth;
     final fbUser = auth?.currentUser;
     if (fbUser == null) throw 'No authenticated user found.';
     try {
-      // Re-authenticate first
       if (fbUser.email != null) {
         final cred = EmailAuthProvider.credential(
             email: fbUser.email!, password: password);
         await fbUser.reauthenticateWithCredential(cred);
       }
-      // Clean up Firestore data
-      final username = state?.username;
-      if (username != null) {
-        await _db.releaseUsername(username);
+      if (!_firestoreQuotaExceeded) {
+        final username = state?.username;
+        if (username != null) {
+          try { await _db.releaseUsername(username); } catch (_) {}
+        }
+        try { await _db.deleteProfile(fbUser.uid); } catch (_) {}
       }
-      await _db.deleteProfile(fbUser.uid);
-      // Delete Firebase Auth account
       await fbUser.delete();
-      // Clear local data
       await LocalStorageService.instance.clearUser();
       state = null;
     } on FirebaseAuthException catch (e) {
@@ -435,6 +466,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 }
+
 // ══════════════════════════════════════════════════════════════════════════════
 // CONNECTIVITY (Global — Week 3: Offline Strategy)
 // ══════════════════════════════════════════════════════════════════════════════
@@ -448,14 +480,13 @@ final connectivityProvider = StreamProvider<ConnectivityResult>((ref) {
 
 final isOnlineProvider = Provider<bool>((ref) {
   final connAsync = ref.watch(connectivityProvider);
-  // While loading, assume online to avoid false offline banner on startup
   if (connAsync.isLoading) return true;
   final conn = connAsync.valueOrNull;
   return conn != null && conn != ConnectivityResult.none;
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// FAVORITES — Global State (Week 3: needed in Home, Search, Detail, Collection)
+// FAVORITES — Global State
 // ══════════════════════════════════════════════════════════════════════════════
 final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<String>>(
   (ref) {
@@ -478,21 +509,18 @@ class FavoritesNotifier extends StateNotifier<List<String>> {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// OFFLINE — Global State (Week 3: check across all screens)
+// OFFLINE — Global State
 // ══════════════════════════════════════════════════════════════════════════════
 final offlineIdsProvider = StateNotifierProvider<OfflineNotifier, List<String>>(
   (ref) => OfflineNotifier(),
 );
 
 class OfflineNotifier extends StateNotifier<List<String>> {
-  OfflineNotifier()
-      : super(LocalStorageService.instance.getOfflineIds());
+  OfflineNotifier() : super(LocalStorageService.instance.getOfflineIds());
 
   bool get isFull => state.length >= AppConstants.maxOfflineArtworks;
-
   bool isOffline(String artworkId) => state.contains(artworkId);
 
-  /// Returns false if storage full (Week 3 spec)
   bool toggleOffline(Artwork artwork) {
     final ok = LocalStorageService.instance.saveOffline(artwork);
     if (ok) state = LocalStorageService.instance.getOfflineIds();
@@ -506,28 +534,18 @@ class OfflineNotifier extends StateNotifier<List<String>> {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// HOME FEED — Met Museum API + Cache
+// HOME FEED — Local Asset + Cache (Firestore reads removed)
 // ══════════════════════════════════════════════════════════════════════════════
 final selectedPeriodProvider = StateProvider<String>((ref) => 'For You');
 
-/// Raw fetch provider — only re-runs when connectivity changes, NOT on period change
 final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) async {
   final storage = ref.watch(storageProvider);
 
-  // Try primary data source (Firestore → local asset fallback chain)
-  try {
-    final api = ref.watch(artworkApiServiceProvider);
-    final artworks = await api.fetchRenaissanceFeed(count: 200);
-    if (artworks.isNotEmpty) {
-      // Cache silently — don't let cache failures break loading
-      try { await storage.cacheArtworks(artworks); } catch (_) {}
-      return artworks;
-    }
-  } catch (_) {
-    // ArtworkApiService creation or fetch failed — try direct local load
-  }
+  // ── 1. Return Hive cache immediately if populated ──────────────────────────
+  final cached = storage.getAllCachedArtworks();
+  if (cached.isNotEmpty) return cached;
 
-  // Direct local asset fallback (bypasses ArtworkApiService entirely)
+  // ── 2. Load from local asset bundle (no network / Firestore calls) ─────────
   try {
     final local = LocalArtworkService.instance;
     final artworks = await local.fetchRenaissanceFeed(count: 200);
@@ -537,34 +555,31 @@ final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) asy
     }
   } catch (_) {}
 
-  // Last resort: return whatever is in the Hive cache
+  // ── 3. Try ArtworkApiService as last resort ────────────────────────────────
   try {
-    final cached = storage.getAllCachedArtworks();
-    if (cached.isNotEmpty) return cached;
+    final api = ref.watch(artworkApiServiceProvider);
+    final artworks = await api.fetchRenaissanceFeed(count: 200);
+    if (artworks.isNotEmpty) {
+      try { await storage.cacheArtworks(artworks); } catch (_) {}
+      return artworks;
+    }
   } catch (_) {}
 
   return [];
 });
 
-/// Derived provider — applies period filter locally without triggering API re-fetch
-/// Watches [_homeFeedRawProvider] + [selectedPeriodProvider] separately so that
-/// changing the period chip only re-filters in memory.
 final homeFeedProvider = Provider.autoDispose<AsyncValue<List<Artwork>>>((ref) {
   final feedAsync = ref.watch(_homeFeedRawProvider);
   final period = ref.watch(selectedPeriodProvider);
 
   return feedAsync.whenData((artworks) {
-    // Filter out stale non-Renaissance cache entries (e.g. old AIC data)
     final filtered = artworks.where((a) => a.id.startsWith('local_')).toList();
     if (period == 'For You') return filtered;
-    // Period filter (e.g. 'Early Renaissance')
     if (period.contains('Renaissance') || period == 'Mannerism') {
       return filtered.where((a) => a.period == period).toList();
     }
-    // Subject filter (e.g. 'Religious', 'Portrait', 'Mythology')
     final subjectMatch = filtered.where((a) => a.subject == period).toList();
     if (subjectMatch.isNotEmpty) return subjectMatch;
-    // Medium / art form filter (e.g. 'Painting' → Oil, 'Sculpture' → Marble/Bronze, 'Fresco')
     final lp = period.toLowerCase();
     return filtered.where((a) {
       final m = a.medium.toLowerCase();
@@ -582,21 +597,17 @@ final homeFeedProvider = Provider.autoDispose<AsyncValue<List<Artwork>>>((ref) {
 final artworkDetailProvider =
     FutureProvider.family.autoDispose<Artwork?, String>((ref, id) async {
   final storage = ref.watch(storageProvider);
-
-  // Check cache first
   final cached = storage.getCachedArtwork(id);
   if (cached != null) return cached;
 
   final api = ref.watch(artworkApiServiceProvider);
-
-  // Unified service routes by id prefix (aic_, rijks_, mock_) or active source
   final artwork = await api.getArtwork(id);
   if (artwork != null) await storage.cacheArtwork(artwork);
   return artwork;
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// SEARCH — Local State (Week 3: screen-specific)
+// SEARCH — Local State
 // ══════════════════════════════════════════════════════════════════════════════
 final searchQueryProvider = StateProvider<String>((ref) => '');
 final searchArtistFilterProvider = StateProvider<String?>((ref) => null);
@@ -606,14 +617,9 @@ final searchSubjectFilterProvider = StateProvider<String?>((ref) => null);
 final searchRegionFilterProvider = StateProvider<String?>((ref) => null);
 
 bool _isFilterableRenaissanceArtwork(Artwork artwork) {
-  // Only include curated local artworks (filter out stale AIC/Met/Rijks cache)
   if (!artwork.id.startsWith('local_')) return false;
-
   final artist = artwork.artist.trim().toLowerCase();
-  if (artist.isEmpty || artist == 'unknown artist' || artist == 'anonymous') {
-    return false;
-  }
-
+  if (artist.isEmpty || artist == 'unknown artist' || artist == 'anonymous') return false;
   final period = artwork.period.toLowerCase();
   return period.contains('renaissance') ||
       period.contains('mannerism') ||
@@ -630,18 +636,18 @@ final searchFilterSeedProvider =
 
   if (seed.length < 24) {
     try {
-      final api = ref.watch(artworkApiServiceProvider);
-      final fetched = await api.fetchRenaissanceFeed(count: 200);
+      final local = LocalArtworkService.instance;
+      final fetched = await local.fetchRenaissanceFeed(count: 200);
       if (fetched.isNotEmpty) {
         try { await storage.cacheArtworks(fetched); } catch (_) {}
         seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
       }
     } catch (_) {
-      // Fallback: try direct local asset load
       try {
-        final local = LocalArtworkService.instance;
-        final fetched = await local.fetchRenaissanceFeed(count: 200);
+        final api = ref.watch(artworkApiServiceProvider);
+        final fetched = await api.fetchRenaissanceFeed(count: 200);
         if (fetched.isNotEmpty) {
+          try { await storage.cacheArtworks(fetched); } catch (_) {}
           seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
         }
       } catch (_) {}
@@ -656,21 +662,18 @@ final availableSearchArtistsProvider = Provider<List<String>>((ref) {
   if (seed == null || seed.isEmpty) {
     return AppStrings.popularArtists.take(6).toList();
   }
-
   final counts = <String, int>{};
   for (final artwork in seed) {
     final artist = artwork.artist.trim();
     if (artist.isEmpty || artist.toLowerCase() == 'unknown artist') continue;
     counts[artist] = (counts[artist] ?? 0) + 1;
   }
-
   final sorted = counts.entries.toList()
     ..sort((a, b) {
       final byCount = b.value.compareTo(a.value);
       if (byCount != 0) return byCount;
       return a.key.compareTo(b.key);
     });
-
   return sorted.take(8).map((e) => e.key).toList();
 });
 
@@ -678,7 +681,6 @@ final availableSearchPeriodsProvider = Provider<List<String>>((ref) {
   final seed = ref.watch(searchFilterSeedProvider).valueOrNull;
   final canonical = AppStrings.periods.skip(1).toList();
   if (seed == null || seed.isEmpty) return canonical;
-
   final set = seed.map((a) => a.period).toSet();
   final filtered = canonical.where(set.contains).toList();
   return filtered.isEmpty ? canonical : filtered;
@@ -688,12 +690,10 @@ final availableSearchMediumsProvider = Provider<List<String>>((ref) {
   final seed = ref.watch(searchFilterSeedProvider).valueOrNull;
   const canonical = AppStrings.artForms;
   if (seed == null || seed.isEmpty) return canonical;
-
   final filtered = canonical.where((artForm) {
     final a = artForm.toLowerCase();
     return seed.any((artwork) => artwork.department.toLowerCase().contains(a));
   }).toList();
-
   return filtered.isEmpty ? canonical : filtered;
 });
 
@@ -706,81 +706,68 @@ final searchResultsProvider =
   final subjectFilter = ref.watch(searchSubjectFilterProvider);
   final regionFilter = ref.watch(searchRegionFilterProvider);
   final storage = ref.watch(storageProvider);
-  final hasAnyFilter = artistFilter != null || periodFilter != null
-      || mediumFilter != null || subjectFilter != null || regionFilter != null;
+  final hasAnyFilter = artistFilter != null || periodFilter != null ||
+      mediumFilter != null || subjectFilter != null || regionFilter != null;
 
   if (query.isEmpty && !hasAnyFilter) {
     return storage.getAllCachedArtworks()
-        .where(_isFilterableRenaissanceArtwork).toList();
+        .where(_isFilterableRenaissanceArtwork)
+        .toList();
   }
 
-  List<Artwork> results;
+  List<Artwork> results = storage.getAllCachedArtworks();
 
-  // Always use cached data (populated by home feed from local asset)
-  results = storage.getAllCachedArtworks();
   if (results.isEmpty) {
-    // Fallback: load from API/local directly
     try {
-      final api = ref.watch(artworkApiServiceProvider);
-      if (query.isNotEmpty) {
-        results = await api.searchArtworks(query, maxCount: 300);
-      } else {
-        results = await api.fetchRenaissanceFeed(count: 300);
-      }
+      final local = LocalArtworkService.instance;
+      results = query.isNotEmpty
+          ? await local.searchArtworks(query, maxCount: 300)
+          : await local.fetchRenaissanceFeed(count: 300);
       if (results.isNotEmpty) {
         try { await storage.cacheArtworks(results); } catch (_) {}
       }
     } catch (_) {
-      // Direct local fallback
       try {
-        final local = LocalArtworkService.instance;
+        final api = ref.watch(artworkApiServiceProvider);
         results = query.isNotEmpty
-            ? await local.searchArtworks(query, maxCount: 300)
-            : await local.fetchRenaissanceFeed(count: 300);
+            ? await api.searchArtworks(query, maxCount: 300)
+            : await api.fetchRenaissanceFeed(count: 300);
+        if (results.isNotEmpty) {
+          try { await storage.cacheArtworks(results); } catch (_) {}
+        }
       } catch (_) {}
     }
   }
 
   results = results.where(_isFilterableRenaissanceArtwork).toList();
 
-  // Apply query text filtering locally
   if (query.isNotEmpty) {
     final q = query.toLowerCase();
-    results = results.where((a) {
-      return a.title.toLowerCase().contains(q) ||
-          a.artist.toLowerCase().contains(q) ||
-          a.period.toLowerCase().contains(q);
-    }).toList();
+    results = results.where((a) =>
+        a.title.toLowerCase().contains(q) ||
+        a.artist.toLowerCase().contains(q) ||
+        a.period.toLowerCase().contains(q)).toList();
   }
 
-  // Apply local filters
   if (artistFilter != null) {
-    final normalizedArtist = artistFilter.toLowerCase();
-    results = results
-        .where((a) => a.artist.toLowerCase().contains(normalizedArtist))
-        .toList();
+    final n = artistFilter.toLowerCase();
+    results = results.where((a) => a.artist.toLowerCase().contains(n)).toList();
   }
   if (periodFilter != null) {
-    final normalizedPeriod = periodFilter.toLowerCase();
-    results = results
-        .where((a) => a.period.toLowerCase().contains(normalizedPeriod))
-        .toList();
+    final n = periodFilter.toLowerCase();
+    results = results.where((a) => a.period.toLowerCase().contains(n)).toList();
   }
   if (mediumFilter != null) {
-    // type field is stored as 'department' in Artwork model
     results = results.where((a) =>
         a.department.toLowerCase() == mediumFilter.toLowerCase()).toList();
   }
   if (subjectFilter != null) {
-    final normalizedSubject = subjectFilter.toLowerCase();
-    results = results.where((a) =>
-        a.subject.toLowerCase().contains(normalizedSubject)).toList();
+    final n = subjectFilter.toLowerCase();
+    results = results.where((a) => a.subject.toLowerCase().contains(n)).toList();
   }
   if (regionFilter != null) {
-    final normalizedRegion = regionFilter.toLowerCase();
-    // origin field is stored as 'location' in Artwork model
-    results = results.where((a) =>
-        a.location.toLowerCase().contains(normalizedRegion)).toList();
+    final n = regionFilter.toLowerCase();
+    results = results.where((a) => a.location.toLowerCase().contains(n)).toList();
   }
 
   return results;
@@ -790,12 +777,12 @@ final searchResultsProvider =
 // COLLECTION (derived from Global State)
 // ══════════════════════════════════════════════════════════════════════════════
 final favoriteArtworksProvider = Provider<List<Artwork>>((ref) {
-  ref.watch(favoritesProvider); // re-eval when favorites change
+  ref.watch(favoritesProvider);
   final userId = ref.watch(authProvider)?.userId ?? 'guest';
   return LocalStorageService.instance.getFavorites(userId);
 });
 
 final offlineArtworksProvider = Provider<List<Artwork>>((ref) {
-  ref.watch(offlineIdsProvider); // re-eval when offline changes
+  ref.watch(offlineIdsProvider);
   return LocalStorageService.instance.getOfflineArtworks();
 });
