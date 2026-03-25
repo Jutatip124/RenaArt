@@ -206,6 +206,102 @@ RenaArt/
 
 ---
 
+## Security & Privacy
+
+### Security Measures
+
+RenaArt implements multiple security layers to protect user data:
+
+- **Firebase Authentication** - Industry-standard user authentication
+- **Firestore Security Rules** - Server-side access control enforcement
+- **Security Headers** - XSS, clickjacking, and MIME-sniffing protection
+- **Input Validation** - Client-side validation for all user inputs
+- **API Key Restrictions** - Firebase API keys restricted to authorized domains only
+
+**Important:** Before deploying to production, please review [SECURITY.md](SECURITY.md) for complete security configuration checklist.
+
+### Privacy & PDPA Compliance
+
+RenaArt respects user privacy and complies with Thailand's Personal Data Protection Act (PDPA):
+
+**Data Collection:**
+- Email address (authentication only)
+- Username and nickname (user identity)
+- Artwork interactions (favorites, view counts)
+- User preferences (theme, display settings)
+
+**User Rights:**
+- ✅ Right to Access - Export your data anytime
+- ✅ Right to Erasure - Complete account deletion
+- ✅ Right to Rectification - Update your information
+- ✅ Right to Data Portability - JSON data export
+
+**Data Protection:**
+- No data sold to third parties
+- Minimal data collection principle
+- Secure storage with Firebase encryption
+- Local data encryption recommended for production
+
+For detailed privacy information, see [WEEK_7-8-9_LAB_SHEET.md](WEEK_7-8-9_LAB_SHEET.md).
+
+### Security Configuration Checklist
+
+Before production deployment:
+
+- [ ] Enable Firebase API key restrictions in Firebase Console
+- [ ] Enable Firebase App Check for abuse prevention
+- [ ] Review and test Firestore Security Rules
+- [ ] Configure billing alerts in Google Cloud Console
+- [ ] Enable Firebase Crashlytics for error monitoring
+- [ ] Implement local data encryption for sensitive fields
+- [ ] Review and update privacy policy
+- [ ] Test data export and deletion features
+- [ ] Perform security testing (input validation, XSS, etc.)
+
+---
+
+## Development Best Practices
+
+### Code Quality
+
+The codebase follows these quality standards:
+
+- **Error Handling:** Centralized logging via `LoggingService`
+- **Input Validation:** Dedicated `ValidationService` for all user inputs
+- **Privacy:** `PrivacyService` for PDPA compliance features
+- **Security:** Security headers configured in `firebase.json`
+
+### Testing
+
+```bash
+# Run tests
+cd renaart
+flutter test
+
+# Run with coverage
+flutter test --coverage
+```
+
+### Troubleshooting
+
+**Common Issues:**
+
+1. **Firebase initialization error**
+   - Check `firebase_options.dart` configuration
+   - Ensure Firebase project is accessible
+   - Verify API key restrictions don't block localhost
+
+2. **Build errors**
+   - Run `flutter clean && flutter pub get`
+   - Check Flutter version: `flutter --version`
+   - Verify all dependencies are compatible
+
+3. **Local storage errors (Hive)**
+   - Clear browser IndexedDB via DevTools
+   - Check browser privacy settings (IndexedDB must be enabled)
+
+---
+
 ## Credits
 
 - **Student ID:** 6631503124
