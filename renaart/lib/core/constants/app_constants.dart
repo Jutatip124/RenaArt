@@ -43,6 +43,22 @@ class AppConstants {
   static const String keyEmail = 'user_email';
   static const String keyIsGuest = 'user_is_guest';
 
+  // ─── Validation Constants ───────────────────────────────────────────────────
+  static const int usernameMinLength = 3;
+  static const int usernameMaxLength = 30;
+  static const String usernamePattern = r'^[a-zA-Z0-9_]+$';
+  static const int passwordMinLength = 8;
+
+  // ─── Timing Constants ───────────────────────────────────────────────────────
+  static const int authLoadDelayMs = 500;
+  static const int usernameDebounceMs = 600;
+  static const int resetEmailSnackbarSeconds = 5;
+
+  // ─── Feed & Search Constants ────────────────────────────────────────────────
+  static const int homeFeedDefaultCount = 200;
+  static const int searchMaxCount = 300;
+  static const int searchAvailableArtistsLimit = 8;
+  static const int maxDescriptionLength = 2000;
 }
 
 class AppStrings {

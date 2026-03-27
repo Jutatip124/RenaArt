@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -40,7 +41,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
       if (user != null) {
         state = user.preferences.darkMode ? ThemeMode.dark : ThemeMode.light;
       }
-    } catch (_) {}
+    } catch (e) { debugPrint('ThemeNotifier._load failed: $e'); }
   }
 
   void syncFromUser(UserModel? user) {
@@ -59,7 +60,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
       );
       await LocalStorageService.instance.saveUser(updated);
       // Sync to Firestore — fire-and-forget, never retry on quota error
-      try { await FirestoreUserService.instance.saveProfile(updated); } catch (_) {}
+      try { await FirestoreUserService.instance.saveProfile(updated); } catch (e) { debugPrint('ThemeNotifier.toggle sync failed: $e'); }
       _ref.read(authProvider.notifier).refreshState(updated);
     }
   }
@@ -92,7 +93,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   FirebaseAuth? get _auth {
-    try { return FirebaseAuth.instance; } catch (_) { return null; }
+    try { return FirebaseAuth.instance; } catch (e) { debugPrint('AuthNotifier._auth failed: $e'); return null; }
   }
   final _db = FirestoreUserService.instance;
 
@@ -159,10 +160,11 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       }
 
       state = await LocalStorageService.instance.loadUser();
-    } catch (_) {
+    } catch (e) {
+      debugPrint('AuthNotifier._load Firestore sync failed: $e');
       try {
         state = await LocalStorageService.instance.loadUser();
-      } catch (_) {}
+      } catch (e2) { debugPrint('AuthNotifier._load local fallback failed: $e2'); }
     }
     _syncThemeAndMarkLoaded();
   }
@@ -344,7 +346,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     final oldUsername = state!.username;
     await _safeClaimUsername(newUsername, state!.userId);
     if (!_firestoreQuotaExceeded) {
-      try { await _db.releaseUsername(oldUsername); } catch (_) {}
+      try { await _db.releaseUsername(oldUsername); } catch (e) { debugPrint('AuthNotifier.updateUsername releaseUsername failed: $e'); }
     }
     final updated = state!.copyWith(username: newUsername);
     await LocalStorageService.instance.saveUser(updated);
@@ -408,7 +410,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   Future<void> signOut() async {
-    try { await _auth?.signOut(); } catch (_) {}
+    try { await _auth?.signOut(); } catch (e) { debugPrint('AuthNotifier.signOut failed: $e'); }
     await LocalStorageService.instance.clearUser();
     state = null;
   }
@@ -426,9 +428,10 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       if (!_firestoreQuotaExceeded) {
         final username = state?.username;
         if (username != null) {
-          try { await _db.releaseUsername(username); } catch (_) {}
+          try { await _db.releaseUsername(username); } catch (e) { debugPrint('deleteAccount releaseUsername failed: $e'); }
         }
-        try { await _db.deleteProfile(fbUser.uid); } catch (_) {}
+        try { await _db.deleteProfile(fbUser.uid); } catch (e) { debugPrint('deleteAccount deleteProfile failed: $e'); }
+        try { await _db.deleteUserReports(fbUser.uid); } catch (e) { debugPrint('Failed to delete user reports: $e'); }
       }
       await fbUser.delete();
       await LocalStorageService.instance.clearUser();
@@ -550,20 +553,20 @@ final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) asy
     final local = LocalArtworkService.instance;
     final artworks = await local.fetchRenaissanceFeed(count: 200);
     if (artworks.isNotEmpty) {
-      try { await storage.cacheArtworks(artworks); } catch (_) {}
+      try { await storage.cacheArtworks(artworks); } catch (e) { debugPrint('homeFeed cache failed: $e'); }
       return artworks;
     }
-  } catch (_) {}
+  } catch (e) { debugPrint('homeFeed local load failed: $e'); }
 
   // ── 3. Try ArtworkApiService as last resort ────────────────────────────────
   try {
     final api = ref.watch(artworkApiServiceProvider);
     final artworks = await api.fetchRenaissanceFeed(count: 200);
     if (artworks.isNotEmpty) {
-      try { await storage.cacheArtworks(artworks); } catch (_) {}
+      try { await storage.cacheArtworks(artworks); } catch (e) { debugPrint('homeFeed api cache failed: $e'); }
       return artworks;
     }
-  } catch (_) {}
+  } catch (e) { debugPrint('homeFeed api load failed: $e'); }
 
   return [];
 });
@@ -639,18 +642,19 @@ final searchFilterSeedProvider =
       final local = LocalArtworkService.instance;
       final fetched = await local.fetchRenaissanceFeed(count: 200);
       if (fetched.isNotEmpty) {
-        try { await storage.cacheArtworks(fetched); } catch (_) {}
+        try { await storage.cacheArtworks(fetched); } catch (e) { debugPrint('searchFilterSeed cache failed: $e'); }
         seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
       }
-    } catch (_) {
+    } catch (e) {
+      debugPrint('searchFilterSeed local load failed: $e');
       try {
         final api = ref.watch(artworkApiServiceProvider);
         final fetched = await api.fetchRenaissanceFeed(count: 200);
         if (fetched.isNotEmpty) {
-          try { await storage.cacheArtworks(fetched); } catch (_) {}
+          try { await storage.cacheArtworks(fetched); } catch (e2) { debugPrint('searchFilterSeed api cache failed: $e2'); }
           seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
         }
-      } catch (_) {}
+      } catch (e2) { debugPrint('searchFilterSeed api load failed: $e2'); }
     }
   }
 
@@ -724,18 +728,19 @@ final searchResultsProvider =
           ? await local.searchArtworks(query, maxCount: 300)
           : await local.fetchRenaissanceFeed(count: 300);
       if (results.isNotEmpty) {
-        try { await storage.cacheArtworks(results); } catch (_) {}
+        try { await storage.cacheArtworks(results); } catch (e) { debugPrint('searchResults cache failed: $e'); }
       }
-    } catch (_) {
+    } catch (e) {
+      debugPrint('searchResults local load failed: $e');
       try {
         final api = ref.watch(artworkApiServiceProvider);
         results = query.isNotEmpty
             ? await api.searchArtworks(query, maxCount: 300)
             : await api.fetchRenaissanceFeed(count: 300);
         if (results.isNotEmpty) {
-          try { await storage.cacheArtworks(results); } catch (_) {}
+          try { await storage.cacheArtworks(results); } catch (e2) { debugPrint('searchResults api cache failed: $e2'); }
         }
-      } catch (_) {}
+      } catch (e2) { debugPrint('searchResults api load failed: $e2'); }
     }
   }
 

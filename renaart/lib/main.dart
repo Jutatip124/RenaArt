@@ -1,5 +1,6 @@
 // RenaArt — Renaissance Art gallery app entry point.
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,15 +27,15 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-  } catch (_) {
-    // Firebase init failed — app will fall back to local asset data
+  } catch (e) {
+    debugPrint('Firebase init failed: $e');
   }
 
   // Week 3: Initialize Hive local storage
   try {
     await LocalStorageService.instance.init();
-  } catch (_) {
-    // Hive init failed — non-fatal, features degrade gracefully
+  } catch (e) {
+    debugPrint('Hive init failed: $e');
   }
 
   // Status bar

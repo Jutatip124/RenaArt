@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../home/providers/app_providers.dart';
+import '../../auth/widgets/privacy_policy_dialog.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -143,6 +144,9 @@ class ProfileScreen extends ConsumerWidget {
             _Card(card, isDark, [
               _Tile(Icons.help_outline, 'Help & FAQ', null, isDark,
                   onTap: () => _helpFaqDialog(context, isDark)),
+              _Div(isDark),
+              _Tile(Icons.privacy_tip_outlined, 'Privacy Policy', null, isDark,
+                  onTap: () => PrivacyPolicyDialog.show(context)),
               _Div(isDark),
               _Tile(Icons.flag_outlined, 'Report an Issue', null, isDark,
                   onTap: () => _reportDialog(context, ref, isDark)),

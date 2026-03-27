@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/app_constants.dart';
 import '../../models/artwork_model.dart';
 import '../../models/user_model.dart';
+import 'secure_storage_service.dart';
 
 /// Week 3 Part 3: Local Storage
 /// - Favorites: Room.insert(UserArtworkState)  →  Hive box
@@ -197,10 +198,17 @@ class LocalStorageService {
 
   Future<void> saveUser(UserModel user) async {
     final prefs = await SharedPreferences.getInstance();
+    
+    // Store PII in secure storage (encrypted)
+    await SecureStorageService.instance.saveSecureUserData(
+      userId: user.userId,
+      email: user.email,
+      username: user.username,
+    );
+    
+    // Store non-sensitive preferences in SharedPreferences
     await prefs.setString(AppConstants.keyUserId, user.userId);
     await prefs.setString(AppConstants.keyNickname, user.nickname);
-    await prefs.setString(AppConstants.keyUsername, user.username);
-    await prefs.setString(AppConstants.keyEmail, user.email);
     await prefs.setBool(AppConstants.keyIsGuest, user.isGuest);
     await prefs.setBool(AppConstants.keyThemeMode, user.preferences.darkMode);
     await prefs.setBool(AppConstants.keyHighFidelity, user.preferences.highFidelityMode);
@@ -214,12 +222,17 @@ class LocalStorageService {
     final isGuest = prefs.getBool(AppConstants.keyIsGuest) ?? false;
     if (isGuest) return UserModel.guest();
 
+    // Load PII from secure storage
+    final secureData = await SecureStorageService.instance.loadSecureUserData();
+    final email = secureData?['email'] ?? '';
+    final username = secureData?['username'] ?? 'user';
+
     return UserModel(
       userId: userId,
       name: prefs.getString(AppConstants.keyNickname) ?? '',
       nickname: prefs.getString(AppConstants.keyNickname) ?? 'Art Lover',
-      username: prefs.getString(AppConstants.keyUsername) ?? 'user',
-      email: prefs.getString(AppConstants.keyEmail) ?? '',
+      username: username,
+      email: email,
       preferences: UserPreferences(
         darkMode: prefs.getBool(AppConstants.keyThemeMode) ?? false,
         highFidelityMode: prefs.getBool(AppConstants.keyHighFidelity) ?? true,
@@ -234,5 +247,12 @@ class LocalStorageService {
   Future<void> clearUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    
+    // Clear Hive boxes
+    await _favoritesBox?.clear();
+    await _offlineBox?.clear();
+    
+    // Clear secure storage
+    await SecureStorageService.instance.clearSecureData();
   }
 }
