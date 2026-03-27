@@ -26,91 +26,113 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // ── Pinned Header ──────────────────────────────────────────
-            SliverAppBar(
-              pinned: true,
-              backgroundColor: bg,
-              centerTitle: true,
-              automaticallyImplyLeading: false,
-              title: Text('Profile', style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
-                  fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
-                  color: text, letterSpacing: -0.5, height: 1.0)),
-            ),
-            SliverToBoxAdapter(child: Container(
-                width: double.infinity,
-                color: bg,
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        width: 68,
-                        height: 68,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isDark ? AppColors.darkRaised : AppColors.canvasCard,
-                          border: Border.all(
-                              color: isDark ? AppColors.gold : AppColors.inkHair,
-                              width: 1.5),
-                        ),
-                        child: Center(
-                          child: Text(
-                            user.nickname.isNotEmpty ? user.nickname[0].toUpperCase() : 'G',
-                            style: TextStyle(
-                                fontFamily: 'Cormorant',
-                                fontSize: 28,
-                                fontWeight: FontWeight.w700,
-                                color: isDark ? AppColors.gold : AppColors.ink),
-                          ),
+        child: CustomScrollView(slivers: [
+          // ── Pinned Header ──────────────────────────────────────────
+          SliverAppBar(
+            pinned: true,
+            backgroundColor: bg,
+            centerTitle: true,
+            automaticallyImplyLeading: false,
+            title: Text('Profile',
+                style: TextStyle(
+                    fontFamily: 'Cormorant',
+                    fontSize: 26,
+                    fontWeight: FontWeight.w700,
+                    fontStyle: FontStyle.italic,
+                    color: text,
+                    letterSpacing: -0.5,
+                    height: 1.0)),
+          ),
+          SliverToBoxAdapter(
+              child: Container(
+            width: double.infinity,
+            color: bg,
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      width: 68,
+                      height: 68,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDark
+                            ? AppColors.darkRaised
+                            : AppColors.canvasCard,
+                        border: Border.all(
+                            color: isDark ? AppColors.gold : AppColors.inkHair,
+                            width: 1.5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          user.nickname.isNotEmpty
+                              ? user.nickname[0].toUpperCase()
+                              : 'G',
+                          style: TextStyle(
+                              fontFamily: 'Cormorant',
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? AppColors.gold : AppColors.ink),
                         ),
                       ),
-
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Text(user.nickname,
-                      style: TextStyle(
-                          fontFamily: 'Cormorant',
-                          fontSize: 22,
-                          fontWeight: FontWeight.w700,
-                          color: text,
-                          letterSpacing: -0.3)),
-                  const SizedBox(height: 3),
-                  Text(
-                      user.isGuest
-                          ? 'GUEST VISITOR'
-                          : '@${user.username}',
-                      style: TextStyle(
-                          fontFamily: 'Jost',
-                          fontSize: 10,
-                          letterSpacing: 1.8,
-                          fontWeight: FontWeight.w400,
-                          color: faint)),
-                ],
-              ),
-            )),
-            SliverToBoxAdapter(child: Column(children: [
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Text(user.nickname,
+                    style: TextStyle(
+                        fontFamily: 'Cormorant',
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: text,
+                        letterSpacing: -0.3)),
+                const SizedBox(height: 3),
+                Text(user.isGuest ? 'GUEST VISITOR' : '@${user.username}',
+                    style: TextStyle(
+                        fontFamily: 'Jost',
+                        fontSize: 10,
+                        letterSpacing: 1.8,
+                        fontWeight: FontWeight.w400,
+                        color: faint)),
+              ],
+            ),
+          )),
+          SliverToBoxAdapter(
+              child: Column(children: [
             const SizedBox(height: 20),
             _Label('ACCOUNT', faint),
             _Card(card, isDark, [
               if (!user.isGuest) ...[
-                _Tile(Icons.person_outline, 'Display Name', user.nickname, isDark,
-                    onTap: () => _editDialog(context, ref, 'Display Name', user.nickname, isDark,
-                        (v) => ref.read(authProvider.notifier).updateNickname(v))),
+                _Tile(
+                    Icons.person_outline, 'Display Name', user.nickname, isDark,
+                    onTap: () => _editDialog(
+                        context,
+                        ref,
+                        'Display Name',
+                        user.nickname,
+                        isDark,
+                        (v) =>
+                            ref.read(authProvider.notifier).updateNickname(v))),
                 _Div(isDark),
-                _Tile(Icons.alternate_email, 'Username', '@${user.username}', isDark,
-                    onTap: () => _secureEditDialog(context, ref, 'Username', user.username, isDark,
-                        (v) => ref.read(authProvider.notifier).updateUsername(v))),
+                _Tile(Icons.alternate_email, 'Username', '@${user.username}',
+                    isDark,
+                    onTap: () => _secureEditDialog(
+                        context,
+                        ref,
+                        'Username',
+                        user.username,
+                        isDark,
+                        (v) =>
+                            ref.read(authProvider.notifier).updateUsername(v))),
                 _Div(isDark),
                 _ReadOnlyTile(Icons.mail_outline, 'Email', user.email, isDark),
                 _Div(isDark),
                 _Tile(Icons.lock_outline, 'Password', '••••••••', isDark,
                     onTap: () => _changePasswordDialog(context, ref, isDark)),
                 _Div(isDark),
-                _ReadOnlyTile(Icons.badge_outlined, 'User ID', user.userId, isDark),
+                _ReadOnlyTile(
+                    Icons.badge_outlined, 'User ID', user.userId, isDark),
               ] else
                 _Tile(Icons.person_outline, 'Browsing as Guest',
                     'Sign in to save your collection', isDark, onTap: () {
@@ -128,7 +150,8 @@ class ProfileScreen extends ConsumerWidget {
                   isDark ? AppColors.gold : AppColors.ink,
                   isDark,
                   isDark,
-                  onToggle: (_) => ref.read(themeModeProvider.notifier).toggle()),
+                  onToggle: (_) =>
+                      ref.read(themeModeProvider.notifier).toggle()),
               _Div(isDark),
               _ToggleTile(
                   Icons.high_quality_outlined,
@@ -137,7 +160,8 @@ class ProfileScreen extends ConsumerWidget {
                   isDark ? AppColors.gold : AppColors.ink,
                   user.preferences.highFidelityMode,
                   isDark,
-                  onToggle: (_) => ref.read(authProvider.notifier).toggleHighFidelity()),
+                  onToggle: (_) =>
+                      ref.read(authProvider.notifier).toggleHighFidelity()),
             ]),
             const SizedBox(height: 14),
             _Label('SUPPORT', faint),
@@ -167,8 +191,10 @@ class ProfileScreen extends ConsumerWidget {
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.heartRed,
-                    side: const BorderSide(color: AppColors.heartRed, width: 0.8),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    side:
+                        const BorderSide(color: AppColors.heartRed, width: 0.8),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6)),
                     padding: const EdgeInsets.symmetric(vertical: 13),
                     textStyle: const TextStyle(
                         fontFamily: 'Jost',
@@ -216,72 +242,116 @@ class ProfileScreen extends ConsumerWidget {
 
     showDialog(
       context: ctx,
-      builder: (_) => StatefulBuilder(builder: (dialogCtx, setDialogState) => AlertDialog(
-        backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: const Text('Delete Account',
-            style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
-                fontWeight: FontWeight.w600, color: AppColors.errorRed)),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                color: AppColors.errorRed.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(6)),
-            child: Row(children: [
-              const Icon(Icons.warning_amber_rounded, size: 16, color: AppColors.errorRed),
-              const SizedBox(width: 8),
-              Expanded(child: Text(
-                  'This action is permanent and cannot be undone. All your data will be deleted.',
-                  style: TextStyle(fontFamily: 'Jost', fontSize: 12,
-                      color: isDark ? AppColors.darkText : AppColors.ink))),
-            ]),
-          ),
-          const SizedBox(height: 14),
-          TextField(controller: passCtrl, obscureText: true,
-            decoration: InputDecoration(
-              labelText: 'Enter your password to confirm',
-              labelStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
-                  color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-            )),
-          if (dialogErr != null) ...[
-            const SizedBox(height: 8),
-            Text(dialogErr!, style: const TextStyle(fontFamily: 'Jost',
-                fontSize: 12, color: AppColors.errorRed)),
-          ],
-        ]),
-        actions: [
-          TextButton(
-              onPressed: loading ? null : () => Navigator.pop(dialogCtx),
-              child: Text('Cancel', style: TextStyle(fontFamily: 'Jost',
-                  color: isDark ? AppColors.darkFaint : AppColors.inkLight))),
-          TextButton(
-              onPressed: loading ? null : () async {
-                if (passCtrl.text.isEmpty) {
-                  setDialogState(() => dialogErr = 'Please enter your password.');
-                  return;
-                }
-                setDialogState(() { loading = true; dialogErr = null; });
-                try {
-                  await ref.read(authProvider.notifier).deleteAccount(passCtrl.text);
-                  if (dialogCtx.mounted) Navigator.pop(dialogCtx);
-                  if (ctx.mounted) {
-                    ScaffoldMessenger.of(ctx).showSnackBar(
-                      AppTheme.successSnackBar(ctx, 'Account deleted successfully.'),
-                    );
-                    GoRouter.of(ctx).go(AppRoutes.login);
-                  }
-                } catch (e) {
-                  setDialogState(() { loading = false; dialogErr = e.toString(); });
-                }
-              },
-              child: loading
-                  ? const SizedBox(width: 14, height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 1.5))
-                  : const Text('DELETE', style: TextStyle(fontFamily: 'Jost',
-                      fontWeight: FontWeight.w600, color: AppColors.errorRed))),
-        ],
-      )),
+      builder: (_) => StatefulBuilder(
+          builder: (dialogCtx, setDialogState) => AlertDialog(
+                backgroundColor:
+                    isDark ? AppColors.darkCard : AppColors.canvasCard,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                title: const Text('Delete Account',
+                    style: TextStyle(
+                        fontFamily: 'Cormorant',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.errorRed)),
+                content: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        color: AppColors.errorRed.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6)),
+                    child: Row(children: [
+                      const Icon(Icons.warning_amber_rounded,
+                          size: 16, color: AppColors.errorRed),
+                      const SizedBox(width: 8),
+                      Expanded(
+                          child: Text(
+                              'This action is permanent and cannot be undone. All your data will be deleted.',
+                              style: TextStyle(
+                                  fontFamily: 'Jost',
+                                  fontSize: 12,
+                                  color: isDark
+                                      ? AppColors.darkText
+                                      : AppColors.ink))),
+                    ]),
+                  ),
+                  const SizedBox(height: 14),
+                  TextField(
+                      controller: passCtrl,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Enter your password to confirm',
+                        labelStyle: TextStyle(
+                            fontFamily: 'Jost',
+                            fontSize: 13,
+                            color: isDark
+                                ? AppColors.darkFaint
+                                : AppColors.inkLight),
+                      )),
+                  if (dialogErr != null) ...[
+                    const SizedBox(height: 8),
+                    Text(dialogErr!,
+                        style: const TextStyle(
+                            fontFamily: 'Jost',
+                            fontSize: 12,
+                            color: AppColors.errorRed)),
+                  ],
+                ]),
+                actions: [
+                  TextButton(
+                      onPressed:
+                          loading ? null : () => Navigator.pop(dialogCtx),
+                      child: Text('Cancel',
+                          style: TextStyle(
+                              fontFamily: 'Jost',
+                              color: isDark
+                                  ? AppColors.darkFaint
+                                  : AppColors.inkLight))),
+                  TextButton(
+                      onPressed: loading
+                          ? null
+                          : () async {
+                              if (passCtrl.text.isEmpty) {
+                                setDialogState(() =>
+                                    dialogErr = 'Please enter your password.');
+                                return;
+                              }
+                              setDialogState(() {
+                                loading = true;
+                                dialogErr = null;
+                              });
+                              try {
+                                await ref
+                                    .read(authProvider.notifier)
+                                    .deleteAccount(passCtrl.text);
+                                if (dialogCtx.mounted) Navigator.pop(dialogCtx);
+                                if (ctx.mounted) {
+                                  ScaffoldMessenger.of(ctx).showSnackBar(
+                                    AppTheme.successSnackBar(
+                                        ctx, 'Account deleted successfully.'),
+                                  );
+                                  GoRouter.of(ctx).go(AppRoutes.login);
+                                }
+                              } catch (e) {
+                                setDialogState(() {
+                                  loading = false;
+                                  dialogErr = e.toString();
+                                });
+                              }
+                            },
+                      child: loading
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child:
+                                  CircularProgressIndicator(strokeWidth: 1.5))
+                          : const Text('DELETE',
+                              style: TextStyle(
+                                  fontFamily: 'Jost',
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.errorRed))),
+                ],
+              )),
     );
   }
 
@@ -292,29 +362,39 @@ class ProfileScreen extends ConsumerWidget {
         backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         title: Text(AppConstants.appName,
-            style: TextStyle(fontFamily: 'Cormorant', fontSize: 26,
-                fontWeight: FontWeight.w700, fontStyle: FontStyle.italic,
+            style: TextStyle(
+                fontFamily: 'Cormorant',
+                fontSize: 26,
+                fontWeight: FontWeight.w700,
+                fontStyle: FontStyle.italic,
                 color: isDark ? AppColors.darkText : AppColors.ink)),
-        content: Column(mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(AppConstants.appTagline,
-              style: TextStyle(fontFamily: 'Jost', fontSize: 12,
-                  color: isDark ? AppColors.darkSub : AppColors.inkMid)),
-          const SizedBox(height: 14),
-          Container(height: 0.8,
-              color: isDark ? AppColors.darkBorder : AppColors.inkHair),
-          const SizedBox(height: 14),
-          _InfoRow('Version', 'v${AppConstants.appVersion}', isDark),
-          const SizedBox(height: 6),
-          _InfoRow('Data Source', 'Wikimedia Commons + Firestore', isDark),
-          const SizedBox(height: 6),
-          _InfoRow('Repository', 'github.com/Jutatip124/RenaArt', isDark),
-        ]),
+        content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(AppConstants.appTagline,
+                  style: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 12,
+                      color: isDark ? AppColors.darkSub : AppColors.inkMid)),
+              const SizedBox(height: 14),
+              Container(
+                  height: 0.8,
+                  color: isDark ? AppColors.darkBorder : AppColors.inkHair),
+              const SizedBox(height: 14),
+              _InfoRow('Version', 'v${AppConstants.appVersion}', isDark),
+              const SizedBox(height: 6),
+              _InfoRow('Data Source', 'Wikimedia Commons + Firestore', isDark),
+              const SizedBox(height: 6),
+              _InfoRow('Repository', 'github.com/Jutatip124/RenaArt', isDark),
+            ]),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text('Close',
-                style: TextStyle(fontFamily: 'Jost', fontWeight: FontWeight.w600,
+                style: TextStyle(
+                    fontFamily: 'Jost',
+                    fontWeight: FontWeight.w600,
                     color: isDark ? AppColors.gold : AppColors.ink)),
           ),
         ],
@@ -322,161 +402,225 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  void _editDialog(BuildContext ctx, WidgetRef ref, String label, String current, bool isDark,
-      Function(String) onSave,
+  void _editDialog(BuildContext ctx, WidgetRef ref, String label,
+      String current, bool isDark, Function(String) onSave,
       {String? note, bool isPassword = false}) {
     final ctrl = TextEditingController(text: current);
     String? dialogErr;
     showDialog(
         context: ctx,
-        builder: (_) => StatefulBuilder(builder: (dialogCtx, setDialogState) => AlertDialog(
-              backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              title: Text('Edit $label',
-                  style: TextStyle(
-                      fontFamily: 'Cormorant',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? AppColors.darkText : AppColors.ink)),
-              content: Column(mainAxisSize: MainAxisSize.min, children: [
-                if (note != null) ...[
-                  Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: AppColors.saveBlue.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(6)),
-                      child: Row(children: [
-                        const Icon(Icons.mail_outline, size: 13, color: AppColors.saveBlue),
-                        const SizedBox(width: 8),
-                        Expanded(
-                            child: Text(note,
-                                style: const TextStyle(
-                                    fontFamily: 'Jost', fontSize: 12, color: AppColors.saveBlue))),
-                      ])),
-                  const SizedBox(height: 12),
-                ],
-                TextField(
-                  controller: ctrl,
-                  obscureText: isPassword,
-                  decoration: InputDecoration(
-                    hintText: isPassword ? 'New password' : 'Enter $label',
-                    hintStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
-                        color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                ),
-                if (dialogErr != null) ...[
-                  const SizedBox(height: 8),
-                  Text(dialogErr!, style: const TextStyle(
-                      fontFamily: 'Jost', fontSize: 12, color: AppColors.errorRed)),
-                ],
-              ]),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(dialogCtx),
-                    child: Text('Cancel',
-                        style: TextStyle(
+        builder: (_) => StatefulBuilder(
+            builder: (dialogCtx, setDialogState) => AlertDialog(
+                  backgroundColor:
+                      isDark ? AppColors.darkCard : AppColors.canvasCard,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  title: Text('Edit $label',
+                      style: TextStyle(
+                          fontFamily: 'Cormorant',
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? AppColors.darkText : AppColors.ink)),
+                  content: Column(mainAxisSize: MainAxisSize.min, children: [
+                    if (note != null) ...[
+                      Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              color: AppColors.saveBlue.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6)),
+                          child: Row(children: [
+                            const Icon(Icons.mail_outline,
+                                size: 13, color: AppColors.saveBlue),
+                            const SizedBox(width: 8),
+                            Expanded(
+                                child: Text(note,
+                                    style: const TextStyle(
+                                        fontFamily: 'Jost',
+                                        fontSize: 12,
+                                        color: AppColors.saveBlue))),
+                          ])),
+                      const SizedBox(height: 12),
+                    ],
+                    TextField(
+                      controller: ctrl,
+                      obscureText: isPassword,
+                      decoration: InputDecoration(
+                        hintText: isPassword ? 'New password' : 'Enter $label',
+                        hintStyle: TextStyle(
                             fontFamily: 'Jost',
-                            color: isDark ? AppColors.darkFaint : AppColors.inkLight))),
-                TextButton(
-                    onPressed: () async {
-                      try {
-                        await onSave(ctrl.text.trim());
-                        if (dialogCtx.mounted) Navigator.pop(dialogCtx);
-                      } catch (e) {
-                        setDialogState(() => dialogErr = e.toString());
-                      }
-                    },
-                    child: Text('Save',
-                        style: TextStyle(
-                            fontFamily: 'Jost',
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? AppColors.gold : AppColors.ink))),
-              ],
-            )));
+                            fontSize: 13,
+                            color: isDark
+                                ? AppColors.darkFaint
+                                : AppColors.inkLight),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                    if (dialogErr != null) ...[
+                      const SizedBox(height: 8),
+                      Text(dialogErr!,
+                          style: const TextStyle(
+                              fontFamily: 'Jost',
+                              fontSize: 12,
+                              color: AppColors.errorRed)),
+                    ],
+                  ]),
+                  actions: [
+                    TextButton(
+                        onPressed: () => Navigator.pop(dialogCtx),
+                        child: Text('Cancel',
+                            style: TextStyle(
+                                fontFamily: 'Jost',
+                                color: isDark
+                                    ? AppColors.darkFaint
+                                    : AppColors.inkLight))),
+                    TextButton(
+                        onPressed: () async {
+                          try {
+                            await onSave(ctrl.text.trim());
+                            if (dialogCtx.mounted) Navigator.pop(dialogCtx);
+                          } catch (e) {
+                            setDialogState(() => dialogErr = e.toString());
+                          }
+                        },
+                        child: Text('Save',
+                            style: TextStyle(
+                                fontFamily: 'Jost',
+                                fontWeight: FontWeight.w600,
+                                color:
+                                    isDark ? AppColors.gold : AppColors.ink))),
+                  ],
+                )));
   }
 
   /// Secure edit dialog — requires current password re-authentication.
-  void _secureEditDialog(BuildContext ctx, WidgetRef ref, String label, String current, bool isDark,
-      Function(String) onSave, {String? note}) {
+  void _secureEditDialog(BuildContext ctx, WidgetRef ref, String label,
+      String current, bool isDark, Function(String) onSave,
+      {String? note}) {
     final valueCtrl = TextEditingController(text: current);
     final passCtrl = TextEditingController();
     String? dialogErr;
     bool loading = false;
     showDialog(
       context: ctx,
-      builder: (_) => StatefulBuilder(builder: (dialogCtx, setDialogState) => AlertDialog(
-        backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: Text('Edit $label',
-            style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.darkText : AppColors.ink)),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          if (note != null) ...[
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                  color: AppColors.saveBlue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(6)),
-              child: Row(children: [
-                const Icon(Icons.info_outline, size: 13, color: AppColors.saveBlue),
-                const SizedBox(width: 8),
-                Expanded(child: Text(note,
-                    style: const TextStyle(fontFamily: 'Jost', fontSize: 12,
-                        color: AppColors.saveBlue))),
-              ]),
-            ),
-            const SizedBox(height: 12),
-          ],
-          TextField(controller: valueCtrl,
-            decoration: InputDecoration(
-              labelText: 'New $label',
-              labelStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
-                  color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-            )),
-          const SizedBox(height: 12),
-          TextField(controller: passCtrl, obscureText: true,
-            decoration: InputDecoration(
-              labelText: 'Current Password',
-              labelStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
-                  color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-              hintText: 'Enter password to verify',
-            )),
-          if (dialogErr != null) ...[
-            const SizedBox(height: 8),
-            Text(dialogErr!, style: const TextStyle(fontFamily: 'Jost',
-                fontSize: 12, color: AppColors.errorRed)),
-          ],
-        ]),
-        actions: [
-          TextButton(
-              onPressed: loading ? null : () => Navigator.pop(dialogCtx),
-              child: Text('Cancel', style: TextStyle(fontFamily: 'Jost',
-                  color: isDark ? AppColors.darkFaint : AppColors.inkLight))),
-          TextButton(
-              onPressed: loading ? null : () async {
-                if (passCtrl.text.isEmpty) {
-                  setDialogState(() => dialogErr = 'Please enter your current password.');
-                  return;
-                }
-                setDialogState(() { loading = true; dialogErr = null; });
-                try {
-                  await ref.read(authProvider.notifier).reauthenticate(passCtrl.text);
-                  await onSave(valueCtrl.text.trim());
-                  if (dialogCtx.mounted) Navigator.pop(dialogCtx);
-                } catch (e) {
-                  setDialogState(() { loading = false; dialogErr = e.toString(); });
-                }
-              },
-              child: loading
-                  ? const SizedBox(width: 14, height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 1.5))
-                  : Text('Save', style: TextStyle(fontFamily: 'Jost',
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? AppColors.gold : AppColors.ink))),
-        ],
-      )),
+      builder: (_) => StatefulBuilder(
+          builder: (dialogCtx, setDialogState) => AlertDialog(
+                backgroundColor:
+                    isDark ? AppColors.darkCard : AppColors.canvasCard,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                title: Text('Edit $label',
+                    style: TextStyle(
+                        fontFamily: 'Cormorant',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? AppColors.darkText : AppColors.ink)),
+                content: Column(mainAxisSize: MainAxisSize.min, children: [
+                  if (note != null) ...[
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: AppColors.saveBlue.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(6)),
+                      child: Row(children: [
+                        const Icon(Icons.info_outline,
+                            size: 13, color: AppColors.saveBlue),
+                        const SizedBox(width: 8),
+                        Expanded(
+                            child: Text(note,
+                                style: const TextStyle(
+                                    fontFamily: 'Jost',
+                                    fontSize: 12,
+                                    color: AppColors.saveBlue))),
+                      ]),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                  TextField(
+                      controller: valueCtrl,
+                      decoration: InputDecoration(
+                        labelText: 'New $label',
+                        labelStyle: TextStyle(
+                            fontFamily: 'Jost',
+                            fontSize: 13,
+                            color: isDark
+                                ? AppColors.darkFaint
+                                : AppColors.inkLight),
+                      )),
+                  const SizedBox(height: 12),
+                  TextField(
+                      controller: passCtrl,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Current Password',
+                        labelStyle: TextStyle(
+                            fontFamily: 'Jost',
+                            fontSize: 13,
+                            color: isDark
+                                ? AppColors.darkFaint
+                                : AppColors.inkLight),
+                        hintText: 'Enter password to verify',
+                      )),
+                  if (dialogErr != null) ...[
+                    const SizedBox(height: 8),
+                    Text(dialogErr!,
+                        style: const TextStyle(
+                            fontFamily: 'Jost',
+                            fontSize: 12,
+                            color: AppColors.errorRed)),
+                  ],
+                ]),
+                actions: [
+                  TextButton(
+                      onPressed:
+                          loading ? null : () => Navigator.pop(dialogCtx),
+                      child: Text('Cancel',
+                          style: TextStyle(
+                              fontFamily: 'Jost',
+                              color: isDark
+                                  ? AppColors.darkFaint
+                                  : AppColors.inkLight))),
+                  TextButton(
+                      onPressed: loading
+                          ? null
+                          : () async {
+                              if (passCtrl.text.isEmpty) {
+                                setDialogState(() => dialogErr =
+                                    'Please enter your current password.');
+                                return;
+                              }
+                              setDialogState(() {
+                                loading = true;
+                                dialogErr = null;
+                              });
+                              try {
+                                await ref
+                                    .read(authProvider.notifier)
+                                    .reauthenticate(passCtrl.text);
+                                await onSave(valueCtrl.text.trim());
+                                if (dialogCtx.mounted) Navigator.pop(dialogCtx);
+                              } catch (e) {
+                                setDialogState(() {
+                                  loading = false;
+                                  dialogErr = e.toString();
+                                });
+                              }
+                            },
+                      child: loading
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child:
+                                  CircularProgressIndicator(strokeWidth: 1.5))
+                          : Text('Save',
+                              style: TextStyle(
+                                  fontFamily: 'Jost',
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? AppColors.gold
+                                      : AppColors.ink))),
+                ],
+              )),
     );
   }
 
@@ -489,12 +633,13 @@ class ProfileScreen extends ConsumerWidget {
     bool loading = false;
 
     List<_PwdReq> reqs(String p) => [
-      _PwdReq('At least 8 characters', p.length >= 8),
-      _PwdReq('Uppercase letter (A-Z)', p.contains(RegExp(r'[A-Z]'))),
-      _PwdReq('Lowercase letter (a-z)', p.contains(RegExp(r'[a-z]'))),
-      _PwdReq('Number (0-9)', p.contains(RegExp(r'[0-9]'))),
-      _PwdReq('Special character (!@#\$%...)', p.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>\-_=+\[\]\\\/~`]'))),
-    ];
+          _PwdReq('At least 8 characters', p.length >= 8),
+          _PwdReq('Uppercase letter (A-Z)', p.contains(RegExp(r'[A-Z]'))),
+          _PwdReq('Lowercase letter (a-z)', p.contains(RegExp(r'[a-z]'))),
+          _PwdReq('Number (0-9)', p.contains(RegExp(r'[0-9]'))),
+          _PwdReq('Special character (!@#\$%...)',
+              p.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>\-_=+\[\]\\\/~`]'))),
+        ];
 
     showDialog(
       context: ctx,
@@ -505,97 +650,151 @@ class ProfileScreen extends ConsumerWidget {
         final passReqs = reqs(newCtrl.text);
         return AlertDialog(
           backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           title: Text('Change Password',
-              style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
+              style: TextStyle(
+                  fontFamily: 'Cormorant',
+                  fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: isDark ? AppColors.darkText : AppColors.ink)),
-          content: SingleChildScrollView(child: Column(mainAxisSize: MainAxisSize.min, children: [
-            TextField(controller: currentCtrl, obscureText: true,
+          content: SingleChildScrollView(
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+            TextField(
+                controller: currentCtrl,
+                obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Current Password',
-                  labelStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                  labelStyle: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 13,
                       color: isDark ? AppColors.darkFaint : AppColors.inkLight),
                 )),
             const SizedBox(height: 12),
-            TextField(controller: newCtrl, obscureText: true,
+            TextField(
+                controller: newCtrl,
+                obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'New Password',
-                  labelStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                  labelStyle: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 13,
                       color: isDark ? AppColors.darkFaint : AppColors.inkLight),
                 )),
             if (newCtrl.text.isNotEmpty) ...[
               const SizedBox(height: 8),
               ...passReqs.map((r) => Padding(
-                padding: const EdgeInsets.only(bottom: 2),
-                child: Row(children: [
-                  Icon(r.met ? Icons.check_circle : Icons.circle_outlined, size: 12,
-                      color: r.met ? const Color(0xFF4CAF50)
-                          : isDark ? AppColors.darkFaint : AppColors.inkLight),
-                  const SizedBox(width: 6),
-                  Text(r.label, style: TextStyle(fontFamily: 'Jost', fontSize: 11,
-                      color: r.met ? const Color(0xFF4CAF50)
-                          : isDark ? AppColors.darkFaint : AppColors.inkLight)),
-                ]),
-              )),
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Row(children: [
+                      Icon(r.met ? Icons.check_circle : Icons.circle_outlined,
+                          size: 12,
+                          color: r.met
+                              ? const Color(0xFF4CAF50)
+                              : isDark
+                                  ? AppColors.darkFaint
+                                  : AppColors.inkLight),
+                      const SizedBox(width: 6),
+                      Text(r.label,
+                          style: TextStyle(
+                              fontFamily: 'Jost',
+                              fontSize: 11,
+                              color: r.met
+                                  ? const Color(0xFF4CAF50)
+                                  : isDark
+                                      ? AppColors.darkFaint
+                                      : AppColors.inkLight)),
+                    ]),
+                  )),
             ],
             const SizedBox(height: 12),
-            TextField(controller: confirmCtrl, obscureText: true,
+            TextField(
+                controller: confirmCtrl,
+                obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Confirm New Password',
-                  labelStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
+                  labelStyle: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 13,
                       color: isDark ? AppColors.darkFaint : AppColors.inkLight),
                 )),
             if (dialogErr != null) ...[
               const SizedBox(height: 8),
-              Text(dialogErr!, style: const TextStyle(fontFamily: 'Jost',
-                  fontSize: 12, color: AppColors.errorRed)),
+              Text(dialogErr!,
+                  style: const TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 12,
+                      color: AppColors.errorRed)),
             ],
           ])),
           actions: [
             TextButton(
                 onPressed: loading ? null : () => Navigator.pop(dialogCtx),
-                child: Text('Cancel', style: TextStyle(fontFamily: 'Jost',
-                    color: isDark ? AppColors.darkFaint : AppColors.inkLight))),
+                child: Text('Cancel',
+                    style: TextStyle(
+                        fontFamily: 'Jost',
+                        color: isDark
+                            ? AppColors.darkFaint
+                            : AppColors.inkLight))),
             TextButton(
-                onPressed: loading ? null : () async {
-                  if (currentCtrl.text.isEmpty) {
-                    setDialogState(() => dialogErr = 'Enter your current password.');
-                    return;
-                  }
-                  // Check if new password is the same as current password
-                  if (newCtrl.text == currentCtrl.text) {
-                    setDialogState(() => dialogErr = 'New password cannot be the same as current password.');
-                    return;
-                  }
-                  if (!reqs(newCtrl.text).every((r) => r.met)) {
-                    setDialogState(() => dialogErr = 'New password does not meet all requirements.');
-                    return;
-                  }
-                  if (newCtrl.text != confirmCtrl.text) {
-                    setDialogState(() => dialogErr = 'New passwords do not match.');
-                    return;
-                  }
-                  setDialogState(() { loading = true; dialogErr = null; });
-                  try {
-                    await ref.read(authProvider.notifier).reauthenticate(currentCtrl.text);
-                    await ref.read(authProvider.notifier).updatePassword(newCtrl.text);
-                    if (dialogCtx.mounted) {
-                      Navigator.pop(dialogCtx);
-                      ScaffoldMessenger.of(ctx).showSnackBar(
-                        AppTheme.successSnackBar(ctx, 'Password updated successfully'),
-                      );
-                    }
-                  } catch (e) {
-                    setDialogState(() { loading = false; dialogErr = e.toString(); });
-                  }
-                },
+                onPressed: loading
+                    ? null
+                    : () async {
+                        if (currentCtrl.text.isEmpty) {
+                          setDialogState(
+                              () => dialogErr = 'Enter your current password.');
+                          return;
+                        }
+                        // Check if new password is the same as current password
+                        if (newCtrl.text == currentCtrl.text) {
+                          setDialogState(() => dialogErr =
+                              'New password cannot be the same as current password.');
+                          return;
+                        }
+                        if (!reqs(newCtrl.text).every((r) => r.met)) {
+                          setDialogState(() => dialogErr =
+                              'New password does not meet all requirements.');
+                          return;
+                        }
+                        if (newCtrl.text != confirmCtrl.text) {
+                          setDialogState(
+                              () => dialogErr = 'New passwords do not match.');
+                          return;
+                        }
+                        setDialogState(() {
+                          loading = true;
+                          dialogErr = null;
+                        });
+                        try {
+                          await ref
+                              .read(authProvider.notifier)
+                              .reauthenticate(currentCtrl.text);
+                          await ref
+                              .read(authProvider.notifier)
+                              .updatePassword(newCtrl.text);
+                          if (dialogCtx.mounted) {
+                            Navigator.pop(dialogCtx);
+                            ScaffoldMessenger.of(ctx).showSnackBar(
+                              AppTheme.successSnackBar(
+                                  ctx, 'Password updated successfully'),
+                            );
+                          }
+                        } catch (e) {
+                          setDialogState(() {
+                            loading = false;
+                            dialogErr = e.toString();
+                          });
+                        }
+                      },
                 child: loading
-                    ? const SizedBox(width: 14, height: 14,
+                    ? const SizedBox(
+                        width: 14,
+                        height: 14,
                         child: CircularProgressIndicator(strokeWidth: 1.5))
-                    : Text('Update', style: TextStyle(fontFamily: 'Jost',
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? AppColors.gold : AppColors.ink))),
+                    : Text('Update',
+                        style: TextStyle(
+                            fontFamily: 'Jost',
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? AppColors.gold : AppColors.ink))),
           ],
         );
       }),
@@ -604,47 +803,83 @@ class ProfileScreen extends ConsumerWidget {
 
   void _helpFaqDialog(BuildContext ctx, bool isDark) {
     final text = isDark ? AppColors.darkText : AppColors.ink;
-    final sub  = isDark ? AppColors.darkSub  : AppColors.inkMid;
+    final sub = isDark ? AppColors.darkSub : AppColors.inkMid;
     const faqs = [
-      ('What is RenaArt?', 'RenaArt is a curated gallery of 300 Renaissance artworks (1300-1600) featuring paintings, sculptures, and frescoes from the greatest masters.'),
-      ('How do I save artworks offline?', 'Open any artwork detail page and tap the download icon. You can save up to 10 artworks for offline viewing.'),
-      ('How do I like an artwork?', 'Tap the heart icon on any artwork card or detail page. Liked artworks appear in your Collection tab.'),
-      ('Can I change my display name?', 'Yes. Go to Profile > Display Name and tap to edit.'),
-      ('What does High Fidelity mode do?', 'When enabled, images load at up to 1080p resolution. Disable it to save bandwidth on slower connections.'),
-      ('How do I report an issue?', 'Go to Profile > Report an Issue. Select a category, optionally enter the Object ID, describe the issue, and submit.'),
-      ('Is my data private?', 'Your account data is stored securely in Firebase. We do not share personal information with third parties.'),
+      (
+        'What is RenaArt?',
+        'RenaArt is a curated gallery of 300 Renaissance artworks (1300-1600) featuring paintings, sculptures, and frescoes from the greatest masters.'
+      ),
+      (
+        'How do I save artworks offline?',
+        'Open any artwork detail page and tap the download icon. You can save up to 10 artworks for offline viewing.'
+      ),
+      (
+        'How do I like an artwork?',
+        'Tap the heart icon on any artwork card or detail page. Liked artworks appear in your Collection tab.'
+      ),
+      (
+        'Can I change my display name?',
+        'Yes. Go to Profile > Display Name and tap to edit.'
+      ),
+      (
+        'What does High Fidelity mode do?',
+        'When enabled, images load at up to 1080p resolution. Disable it to save bandwidth on slower connections.'
+      ),
+      (
+        'How do I report an issue?',
+        'Go to Profile > Report an Issue. Select a category, optionally enter the Object ID, describe the issue, and submit.'
+      ),
+      (
+        'Is my data private?',
+        'Your account data is stored securely in Firebase. We do not share personal information with third parties.'
+      ),
     ];
     showDialog(
       context: ctx,
       builder: (_) => AlertDialog(
         backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: Text('Help & FAQ', style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
-            fontWeight: FontWeight.w600, color: text)),
+        title: Text('Help & FAQ',
+            style: TextStyle(
+                fontFamily: 'Cormorant',
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: text)),
         content: SizedBox(
           width: double.maxFinite,
           child: ListView.separated(
             shrinkWrap: true,
             itemCount: faqs.length,
             separatorBuilder: (_, __) => Divider(
-                color: isDark ? AppColors.darkBorder : AppColors.inkHair, height: 20),
+                color: isDark ? AppColors.darkBorder : AppColors.inkHair,
+                height: 20),
             itemBuilder: (_, i) {
               final (q, a) = faqs[i];
-              return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(q, style: TextStyle(fontFamily: 'Jost', fontSize: 13,
-                    fontWeight: FontWeight.w600, color: text)),
-                const SizedBox(height: 4),
-                Text(a, style: TextStyle(fontFamily: 'Jost', fontSize: 12, color: sub)),
-              ]);
+              return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(q,
+                        style: TextStyle(
+                            fontFamily: 'Jost',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: text)),
+                    const SizedBox(height: 4),
+                    Text(a,
+                        style: TextStyle(
+                            fontFamily: 'Jost', fontSize: 12, color: sub)),
+                  ]);
             },
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Close', style: TextStyle(fontFamily: 'Jost',
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.gold : AppColors.ink)),
+            child: Text('Close',
+                style: TextStyle(
+                    fontFamily: 'Jost',
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? AppColors.gold : AppColors.ink)),
           ),
         ],
       ),
@@ -673,135 +908,230 @@ class ProfileScreen extends ConsumerWidget {
       Future.delayed(const Duration(milliseconds: 300), () {
         if (scrollCtrl.hasClients) {
           scrollCtrl.animateTo(scrollCtrl.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOut);
         }
       });
     }
 
     showDialog(
       context: ctx,
-      builder: (_) => StatefulBuilder(builder: (dialogCtx, setDialogState) => AlertDialog(
-        backgroundColor: isDark ? AppColors.darkCard : AppColors.canvasCard,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: Text('Report an Issue',
-            style: TextStyle(fontFamily: 'Cormorant', fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.darkText : AppColors.ink)),
-        content: SingleChildScrollView(controller: scrollCtrl, child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('SELECT CATEGORY', style: TextStyle(fontFamily: 'Jost', fontSize: 10,
-                fontWeight: FontWeight.w600, letterSpacing: 1.3,
-                color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
-            const SizedBox(height: 8),
-            Wrap(spacing: 6, runSpacing: 6,
-              children: categories.map((c) => ChoiceChip(
-                label: Text(c, style: TextStyle(fontFamily: 'Jost', fontSize: 12,
-                    color: selectedCategory == c
-                        ? (isDark ? AppColors.darkCanvas : Colors.white)
-                        : (isDark ? AppColors.darkText : AppColors.ink))),
-                selected: selectedCategory == c,
-                onSelected: (_) => setDialogState(() => selectedCategory = c),
-                selectedColor: isDark ? AppColors.gold : AppColors.ink,
-                checkmarkColor: isDark ? AppColors.darkCanvas : Colors.white,
-                backgroundColor: isDark ? AppColors.darkRaised : AppColors.canvasTone,
-                side: BorderSide.none,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-              )).toList(),
-            ),
-            if (selectedCategory == 'Other') ...[
-              const SizedBox(height: 12),
-              TextField(controller: otherCtrl,
-                onTap: scrollToEnd,
-                decoration: InputDecoration(
-                  labelText: 'Specify category',
-                  labelStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
-                      color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-                )),
-            ],
-            const SizedBox(height: 14),
-            Text('OBJECT ID (OPTIONAL)', style: TextStyle(fontFamily: 'Jost', fontSize: 10,
-                fontWeight: FontWeight.w600, letterSpacing: 1.3,
-                color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
-            const SizedBox(height: 6),
-            TextField(
-              controller: objectIdCtrl,
-              keyboardType: TextInputType.number,
-              onTap: scrollToEnd,
-              decoration: InputDecoration(
-                prefixText: 'local_',
-                prefixStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
-                    color: isDark ? AppColors.darkSub : AppColors.inkMid),
-                hintText: 'e.g. 123',
-                hintStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
-                    color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-            ),
-            const SizedBox(height: 14),
-            Text('DESCRIPTION', style: TextStyle(fontFamily: 'Jost', fontSize: 10,
-                fontWeight: FontWeight.w600, letterSpacing: 1.3,
-                color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
-            const SizedBox(height: 6),
-            TextField(
-              controller: descCtrl,
-              maxLines: 4,
-              onTap: scrollToEnd,
-              decoration: InputDecoration(
-                hintText: 'Describe the problem in detail...',
-                hintStyle: TextStyle(fontFamily: 'Jost', fontSize: 13,
-                    color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-            ),
-            if (dialogErr != null) ...[
-              const SizedBox(height: 8),
-              Text(dialogErr!, style: const TextStyle(fontFamily: 'Jost',
-                  fontSize: 12, color: AppColors.errorRed)),
-            ],
-          ],
-        )),
-        actions: [
-          TextButton(
-              onPressed: loading ? null : () => Navigator.pop(dialogCtx),
-              child: Text('Cancel', style: TextStyle(fontFamily: 'Jost',
-                  color: isDark ? AppColors.darkFaint : AppColors.inkLight))),
-          TextButton(
-              onPressed: loading ? null : () async {
-                if (selectedCategory == null) {
-                  setDialogState(() => dialogErr = 'Please select a category.');
-                  return;
-                }
-                final cat = selectedCategory == 'Other'
-                    ? (otherCtrl.text.trim().isEmpty ? 'Other' : otherCtrl.text.trim())
-                    : selectedCategory!;
-                setDialogState(() { loading = true; dialogErr = null; });
-                try {
-                  final objId = objectIdCtrl.text.trim().isNotEmpty
-                      ? 'local_${objectIdCtrl.text.trim()}' : '';
-                  final desc = objId.isNotEmpty
-                      ? '[Object: $objId] ${descCtrl.text.trim()}'
-                      : descCtrl.text.trim();
-                  await ref.read(authProvider.notifier).submitReport(cat, desc);
-                  if (dialogCtx.mounted) {
-                    Navigator.pop(dialogCtx);
-                    ScaffoldMessenger.of(ctx).showSnackBar(
-                      AppTheme.successSnackBar(ctx, 'Report submitted successfully. Thank you!'),
-                    );
-                  }
-                } catch (e) {
-                  setDialogState(() { loading = false; dialogErr = 'Failed to submit. Please try again.'; });
-                }
-              },
-              child: loading
-                  ? const SizedBox(width: 14, height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 1.5))
-                  : Text('Submit', style: TextStyle(fontFamily: 'Jost',
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? AppColors.gold : AppColors.ink))),
-        ],
-      )),
+      builder: (_) => StatefulBuilder(
+          builder: (dialogCtx, setDialogState) => AlertDialog(
+                backgroundColor:
+                    isDark ? AppColors.darkCard : AppColors.canvasCard,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                title: Text('Report an Issue',
+                    style: TextStyle(
+                        fontFamily: 'Cormorant',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? AppColors.darkText : AppColors.ink)),
+                content: SingleChildScrollView(
+                    controller: scrollCtrl,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('SELECT CATEGORY',
+                            style: TextStyle(
+                                fontFamily: 'Jost',
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.3,
+                                color: isDark
+                                    ? AppColors.darkFaint
+                                    : AppColors.inkLight)),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: categories
+                              .map((c) => ChoiceChip(
+                                    label: Text(c,
+                                        style: TextStyle(
+                                            fontFamily: 'Jost',
+                                            fontSize: 12,
+                                            color: selectedCategory == c
+                                                ? (isDark
+                                                    ? AppColors.darkCanvas
+                                                    : Colors.white)
+                                                : (isDark
+                                                    ? AppColors.darkText
+                                                    : AppColors.ink))),
+                                    selected: selectedCategory == c,
+                                    onSelected: (_) => setDialogState(
+                                        () => selectedCategory = c),
+                                    selectedColor:
+                                        isDark ? AppColors.gold : AppColors.ink,
+                                    checkmarkColor: isDark
+                                        ? AppColors.darkCanvas
+                                        : Colors.white,
+                                    backgroundColor: isDark
+                                        ? AppColors.darkRaised
+                                        : AppColors.canvasTone,
+                                    side: BorderSide.none,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6)),
+                                  ))
+                              .toList(),
+                        ),
+                        if (selectedCategory == 'Other') ...[
+                          const SizedBox(height: 12),
+                          TextField(
+                              controller: otherCtrl,
+                              onTap: scrollToEnd,
+                              decoration: InputDecoration(
+                                labelText: 'Specify category',
+                                labelStyle: TextStyle(
+                                    fontFamily: 'Jost',
+                                    fontSize: 13,
+                                    color: isDark
+                                        ? AppColors.darkFaint
+                                        : AppColors.inkLight),
+                              )),
+                        ],
+                        const SizedBox(height: 14),
+                        Text('OBJECT ID (OPTIONAL)',
+                            style: TextStyle(
+                                fontFamily: 'Jost',
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.3,
+                                color: isDark
+                                    ? AppColors.darkFaint
+                                    : AppColors.inkLight)),
+                        const SizedBox(height: 6),
+                        TextField(
+                          controller: objectIdCtrl,
+                          keyboardType: TextInputType.number,
+                          onTap: scrollToEnd,
+                          decoration: InputDecoration(
+                            prefixText: 'local_',
+                            prefixStyle: TextStyle(
+                                fontFamily: 'Jost',
+                                fontSize: 13,
+                                color: isDark
+                                    ? AppColors.darkSub
+                                    : AppColors.inkMid),
+                            hintText: 'e.g. 123',
+                            hintStyle: TextStyle(
+                                fontFamily: 'Jost',
+                                fontSize: 13,
+                                color: isDark
+                                    ? AppColors.darkFaint
+                                    : AppColors.inkLight),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        Text('DESCRIPTION',
+                            style: TextStyle(
+                                fontFamily: 'Jost',
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.3,
+                                color: isDark
+                                    ? AppColors.darkFaint
+                                    : AppColors.inkLight)),
+                        const SizedBox(height: 6),
+                        TextField(
+                          controller: descCtrl,
+                          maxLines: 4,
+                          onTap: scrollToEnd,
+                          decoration: InputDecoration(
+                            hintText: 'Describe the problem in detail...',
+                            hintStyle: TextStyle(
+                                fontFamily: 'Jost',
+                                fontSize: 13,
+                                color: isDark
+                                    ? AppColors.darkFaint
+                                    : AppColors.inkLight),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                        ),
+                        if (dialogErr != null) ...[
+                          const SizedBox(height: 8),
+                          Text(dialogErr!,
+                              style: const TextStyle(
+                                  fontFamily: 'Jost',
+                                  fontSize: 12,
+                                  color: AppColors.errorRed)),
+                        ],
+                      ],
+                    )),
+                actions: [
+                  TextButton(
+                      onPressed:
+                          loading ? null : () => Navigator.pop(dialogCtx),
+                      child: Text('Cancel',
+                          style: TextStyle(
+                              fontFamily: 'Jost',
+                              color: isDark
+                                  ? AppColors.darkFaint
+                                  : AppColors.inkLight))),
+                  TextButton(
+                      onPressed: loading
+                          ? null
+                          : () async {
+                              if (selectedCategory == null) {
+                                setDialogState(() =>
+                                    dialogErr = 'Please select a category.');
+                                return;
+                              }
+                              final cat = selectedCategory == 'Other'
+                                  ? (otherCtrl.text.trim().isEmpty
+                                      ? 'Other'
+                                      : otherCtrl.text.trim())
+                                  : selectedCategory!;
+                              setDialogState(() {
+                                loading = true;
+                                dialogErr = null;
+                              });
+                              try {
+                                final objId =
+                                    objectIdCtrl.text.trim().isNotEmpty
+                                        ? 'local_${objectIdCtrl.text.trim()}'
+                                        : '';
+                                final desc = objId.isNotEmpty
+                                    ? '[Object: $objId] ${descCtrl.text.trim()}'
+                                    : descCtrl.text.trim();
+                                await ref
+                                    .read(authProvider.notifier)
+                                    .submitReport(cat, desc);
+                                if (dialogCtx.mounted) {
+                                  Navigator.pop(dialogCtx);
+                                  ScaffoldMessenger.of(ctx).showSnackBar(
+                                    AppTheme.successSnackBar(ctx,
+                                        'Report submitted successfully. Thank you!'),
+                                  );
+                                }
+                              } catch (e) {
+                                setDialogState(() {
+                                  loading = false;
+                                  dialogErr =
+                                      'Failed to submit. Please try again.';
+                                });
+                              }
+                            },
+                      child: loading
+                          ? const SizedBox(
+                              width: 14,
+                              height: 14,
+                              child:
+                                  CircularProgressIndicator(strokeWidth: 1.5))
+                          : Text('Submit',
+                              style: TextStyle(
+                                  fontFamily: 'Jost',
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? AppColors.gold
+                                      : AppColors.ink))),
+                ],
+              )),
     );
   }
 }
@@ -812,19 +1142,26 @@ class _PwdReq {
   const _PwdReq(this.label, this.met);
 }
 
-
 class _InfoRow extends StatelessWidget {
   final String label, value;
   final bool isDark;
   const _InfoRow(this.label, this.value, this.isDark);
   @override
   Widget build(BuildContext context) => Row(children: [
-    Text('$label  ', style: TextStyle(fontFamily: 'Jost', fontSize: 11,
-        fontWeight: FontWeight.w500,
-        color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
-    Expanded(child: Text(value, style: TextStyle(fontFamily: 'Jost', fontSize: 11,
-        color: isDark ? AppColors.darkText : AppColors.ink), overflow: TextOverflow.ellipsis)),
-  ]);
+        Text('$label  ',
+            style: TextStyle(
+                fontFamily: 'Jost',
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
+        Expanded(
+            child: Text(value,
+                style: TextStyle(
+                    fontFamily: 'Jost',
+                    fontSize: 11,
+                    color: isDark ? AppColors.darkText : AppColors.ink),
+                overflow: TextOverflow.ellipsis)),
+      ]);
 }
 
 // ignore: non_constant_identifier_names
@@ -845,12 +1182,16 @@ Widget _Card(Color bg, bool isDark, List<Widget> children) => Container(
         color: bg,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.inkHair, width: isDark ? 0.5 : 0.8)),
+            color: isDark ? AppColors.darkBorder : AppColors.inkHair,
+            width: isDark ? 0.5 : 0.8)),
     child: Column(children: children));
 
 // ignore: non_constant_identifier_names
 Widget _Div(bool isDark) => Divider(
-    color: isDark ? AppColors.darkBorder : AppColors.inkHair, height: 1, thickness: 0.8, indent: 44);
+    color: isDark ? AppColors.darkBorder : AppColors.inkHair,
+    height: 1,
+    thickness: 0.8,
+    indent: 44);
 
 class _ReadOnlyTile extends StatelessWidget {
   final IconData icon;
@@ -860,22 +1201,34 @@ class _ReadOnlyTile extends StatelessWidget {
   const _ReadOnlyTile(this.icon, this.label, this.value, this.isDark);
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    child: Row(children: [
-      Icon(icon, size: 17, color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-      const SizedBox(width: 12),
-      Expanded(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(label, style: TextStyle(fontFamily: 'Jost', fontSize: 14,
-              color: isDark ? AppColors.darkText : AppColors.ink)),
-          Text(value, style: TextStyle(fontFamily: 'Jost', fontSize: 11,
-              letterSpacing: 0.5,
-              color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(children: [
+          Icon(icon,
+              size: 17,
+              color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+          const SizedBox(width: 12),
+          Expanded(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(label,
+                  style: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 14,
+                      color: isDark ? AppColors.darkText : AppColors.ink)),
+              Text(value,
+                  style: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 11,
+                      letterSpacing: 0.5,
+                      color:
+                          isDark ? AppColors.darkFaint : AppColors.inkLight)),
+            ]),
+          ),
+          Icon(Icons.lock,
+              size: 13,
+              color: isDark ? AppColors.darkFaint : AppColors.inkLight),
         ]),
-      ),
-      Icon(Icons.lock, size: 13, color: isDark ? AppColors.darkFaint : AppColors.inkLight),
-    ]),
-  );
+      );
 }
 
 class _Tile extends StatelessWidget {
@@ -884,7 +1237,8 @@ class _Tile extends StatelessWidget {
   final String? value;
   final bool isDark;
   final VoidCallback onTap;
-  const _Tile(this.icon, this.label, this.value, this.isDark, {required this.onTap});
+  const _Tile(this.icon, this.label, this.value, this.isDark,
+      {required this.onTap});
   @override
   Widget build(BuildContext context) => InkWell(
         onTap: onTap,
@@ -892,24 +1246,31 @@ class _Tile extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(children: [
-            Icon(icon, size: 17, color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+            Icon(icon,
+                size: 17,
+                color: isDark ? AppColors.darkFaint : AppColors.inkLight),
             const SizedBox(width: 12),
             Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(label,
-                  style: TextStyle(
-                      fontFamily: 'Jost',
-                      fontSize: 14,
-                      color: isDark ? AppColors.darkText : AppColors.ink)),
-              if (value != null)
-                Text(value!,
-                    style: TextStyle(
-                        fontFamily: 'Jost',
-                        fontSize: 12,
-                        color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
-            ])),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                  Text(label,
+                      style: TextStyle(
+                          fontFamily: 'Jost',
+                          fontSize: 14,
+                          color: isDark ? AppColors.darkText : AppColors.ink)),
+                  if (value != null)
+                    Text(value!,
+                        style: TextStyle(
+                            fontFamily: 'Jost',
+                            fontSize: 12,
+                            color: isDark
+                                ? AppColors.darkFaint
+                                : AppColors.inkLight)),
+                ])),
             Icon(Icons.chevron_right,
-                size: 16, color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+                size: 16,
+                color: isDark ? AppColors.darkFaint : AppColors.inkLight),
           ]),
         ),
       );
@@ -921,36 +1282,43 @@ class _ToggleTile extends StatelessWidget {
   final Color activeColor;
   final bool value, isDark;
   final ValueChanged<bool> onToggle;
-  const _ToggleTile(this.icon, this.label, this.sub, this.activeColor, this.value, this.isDark,
+  const _ToggleTile(this.icon, this.label, this.sub, this.activeColor,
+      this.value, this.isDark,
       {required this.onToggle});
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(children: [
-          Icon(icon, size: 17, color: isDark ? AppColors.darkFaint : AppColors.inkLight),
+          Icon(icon,
+              size: 17,
+              color: isDark ? AppColors.darkFaint : AppColors.inkLight),
           const SizedBox(width: 12),
           Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(label,
-                style: TextStyle(
-                    fontFamily: 'Jost',
-                    fontSize: 14,
-                    color: isDark ? AppColors.darkText : AppColors.ink)),
-            Text(sub,
-                style: TextStyle(
-                    fontFamily: 'Jost',
-                    fontSize: 12,
-                    color: isDark ? AppColors.darkFaint : AppColors.inkLight)),
-          ])),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text(label,
+                    style: TextStyle(
+                        fontFamily: 'Jost',
+                        fontSize: 14,
+                        color: isDark ? AppColors.darkText : AppColors.ink)),
+                Text(sub,
+                    style: TextStyle(
+                        fontFamily: 'Jost',
+                        fontSize: 12,
+                        color:
+                            isDark ? AppColors.darkFaint : AppColors.inkLight)),
+              ])),
           Switch(
               value: value,
               onChanged: onToggle,
               activeThumbColor: activeColor,
-              trackColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected)
-                  ? activeColor.withValues(alpha: 0.25)
-                  : isDark
-                      ? AppColors.darkBorder
-                      : AppColors.inkHair)),
+              trackColor: WidgetStateProperty.resolveWith(
+                  (s) => s.contains(WidgetState.selected)
+                      ? activeColor.withValues(alpha: 0.25)
+                      : isDark
+                          ? AppColors.darkBorder
+                          : AppColors.inkHair)),
         ]),
       );
 }

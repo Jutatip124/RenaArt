@@ -40,7 +40,9 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
       if (user != null) {
         state = user.preferences.darkMode ? ThemeMode.dark : ThemeMode.light;
       }
-    } catch (e) { debugPrint('ThemeNotifier._load failed: $e'); }
+    } catch (e) {
+      debugPrint('ThemeNotifier._load failed: $e');
+    }
   }
 
   void syncFromUser(UserModel? user) {
@@ -59,7 +61,11 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
       );
       await LocalStorageService.instance.saveUser(updated);
       // Sync to Firestore — fire-and-forget, never retry on quota error
-      try { await FirestoreUserService.instance.saveProfile(updated); } catch (e) { debugPrint('ThemeNotifier.toggle sync failed: $e'); }
+      try {
+        await FirestoreUserService.instance.saveProfile(updated);
+      } catch (e) {
+        debugPrint('ThemeNotifier.toggle sync failed: $e');
+      }
       _ref.read(authProvider.notifier).refreshState(updated);
     }
   }
@@ -92,8 +98,14 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   FirebaseAuth? get _auth {
-    try { return FirebaseAuth.instance; } catch (e) { debugPrint('AuthNotifier._auth failed: $e'); return null; }
+    try {
+      return FirebaseAuth.instance;
+    } catch (e) {
+      debugPrint('AuthNotifier._auth failed: $e');
+      return null;
+    }
   }
+
   final _db = FirestoreUserService.instance;
 
   // ── Firestore helpers ─────────────────────────────────────────────────────
@@ -163,7 +175,9 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       debugPrint('AuthNotifier._load Firestore sync failed: $e');
       try {
         state = await LocalStorageService.instance.loadUser();
-      } catch (e2) { debugPrint('AuthNotifier._load local fallback failed: $e2'); }
+      } catch (e2) {
+        debugPrint('AuthNotifier._load local fallback failed: $e2');
+      }
     }
     _syncThemeAndMarkLoaded();
   }
@@ -189,12 +203,13 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       // Firestore profile exists - use it as source of truth
       // Only update if fields are empty
       bool needsUpdate = false;
-      
+
       if (profile.email.isEmpty && email.isNotEmpty) {
         profile = profile.copyWith(email: email);
         needsUpdate = true;
       }
-      if (profile.nickname.isEmpty && (fbUser.displayName?.isNotEmpty ?? false)) {
+      if (profile.nickname.isEmpty &&
+          (fbUser.displayName?.isNotEmpty ?? false)) {
         profile = profile.copyWith(nickname: fbUser.displayName);
         needsUpdate = true;
       }
@@ -207,7 +222,7 @@ class AuthNotifier extends StateNotifier<UserModel?> {
         profile = profile.copyWith(username: generatedUsername);
         needsUpdate = true;
       }
-      
+
       if (needsUpdate) {
         await _safeSaveProfile(profile);
       }
@@ -257,7 +272,8 @@ class AuthNotifier extends StateNotifier<UserModel?> {
         userId: fbUser.uid,
         name: fbUser.displayName ?? email.split('@').first,
         nickname: fbUser.displayName ?? email.split('@').first,
-        username: email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_'),
+        username:
+            email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_'),
         email: email,
         createdAt: DateTime.now().toIso8601String(),
       );
@@ -288,7 +304,8 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     }
   }
 
-  Future<void> register(String nickname, String username, String email, String password) async {
+  Future<void> register(
+      String nickname, String username, String email, String password) async {
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
@@ -380,7 +397,11 @@ class AuthNotifier extends StateNotifier<UserModel?> {
     final oldUsername = state!.username;
     await _safeClaimUsername(newUsername, state!.userId);
     if (!_firestoreQuotaExceeded) {
-      try { await _db.releaseUsername(oldUsername); } catch (e) { debugPrint('AuthNotifier.updateUsername releaseUsername failed: $e'); }
+      try {
+        await _db.releaseUsername(oldUsername);
+      } catch (e) {
+        debugPrint('AuthNotifier.updateUsername releaseUsername failed: $e');
+      }
     }
     final updated = state!.copyWith(username: newUsername);
     await LocalStorageService.instance.saveUser(updated);
@@ -444,7 +465,11 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   Future<void> signOut() async {
-    try { await _auth?.signOut(); } catch (e) { debugPrint('AuthNotifier.signOut failed: $e'); }
+    try {
+      await _auth?.signOut();
+    } catch (e) {
+      debugPrint('AuthNotifier.signOut failed: $e');
+    }
     await LocalStorageService.instance.clearUser();
     state = null;
   }
@@ -462,10 +487,22 @@ class AuthNotifier extends StateNotifier<UserModel?> {
       if (!_firestoreQuotaExceeded) {
         final username = state?.username;
         if (username != null) {
-          try { await _db.releaseUsername(username); } catch (e) { debugPrint('deleteAccount releaseUsername failed: $e'); }
+          try {
+            await _db.releaseUsername(username);
+          } catch (e) {
+            debugPrint('deleteAccount releaseUsername failed: $e');
+          }
         }
-        try { await _db.deleteProfile(fbUser.uid); } catch (e) { debugPrint('deleteAccount deleteProfile failed: $e'); }
-        try { await _db.deleteUserReports(fbUser.uid); } catch (e) { debugPrint('Failed to delete user reports: $e'); }
+        try {
+          await _db.deleteProfile(fbUser.uid);
+        } catch (e) {
+          debugPrint('deleteAccount deleteProfile failed: $e');
+        }
+        try {
+          await _db.deleteUserReports(fbUser.uid);
+        } catch (e) {
+          debugPrint('Failed to delete user reports: $e');
+        }
       }
       await fbUser.delete();
       await LocalStorageService.instance.clearUser();
@@ -525,7 +562,8 @@ final isOnlineProvider = Provider<bool>((ref) {
 // ══════════════════════════════════════════════════════════════════════════════
 // FAVORITES — Global State
 // ══════════════════════════════════════════════════════════════════════════════
-final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<String>>(
+final favoritesProvider =
+    StateNotifierProvider<FavoritesNotifier, List<String>>(
   (ref) {
     final userId = ref.watch(authProvider)?.userId ?? 'guest';
     return FavoritesNotifier(userId);
@@ -575,7 +613,8 @@ class OfflineNotifier extends StateNotifier<List<String>> {
 // ══════════════════════════════════════════════════════════════════════════════
 final selectedPeriodProvider = StateProvider<String>((ref) => 'For You');
 
-final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) async {
+final _homeFeedRawProvider =
+    FutureProvider.autoDispose<List<Artwork>>((ref) async {
   final storage = ref.watch(storageProvider);
 
   // ── 1. Return Hive cache immediately if populated ──────────────────────────
@@ -587,20 +626,32 @@ final _homeFeedRawProvider = FutureProvider.autoDispose<List<Artwork>>((ref) asy
     final local = LocalArtworkService.instance;
     final artworks = await local.fetchRenaissanceFeed(count: 200);
     if (artworks.isNotEmpty) {
-      try { await storage.cacheArtworks(artworks); } catch (e) { debugPrint('homeFeed cache failed: $e'); }
+      try {
+        await storage.cacheArtworks(artworks);
+      } catch (e) {
+        debugPrint('homeFeed cache failed: $e');
+      }
       return artworks;
     }
-  } catch (e) { debugPrint('homeFeed local load failed: $e'); }
+  } catch (e) {
+    debugPrint('homeFeed local load failed: $e');
+  }
 
   // ── 3. Try ArtworkApiService as last resort ────────────────────────────────
   try {
     final api = ref.watch(artworkApiServiceProvider);
     final artworks = await api.fetchRenaissanceFeed(count: 200);
     if (artworks.isNotEmpty) {
-      try { await storage.cacheArtworks(artworks); } catch (e) { debugPrint('homeFeed api cache failed: $e'); }
+      try {
+        await storage.cacheArtworks(artworks);
+      } catch (e) {
+        debugPrint('homeFeed api cache failed: $e');
+      }
       return artworks;
     }
-  } catch (e) { debugPrint('homeFeed api load failed: $e'); }
+  } catch (e) {
+    debugPrint('homeFeed api load failed: $e');
+  }
 
   return [];
 });
@@ -624,8 +675,15 @@ final homeFeedProvider = Provider.autoDispose<AsyncValue<List<Artwork>>>((ref) {
         final lp = period.toLowerCase();
         result = filtered.where((a) {
           final m = a.medium.toLowerCase();
-          if (lp == 'painting') return m.contains('oil') || m.contains('tempera') || m.contains('panel') || m.contains('canvas');
-          if (lp == 'sculpture') return m.contains('marble') || m.contains('bronze') || m.contains('sculpture');
+          if (lp == 'painting')
+            return m.contains('oil') ||
+                m.contains('tempera') ||
+                m.contains('panel') ||
+                m.contains('canvas');
+          if (lp == 'sculpture')
+            return m.contains('marble') ||
+                m.contains('bronze') ||
+                m.contains('sculpture');
           if (lp == 'fresco') return m.contains('fresco');
           return false;
         }).toList();
@@ -664,7 +722,8 @@ final searchRegionFilterProvider = StateProvider<String?>((ref) => null);
 bool _isFilterableRenaissanceArtwork(Artwork artwork) {
   if (!artwork.id.startsWith('local_')) return false;
   final artist = artwork.artist.trim().toLowerCase();
-  if (artist.isEmpty || artist == 'unknown artist' || artist == 'anonymous') return false;
+  if (artist.isEmpty || artist == 'unknown artist' || artist == 'anonymous')
+    return false;
   final period = artwork.period.toLowerCase();
   return period.contains('renaissance') ||
       period.contains('mannerism') ||
@@ -675,7 +734,8 @@ final searchFilterSeedProvider =
     FutureProvider.autoDispose<List<Artwork>>((ref) async {
   final storage = ref.watch(storageProvider);
 
-  var seed = storage.getAllCachedArtworks()
+  var seed = storage
+      .getAllCachedArtworks()
       .where(_isFilterableRenaissanceArtwork)
       .toList();
 
@@ -684,7 +744,11 @@ final searchFilterSeedProvider =
       final local = LocalArtworkService.instance;
       final fetched = await local.fetchRenaissanceFeed(count: 200);
       if (fetched.isNotEmpty) {
-        try { await storage.cacheArtworks(fetched); } catch (e) { debugPrint('searchFilterSeed cache failed: $e'); }
+        try {
+          await storage.cacheArtworks(fetched);
+        } catch (e) {
+          debugPrint('searchFilterSeed cache failed: $e');
+        }
         seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
       }
     } catch (e) {
@@ -693,10 +757,16 @@ final searchFilterSeedProvider =
         final api = ref.watch(artworkApiServiceProvider);
         final fetched = await api.fetchRenaissanceFeed(count: 200);
         if (fetched.isNotEmpty) {
-          try { await storage.cacheArtworks(fetched); } catch (e2) { debugPrint('searchFilterSeed api cache failed: $e2'); }
+          try {
+            await storage.cacheArtworks(fetched);
+          } catch (e2) {
+            debugPrint('searchFilterSeed api cache failed: $e2');
+          }
           seed = fetched.where(_isFilterableRenaissanceArtwork).toList();
         }
-      } catch (e2) { debugPrint('searchFilterSeed api load failed: $e2'); }
+      } catch (e2) {
+        debugPrint('searchFilterSeed api load failed: $e2');
+      }
     }
   }
 
@@ -752,11 +822,15 @@ final searchResultsProvider =
   final subjectFilter = ref.watch(searchSubjectFilterProvider);
   final regionFilter = ref.watch(searchRegionFilterProvider);
   final storage = ref.watch(storageProvider);
-  final hasAnyFilter = artistFilter != null || periodFilter != null ||
-      mediumFilter != null || subjectFilter != null || regionFilter != null;
+  final hasAnyFilter = artistFilter != null ||
+      periodFilter != null ||
+      mediumFilter != null ||
+      subjectFilter != null ||
+      regionFilter != null;
 
   if (query.isEmpty && !hasAnyFilter) {
-    return storage.getAllCachedArtworks()
+    return storage
+        .getAllCachedArtworks()
         .where(_isFilterableRenaissanceArtwork)
         .toList();
   }
@@ -770,7 +844,11 @@ final searchResultsProvider =
           ? await local.searchArtworks(query, maxCount: 300)
           : await local.fetchRenaissanceFeed(count: 300);
       if (results.isNotEmpty) {
-        try { await storage.cacheArtworks(results); } catch (e) { debugPrint('searchResults cache failed: $e'); }
+        try {
+          await storage.cacheArtworks(results);
+        } catch (e) {
+          debugPrint('searchResults cache failed: $e');
+        }
       }
     } catch (e) {
       debugPrint('searchResults local load failed: $e');
@@ -780,9 +858,15 @@ final searchResultsProvider =
             ? await api.searchArtworks(query, maxCount: 300)
             : await api.fetchRenaissanceFeed(count: 300);
         if (results.isNotEmpty) {
-          try { await storage.cacheArtworks(results); } catch (e2) { debugPrint('searchResults api cache failed: $e2'); }
+          try {
+            await storage.cacheArtworks(results);
+          } catch (e2) {
+            debugPrint('searchResults api cache failed: $e2');
+          }
         }
-      } catch (e2) { debugPrint('searchResults api load failed: $e2'); }
+      } catch (e2) {
+        debugPrint('searchResults api load failed: $e2');
+      }
     }
   }
 
@@ -790,10 +874,12 @@ final searchResultsProvider =
 
   if (query.isNotEmpty) {
     final q = query.toLowerCase();
-    results = results.where((a) =>
-        a.title.toLowerCase().contains(q) ||
-        a.artist.toLowerCase().contains(q) ||
-        a.period.toLowerCase().contains(q)).toList();
+    results = results
+        .where((a) =>
+            a.title.toLowerCase().contains(q) ||
+            a.artist.toLowerCase().contains(q) ||
+            a.period.toLowerCase().contains(q))
+        .toList();
   }
 
   if (artistFilter != null) {
@@ -805,16 +891,19 @@ final searchResultsProvider =
     results = results.where((a) => a.period.toLowerCase().contains(n)).toList();
   }
   if (mediumFilter != null) {
-    results = results.where((a) =>
-        a.department.toLowerCase() == mediumFilter.toLowerCase()).toList();
+    results = results
+        .where((a) => a.department.toLowerCase() == mediumFilter.toLowerCase())
+        .toList();
   }
   if (subjectFilter != null) {
     final n = subjectFilter.toLowerCase();
-    results = results.where((a) => a.subject.toLowerCase().contains(n)).toList();
+    results =
+        results.where((a) => a.subject.toLowerCase().contains(n)).toList();
   }
   if (regionFilter != null) {
     final n = regionFilter.toLowerCase();
-    results = results.where((a) => a.location.toLowerCase().contains(n)).toList();
+    results =
+        results.where((a) => a.location.toLowerCase().contains(n)).toList();
   }
 
   results.shuffle();

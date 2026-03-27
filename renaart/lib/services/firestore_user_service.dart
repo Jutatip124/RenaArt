@@ -101,7 +101,8 @@ class FirestoreUserService {
   /// Delete all reports submitted by this user
   Future<void> deleteUserReports(String userId) async {
     try {
-      final querySnapshot = await _reports.where('userId', isEqualTo: userId).get();
+      final querySnapshot =
+          await _reports.where('userId', isEqualTo: userId).get();
       final batch = _firestore.batch();
       for (final doc in querySnapshot.docs) {
         batch.delete(doc.reference);
@@ -113,7 +114,8 @@ class FirestoreUserService {
   }
 
   /// Submit a problem report to Firestore.
-  Future<void> submitReport(String userId, String category, String description) async {
+  Future<void> submitReport(
+      String userId, String category, String description) async {
     try {
       await _reports.add({
         'userId': userId,

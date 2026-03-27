@@ -33,13 +33,17 @@ class LocalStorageService {
 
     // Register adapters
     if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(ArtworkAdapter());
-    if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(UserArtworkStateAdapter());
-    if (!Hive.isAdapterRegistered(2)) Hive.registerAdapter(OfflineArtworkAdapter());
+    if (!Hive.isAdapterRegistered(1))
+      Hive.registerAdapter(UserArtworkStateAdapter());
+    if (!Hive.isAdapterRegistered(2))
+      Hive.registerAdapter(OfflineArtworkAdapter());
 
     // Open boxes — clear corrupted data on error and retry
     _artworksCache = await _openBoxSafe<Artwork>(AppConstants.artworksBoxName);
-    _favoritesBox = await _openBoxSafe<UserArtworkState>(AppConstants.favoritesBoxName);
-    _offlineBox = await _openBoxSafe<OfflineArtwork>(AppConstants.offlineBoxName);
+    _favoritesBox =
+        await _openBoxSafe<UserArtworkState>(AppConstants.favoritesBoxName);
+    _offlineBox =
+        await _openBoxSafe<OfflineArtwork>(AppConstants.offlineBoxName);
   }
 
   Future<Box<T>> _openBoxSafe<T>(String name) async {
@@ -65,8 +69,7 @@ class LocalStorageService {
 
   Artwork? getCachedArtwork(String id) => _artworksCache?.get(id);
 
-  List<Artwork> getAllCachedArtworks() =>
-      _artworksCache?.values.toList() ?? [];
+  List<Artwork> getAllCachedArtworks() => _artworksCache?.values.toList() ?? [];
 
   // ─── Favorites (Week 3: Room.insert(UserArtworkState)) ───────────────────
 
@@ -198,20 +201,21 @@ class LocalStorageService {
 
   Future<void> saveUser(UserModel user) async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     // Store PII in secure storage (encrypted)
     await SecureStorageService.instance.saveSecureUserData(
       userId: user.userId,
       email: user.email,
       username: user.username,
     );
-    
+
     // Store non-sensitive preferences in SharedPreferences
     await prefs.setString(AppConstants.keyUserId, user.userId);
     await prefs.setString(AppConstants.keyNickname, user.nickname);
     await prefs.setBool(AppConstants.keyIsGuest, user.isGuest);
     await prefs.setBool(AppConstants.keyThemeMode, user.preferences.darkMode);
-    await prefs.setBool(AppConstants.keyHighFidelity, user.preferences.highFidelityMode);
+    await prefs.setBool(
+        AppConstants.keyHighFidelity, user.preferences.highFidelityMode);
   }
 
   Future<UserModel?> loadUser() async {
@@ -247,14 +251,14 @@ class LocalStorageService {
   Future<void> clearUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    
+
     // DON'T clear favorites - they should persist across login/logout
     // Favorites are keyed by userId, so each user sees only their own
     // await _favoritesBox?.clear();  // REMOVED
-    
+
     // DON'T clear offline artworks either - they're useful for returning users
     // await _offlineBox?.clear();  // REMOVED
-    
+
     // Clear secure storage (PII only)
     await SecureStorageService.instance.clearSecureData();
   }
