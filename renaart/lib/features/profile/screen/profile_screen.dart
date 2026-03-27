@@ -563,6 +563,11 @@ class ProfileScreen extends ConsumerWidget {
                     setDialogState(() => dialogErr = 'Enter your current password.');
                     return;
                   }
+                  // Check if new password is the same as current password
+                  if (newCtrl.text == currentCtrl.text) {
+                    setDialogState(() => dialogErr = 'New password cannot be the same as current password.');
+                    return;
+                  }
                   if (!reqs(newCtrl.text).every((r) => r.met)) {
                     setDialogState(() => dialogErr = 'New password does not meet all requirements.');
                     return;

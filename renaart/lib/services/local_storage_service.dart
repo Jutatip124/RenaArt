@@ -248,11 +248,14 @@ class LocalStorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     
-    // Clear Hive boxes
-    await _favoritesBox?.clear();
-    await _offlineBox?.clear();
+    // DON'T clear favorites - they should persist across login/logout
+    // Favorites are keyed by userId, so each user sees only their own
+    // await _favoritesBox?.clear();  // REMOVED
     
-    // Clear secure storage
+    // DON'T clear offline artworks either - they're useful for returning users
+    // await _offlineBox?.clear();  // REMOVED
+    
+    // Clear secure storage (PII only)
     await SecureStorageService.instance.clearSecureData();
   }
 }

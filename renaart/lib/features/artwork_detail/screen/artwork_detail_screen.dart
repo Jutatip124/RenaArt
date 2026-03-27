@@ -64,7 +64,8 @@ class _Body extends ConsumerWidget {
       if (b.medium == artwork.medium) scoreB += 1;
       return scoreB.compareTo(scoreA);
     });
-    final related = others.take(6).toList();
+    others.shuffle();
+    final related = others.take(10).toList();
 
     return Scaffold(
       backgroundColor: bg,

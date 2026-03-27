@@ -11,24 +11,17 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     // Usernames collection: public read for availability check, auth write
-    // Username must be 3-30 characters
     match /usernames/{username} {
       allow read: if true;
-      allow create: if request.auth != null 
-        && request.resource.data.userId == request.auth.uid
-        && username.size() >= 3 
-        && username.size() <= 30;
+      allow create, update: if request.auth != null 
+        && request.resource.data.userId == request.auth.uid;
       allow delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
     // Reports collection: authenticated users can create, no read
-    // Validate required fields and description length
     match /reports/{reportId} {
       allow create: if request.auth != null
-        && request.resource.data.keys().hasAll(['category', 'description'])
-        && request.resource.data.category is string
-        && request.resource.data.category.size() > 0
-        && request.resource.data.description is string
-        && request.resource.data.description.size() > 0
+        && request.resource.data.keys().hasAll(['category', 'description', 'userId'])
+        && request.resource.data.userId == request.auth.uid
         && request.resource.data.description.size() <= 2000;
       allow read, update, delete: if false;
     }

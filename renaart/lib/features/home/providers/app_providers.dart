@@ -177,33 +177,68 @@ class AuthNotifier extends StateNotifier<UserModel?> {
 
   /// Shared helper: load or create profile from a Firebase user.
   Future<void> _handleFirebaseUser(User fbUser) async {
-    // Always try local cache first to avoid Firestore reads
+    final email = fbUser.email ?? '';
+    final generatedUsername = email.isNotEmpty
+        ? email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')
+        : 'user_${fbUser.uid.substring(0, 8)}';
+
+    // ALWAYS try Firestore first for source of truth
+    UserModel? profile = await _safeLoadProfile(fbUser.uid, email);
+
+    if (profile != null) {
+      // Firestore profile exists - use it as source of truth
+      // Only update if fields are empty
+      bool needsUpdate = false;
+      
+      if (profile.email.isEmpty && email.isNotEmpty) {
+        profile = profile.copyWith(email: email);
+        needsUpdate = true;
+      }
+      if (profile.nickname.isEmpty && (fbUser.displayName?.isNotEmpty ?? false)) {
+        profile = profile.copyWith(nickname: fbUser.displayName);
+        needsUpdate = true;
+      }
+      if (profile.createdAt.isEmpty) {
+        profile = profile.copyWith(createdAt: DateTime.now().toIso8601String());
+        needsUpdate = true;
+      }
+      // Don't overwrite username if it's already set and not 'user'
+      if (profile.username == 'user' && generatedUsername != 'user') {
+        profile = profile.copyWith(username: generatedUsername);
+        needsUpdate = true;
+      }
+      
+      if (needsUpdate) {
+        await _safeSaveProfile(profile);
+      }
+      await LocalStorageService.instance.saveUser(profile);
+      state = profile;
+      return;
+    }
+
+    // No Firestore profile - check local cache
     final UserModel? local = await LocalStorageService.instance.loadUser();
     if (local != null && !local.isGuest && local.userId == fbUser.uid) {
+      // Local profile exists but not in Firestore - save to Firestore
+      await _safeSaveProfile(local);
       state = local;
       return;
     }
 
-    final email = fbUser.email ?? '';
-    final username = email.isNotEmpty
-        ? email.split('@').first.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')
-        : 'user_${fbUser.uid.substring(0, 8)}';
+    // Create new profile
+    final newProfile = UserModel(
+      userId: fbUser.uid,
+      name: fbUser.displayName ?? generatedUsername,
+      nickname: fbUser.displayName ?? generatedUsername,
+      username: generatedUsername,
+      email: email,
+      createdAt: DateTime.now().toIso8601String(),
+    );
 
-    // Try Firestore (skipped when quota exceeded)
-    final UserModel profile = await _safeLoadProfile(fbUser.uid, email) ??
-        UserModel(
-          userId: fbUser.uid,
-          name: fbUser.displayName ?? username,
-          nickname: fbUser.displayName ?? username,
-          username: username,
-          email: email,
-          createdAt: DateTime.now().toIso8601String(),
-        );
-
-    await _safeSaveProfile(profile);
-    await _safeClaimUsername(username, fbUser.uid);
-    await LocalStorageService.instance.saveUser(profile);
-    state = profile;
+    await _safeSaveProfile(newProfile);
+    await _safeClaimUsername(generatedUsername, fbUser.uid);
+    await LocalStorageService.instance.saveUser(newProfile);
+    state = newProfile;
   }
 
   // ── Public auth actions ───────────────────────────────────────────────────
@@ -576,20 +611,28 @@ final homeFeedProvider = Provider.autoDispose<AsyncValue<List<Artwork>>>((ref) {
 
   return feedAsync.whenData((artworks) {
     final filtered = artworks.where((a) => a.id.startsWith('local_')).toList();
-    if (period == 'For You') return filtered;
-    if (period.contains('Renaissance') || period == 'Mannerism') {
-      return filtered.where((a) => a.period == period).toList();
+    List<Artwork> result;
+    if (period == 'For You') {
+      result = filtered;
+    } else if (period.contains('Renaissance') || period == 'Mannerism') {
+      result = filtered.where((a) => a.period == period).toList();
+    } else {
+      final subjectMatch = filtered.where((a) => a.subject == period).toList();
+      if (subjectMatch.isNotEmpty) {
+        result = subjectMatch;
+      } else {
+        final lp = period.toLowerCase();
+        result = filtered.where((a) {
+          final m = a.medium.toLowerCase();
+          if (lp == 'painting') return m.contains('oil') || m.contains('tempera') || m.contains('panel') || m.contains('canvas');
+          if (lp == 'sculpture') return m.contains('marble') || m.contains('bronze') || m.contains('sculpture');
+          if (lp == 'fresco') return m.contains('fresco');
+          return false;
+        }).toList();
+      }
     }
-    final subjectMatch = filtered.where((a) => a.subject == period).toList();
-    if (subjectMatch.isNotEmpty) return subjectMatch;
-    final lp = period.toLowerCase();
-    return filtered.where((a) {
-      final m = a.medium.toLowerCase();
-      if (lp == 'painting') return m.contains('oil') || m.contains('tempera') || m.contains('panel') || m.contains('canvas');
-      if (lp == 'sculpture') return m.contains('marble') || m.contains('bronze') || m.contains('sculpture');
-      if (lp == 'fresco') return m.contains('fresco');
-      return false;
-    }).toList();
+    result.shuffle();
+    return result;
   });
 });
 
@@ -774,6 +817,7 @@ final searchResultsProvider =
     results = results.where((a) => a.location.toLowerCase().contains(n)).toList();
   }
 
+  results.shuffle();
   return results;
 });
 

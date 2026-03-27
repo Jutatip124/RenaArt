@@ -35,23 +35,28 @@ class UserModel {
       );
 
   UserModel copyWith({
+    String? userId,
+    String? name,
     String? nickname,
     String? username,
     String? email,
+    String? avatarUrl,
+    String? createdAt,
     UserPreferences? preferences,
     UserStats? stats,
+    bool? isGuest,
   }) {
     return UserModel(
-      userId: userId,
-      name: name,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
       nickname: nickname ?? this.nickname,
       username: username ?? this.username,
       email: email ?? this.email,
-      avatarUrl: avatarUrl,
-      createdAt: createdAt,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      createdAt: createdAt ?? this.createdAt,
       preferences: preferences ?? this.preferences,
       stats: stats ?? this.stats,
-      isGuest: isGuest,
+      isGuest: isGuest ?? this.isGuest,
     );
   }
 }
