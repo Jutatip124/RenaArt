@@ -33,10 +33,12 @@ class LocalStorageService {
 
     // Register adapters
     if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(ArtworkAdapter());
-    if (!Hive.isAdapterRegistered(1))
+    if (!Hive.isAdapterRegistered(1)) {
       Hive.registerAdapter(UserArtworkStateAdapter());
-    if (!Hive.isAdapterRegistered(2))
+    }
+    if (!Hive.isAdapterRegistered(2)) {
       Hive.registerAdapter(OfflineArtworkAdapter());
+    }
 
     // Open boxes — clear corrupted data on error and retry
     _artworksCache = await _openBoxSafe<Artwork>(AppConstants.artworksBoxName);

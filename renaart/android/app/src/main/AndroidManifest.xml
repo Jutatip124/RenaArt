@@ -2,13 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.renaart.app">
 
-    <!-- Week 3: API calls to Met Museum -->
+    <!-- Network access for API calls and Firebase -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Week 3: Offline image caching -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
-    <!-- Week 3: Connectivity check -->
+    <!-- Connectivity check for offline mode detection -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application

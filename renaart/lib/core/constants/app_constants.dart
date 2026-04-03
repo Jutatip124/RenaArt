@@ -21,7 +21,6 @@ class AppConstants {
   static const String appName = 'RenaArt';
   static const String appTagline = 'The Digital Museum of the Renaissance';
   static const String appVersion = '1.0.0';
-  static const String studentId = '6631503124';
   static const String githubRepo = 'https://github.com/Jutatip124/RenaArt';
 
   // ─── Shared artwork settings ───────────────────────────────────────────────

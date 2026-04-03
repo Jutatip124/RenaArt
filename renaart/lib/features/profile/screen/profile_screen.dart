@@ -641,11 +641,19 @@ class ProfileScreen extends ConsumerWidget {
               p.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>\-_=+\[\]\\\/~`]'))),
         ];
 
+    // Track if listener is attached to prevent duplicate listeners
+    bool listenerAttached = false;
+    VoidCallback? onNewPassChange;
+
     showDialog(
       context: ctx,
       builder: (_) => StatefulBuilder(builder: (dialogCtx, setDialogState) {
-        void onNewPassChange() => setDialogState(() {});
-        newCtrl.addListener(onNewPassChange);
+        // Attach listener only once
+        if (!listenerAttached) {
+          onNewPassChange = () => setDialogState(() {});
+          newCtrl.addListener(onNewPassChange!);
+          listenerAttached = true;
+        }
 
         final passReqs = reqs(newCtrl.text);
         return AlertDialog(
@@ -798,7 +806,15 @@ class ProfileScreen extends ConsumerWidget {
           ],
         );
       }),
-    );
+    ).then((_) {
+      // Cleanup: remove listener and dispose controllers when dialog closes
+      if (onNewPassChange != null) {
+        newCtrl.removeListener(onNewPassChange!);
+      }
+      currentCtrl.dispose();
+      newCtrl.dispose();
+      confirmCtrl.dispose();
+    });
   }
 
   void _helpFaqDialog(BuildContext ctx, bool isDark) {

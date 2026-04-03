@@ -675,15 +675,17 @@ final homeFeedProvider = Provider.autoDispose<AsyncValue<List<Artwork>>>((ref) {
         final lp = period.toLowerCase();
         result = filtered.where((a) {
           final m = a.medium.toLowerCase();
-          if (lp == 'painting')
+          if (lp == 'painting') {
             return m.contains('oil') ||
                 m.contains('tempera') ||
                 m.contains('panel') ||
                 m.contains('canvas');
-          if (lp == 'sculpture')
+          }
+          if (lp == 'sculpture') {
             return m.contains('marble') ||
                 m.contains('bronze') ||
                 m.contains('sculpture');
+          }
           if (lp == 'fresco') return m.contains('fresco');
           return false;
         }).toList();
@@ -722,8 +724,9 @@ final searchRegionFilterProvider = StateProvider<String?>((ref) => null);
 bool _isFilterableRenaissanceArtwork(Artwork artwork) {
   if (!artwork.id.startsWith('local_')) return false;
   final artist = artwork.artist.trim().toLowerCase();
-  if (artist.isEmpty || artist == 'unknown artist' || artist == 'anonymous')
+  if (artist.isEmpty || artist == 'unknown artist' || artist == 'anonymous') {
     return false;
+  }
   final period = artwork.period.toLowerCase();
   return period.contains('renaissance') ||
       period.contains('mannerism') ||

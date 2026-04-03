@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
 import 'core/theme/app_theme.dart';
@@ -26,6 +27,12 @@ Future<void> main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+
+    // Enable Firestore offline persistence for better UX and reduced quota usage
+    FirebaseFirestore.instance.settings = const Settings(
+      persistenceEnabled: true,
+      cacheSizeBytes: 50 * 1024 * 1024, // 50MB cache limit
+    );
   } catch (e) {
     debugPrint('Firebase init failed: $e');
   }
@@ -36,6 +43,11 @@ Future<void> main() async {
   } catch (e) {
     debugPrint('Hive init failed: $e');
   }
+
+  // Configure image cache limits to prevent excessive memory usage
+  PaintingBinding.instance.imageCache.maximumSize = 100; // Max 100 images
+  PaintingBinding.instance.imageCache.maximumSizeBytes =
+      50 * 1024 * 1024; // 50MB
 
   // Status bar
   SystemChrome.setSystemUIOverlayStyle(

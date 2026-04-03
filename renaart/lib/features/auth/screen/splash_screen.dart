@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../home/providers/app_providers.dart';
+import '../widgets/privacy_consent_dialog.dart';
 
 // Splash — Museum cinematic: full-dark, large serif, subtle gold rule
 class SplashScreen extends ConsumerStatefulWidget {
@@ -17,34 +18,63 @@ class SplashScreen extends ConsumerStatefulWidget {
 class _SplashState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
-  late final Animation<double>   _fade;
-  late final Animation<Offset>   _slide;
+  late final Animation<double> _fade;
+  late final Animation<Offset> _slide;
 
   @override
   void initState() {
     super.initState();
-    _ctrl  = AnimationController(vsync: this, duration: const Duration(milliseconds: 1400));
-    _fade  = CurvedAnimation(parent: _ctrl, curve: const Interval(0, 0.7, curve: Curves.easeOut));
+    _ctrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1400));
+    _fade = CurvedAnimation(
+        parent: _ctrl, curve: const Interval(0, 0.7, curve: Curves.easeOut));
     _slide = Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero)
         .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
     _ctrl.forward();
   }
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   bool _navigated = false;
+  bool _checkingPrivacy = false;
 
-  void _tryNavigate() {
-    if (_navigated || !mounted) return;
+  Future<void> _tryNavigate() async {
+    if (_navigated || !mounted || _checkingPrivacy) return;
     final loaded = ref.read(authLoadedProvider);
     if (!loaded) return;
+
+    _checkingPrivacy = true;
+
+    // Check if privacy policy has been accepted (PDPA compliance)
+    final hasAccepted = await PrivacyConsentDialog.hasAccepted();
+
+    if (!mounted) return;
+
+    if (!hasAccepted) {
+      // Show privacy consent dialog - must accept before continuing
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => PrivacyConsentDialog(
+          onAccept: () {
+            // Will be called when user accepts
+          },
+        ),
+      );
+    }
+
+    if (!mounted) return;
     _navigated = true;
-    // Show splash for at least 2s after auth loads
-    Future.delayed(const Duration(milliseconds: 2000), () {
-      if (!mounted) return;
-      context.go(ref.read(authProvider) != null ? AppRoutes.home : AppRoutes.login);
-    });
+
+    // Navigate after a brief delay for smooth transition
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+    context
+        .go(ref.read(authProvider) != null ? AppRoutes.home : AppRoutes.login);
   }
 
   @override
@@ -54,51 +84,64 @@ class _SplashState extends ConsumerState<SplashScreen>
     if (authLoaded) _tryNavigate();
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg   = isDark ? AppColors.darkCanvas : AppColors.canvas;
-    final sub  = isDark ? AppColors.darkFaint  : AppColors.inkLight;
+    final bg = isDark ? AppColors.darkCanvas : AppColors.canvas;
+    final sub = isDark ? AppColors.darkFaint : AppColors.inkLight;
 
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
         child: FadeTransition(
-        opacity: _fade,
-        child: SlideTransition(
-          position: _slide,
-          child: Center(
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              // Logo — white in dark, black in light
-              ColorFiltered(
-                colorFilter: ColorFilter.mode(
-                  isDark ? Colors.white : AppColors.ink,
-                  BlendMode.srcIn,
+          opacity: _fade,
+          child: SlideTransition(
+            position: _slide,
+            child: Center(
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                // Logo — white in dark, black in light
+                ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    isDark ? Colors.white : AppColors.ink,
+                    BlendMode.srcIn,
+                  ),
+                  child: Image.asset('assets/images/logo_dark.png',
+                      width: 240, height: 240),
                 ),
-                child: Image.asset('assets/images/logo_dark.png',
-                    width: 240, height: 240),
-              ),
-              const SizedBox(height: 6),
-              // Gold rule
-              Container(width: 40, height: 1,
-                  color: isDark ? AppColors.gold : AppColors.inkLight),
-              const SizedBox(height: 10),
-              Text(AppConstants.appTagline.toUpperCase(),
-                style: TextStyle(fontFamily: 'Jost', fontSize: 9,
-                    fontWeight: FontWeight.w500, letterSpacing: 2.8, color: sub)),
-              const SizedBox(height: 4),
-              Text('v${AppConstants.appVersion}',
-                style: TextStyle(fontFamily: 'Jost', fontSize: 9,
-                    fontWeight: FontWeight.w300, letterSpacing: 1.2, color: sub.withValues(alpha: 0.5))),
-              const SizedBox(height: 56),
-              SizedBox(width: 16, height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 1.2,
-                  color: isDark ? AppColors.gold.withValues(alpha: 0.5)
-                      : AppColors.inkLight,
+                const SizedBox(height: 6),
+                // Gold rule
+                Container(
+                    width: 40,
+                    height: 1,
+                    color: isDark ? AppColors.gold : AppColors.inkLight),
+                const SizedBox(height: 10),
+                Text(AppConstants.appTagline.toUpperCase(),
+                    style: TextStyle(
+                        fontFamily: 'Jost',
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 2.8,
+                        color: sub)),
+                const SizedBox(height: 4),
+                Text('v${AppConstants.appVersion}',
+                    style: TextStyle(
+                        fontFamily: 'Jost',
+                        fontSize: 9,
+                        fontWeight: FontWeight.w300,
+                        letterSpacing: 1.2,
+                        color: sub.withValues(alpha: 0.5))),
+                const SizedBox(height: 56),
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 1.2,
+                    color: isDark
+                        ? AppColors.gold.withValues(alpha: 0.5)
+                        : AppColors.inkLight,
+                  ),
                 ),
-              ),
-            ]),
+              ]),
+            ),
           ),
         ),
-      ),
       ),
     );
   }
