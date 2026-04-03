@@ -49,4 +49,21 @@ app.*.map.json
 *.jks
 android/key.properties
 .env
-.env
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Firebase Configuration (NEVER commit to public repo)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Firebase options (contains API keys)
+lib/firebase_options.dart
+**/firebase_options.dart
+
+# Google Services (Android Firebase config)
+android/app/google-services.json
+**/google-services.json
+
+# iOS Firebase config
+**/GoogleService-Info.plist
+
+# Firebase debug logs
+firebase-debug.log
+firebase-debug.*.log

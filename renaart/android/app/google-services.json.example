@@ -1,0 +1,30 @@
+{
+  "_comment": "🔒 TEMPLATE FILE - DO NOT COMMIT ACTUAL VALUES",
+  "_instructions": [
+    "This is a template file for google-services.json",
+    "To generate the actual file:",
+    "1. Run: flutterfire configure --project=renaart-ded29",
+    "2. Or download from Firebase Console > Project Settings > Android app",
+    "3. NEVER commit the actual google-services.json to git"
+  ],
+  "project_info": {
+    "project_number": "YOUR_PROJECT_NUMBER",
+    "project_id": "YOUR_PROJECT_ID",
+    "storage_bucket": "YOUR_PROJECT_ID.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:YOUR_PROJECT_NUMBER:android:YOUR_APP_ID",
+        "android_client_info": {
+          "package_name": "com.renaart.app"
+        }
+      },
+      "api_key": [
+        {
+          "current_key": "YOUR_API_KEY_HERE"
+        }
+      ]
+    }
+  ]
+}
