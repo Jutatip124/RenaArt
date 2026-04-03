@@ -85,14 +85,16 @@ class _RegState extends ConsumerState<RegisterScreen> {
       return;
     }
     if (user.length < 3) {
-      if (mounted)
+      if (mounted) {
         setState(() => _err = 'Username must be at least 3 characters.');
+      }
       return;
     }
     if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(user)) {
-      if (mounted)
+      if (mounted) {
         setState(() => _err =
             'Username can only contain letters, numbers, and underscores.');
+      }
       return;
     }
     if (_pass.text != _confirm.text) {
@@ -101,26 +103,29 @@ class _RegState extends ConsumerState<RegisterScreen> {
     }
     final strength = _passwordStrength(_pass.text);
     if (!strength.every((r) => r.met)) {
-      if (mounted)
+      if (mounted) {
         setState(() => _err = 'Password does not meet all requirements.');
+      }
       return;
     }
-    if (mounted)
+    if (mounted) {
       setState(() {
         _loading = true;
         _err = null;
       });
+    }
     try {
       await ref
           .read(authProvider.notifier)
           .register(nick, user, email, _pass.text);
       if (mounted) context.go(AppRoutes.home);
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _loading = false;
           _err = e.toString();
         });
+      }
     }
   }
 

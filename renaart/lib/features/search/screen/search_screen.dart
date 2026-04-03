@@ -578,15 +578,17 @@ class _HighlightText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (query.isEmpty)
+    if (query.isEmpty) {
       return Text(text,
           style: baseStyle, maxLines: 1, overflow: TextOverflow.ellipsis);
+    }
 
     final lower = text.toLowerCase();
     final idx = lower.indexOf(query);
-    if (idx < 0)
+    if (idx < 0) {
       return Text(text,
           style: baseStyle, maxLines: 1, overflow: TextOverflow.ellipsis);
+    }
 
     return RichText(
       maxLines: 1,

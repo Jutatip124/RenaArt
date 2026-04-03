@@ -33,22 +33,24 @@ class _LoginState extends ConsumerState<LoginScreen> {
       if (mounted) setState(() => _err = 'Please fill in all fields.');
       return;
     }
-    if (mounted)
+    if (mounted) {
       setState(() {
         _loading = true;
         _err = null;
       });
+    }
     try {
       await ref
           .read(authProvider.notifier)
           .signIn(_email.text.trim(), _pass.text);
       if (mounted) context.go(AppRoutes.home);
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _loading = false;
           _err = e.toString();
         });
+      }
     }
   }
 
