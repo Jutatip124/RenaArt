@@ -421,34 +421,72 @@ class _SuggestionDropdown extends ConsumerWidget {
     if (query.isEmpty) return const SizedBox.shrink();
 
     final cached = ref.watch(storageProvider).getAllCachedArtworks();
-    final q = query.toLowerCase();
-
-    // Collect unique matching titles and artists
-    final titleMatches = <String>[];
-    final artistMatches = <String>{};
-
+    final q = query.toLowerCase().trim();
+    
+    // Collect suggestions with relevance scoring
+    final scoredSuggestions = <_ScoredSuggestion>[];
+    final seenTexts = <String>{};
+    
     for (final a in cached) {
-      if (a.title.toLowerCase().contains(q)) {
-        titleMatches.add(a.title);
+      final titleLower = a.title.toLowerCase();
+      final artistLower = a.artist.toLowerCase();
+      final periodLower = a.period.toLowerCase();
+      final subjectLower = a.subject.toLowerCase();
+      final mediumLower = a.medium.toLowerCase();
+      
+      // Title match (highest priority)
+      if (titleLower.contains(q) && !seenTexts.contains(a.title)) {
+        final score = titleLower.startsWith(q) ? 100 : 80;
+        scoredSuggestions.add(_ScoredSuggestion(a.title, SuggestionType.title, score));
+        seenTexts.add(a.title);
       }
-      if (a.artist.toLowerCase().contains(q) &&
-          a.artist.toLowerCase() != 'unknown artist') {
-        artistMatches.add(a.artist);
+      
+      // Artist match (high priority)
+      if (artistLower.contains(q) && 
+          artistLower != 'unknown artist' &&
+          !seenTexts.contains(a.artist)) {
+        final score = artistLower.startsWith(q) ? 95 : 75;
+        scoredSuggestions.add(_ScoredSuggestion(a.artist, SuggestionType.artist, score));
+        seenTexts.add(a.artist);
+      }
+      
+      // Period match (e.g. "Renaissance", "Baroque")
+      if (periodLower.contains(q) && !seenTexts.contains(a.period)) {
+        final score = periodLower.startsWith(q) ? 70 : 50;
+        scoredSuggestions.add(_ScoredSuggestion(a.period, SuggestionType.period, score));
+        seenTexts.add(a.period);
+      }
+      
+      // Subject match (e.g. "Religious", "Portrait", "Landscape")
+      if (subjectLower.contains(q) && !seenTexts.contains(a.subject)) {
+        final score = subjectLower.startsWith(q) ? 65 : 45;
+        scoredSuggestions.add(_ScoredSuggestion(a.subject, SuggestionType.subject, score));
+        seenTexts.add(a.subject);
+      }
+      
+      // Medium match (e.g. "Oil on canvas", "Fresco")
+      if (mediumLower.contains(q) && a.medium.isNotEmpty && !seenTexts.contains(a.medium)) {
+        final score = mediumLower.startsWith(q) ? 60 : 40;
+        scoredSuggestions.add(_ScoredSuggestion(a.medium, SuggestionType.medium, score));
+        seenTexts.add(a.medium);
+      }
+      
+      // Key symbols match (e.g. "Madonna", "Christ", "Angel")
+      for (final symbol in a.keySymbols) {
+        final symbolLower = symbol.toLowerCase();
+        if (symbolLower.contains(q) && !seenTexts.contains(symbol)) {
+          final score = symbolLower.startsWith(q) ? 55 : 35;
+          scoredSuggestions.add(_ScoredSuggestion(symbol, SuggestionType.keyword, score));
+          seenTexts.add(symbol);
+        }
       }
     }
 
-    // Build suggestion list: artists first, then titles (max 6 total)
-    final suggestions = <_Suggestion>[
-      for (final artist in artistMatches.take(2))
-        _Suggestion(artist, SuggestionType.artist),
-      for (final title in titleMatches.take(4))
-        _Suggestion(title, SuggestionType.title),
-    ];
-
-    if (suggestions.isEmpty) return const SizedBox.shrink();
-
-    // Limit to 6 suggestions
-    final limited = suggestions.take(6).toList();
+    if (scoredSuggestions.isEmpty) return const SizedBox.shrink();
+    
+    // Sort by score (highest first) and take top 6
+    scoredSuggestions.sort((a, b) => b.score.compareTo(a.score));
+    final limited = scoredSuggestions.take(6).toList();
 
     return Container(
       margin: const EdgeInsets.only(top: 4),
@@ -473,8 +511,7 @@ class _SuggestionDropdown extends ConsumerWidget {
                   suggestion: s,
                   query: q,
                   isDark: isDark,
-                  onTap: () => onSelect(
-                      s.type == SuggestionType.artist ? s.text : s.text),
+                  onTap: () => onSelect(s.text),
                 ))
             .toList(),
       ),
@@ -482,16 +519,17 @@ class _SuggestionDropdown extends ConsumerWidget {
   }
 }
 
-enum SuggestionType { title, artist }
+enum SuggestionType { title, artist, period, subject, medium, keyword }
 
-class _Suggestion {
+class _ScoredSuggestion {
   final String text;
   final SuggestionType type;
-  const _Suggestion(this.text, this.type);
+  final int score;
+  const _ScoredSuggestion(this.text, this.type, this.score);
 }
 
 class _SuggestionTile extends StatelessWidget {
-  final _Suggestion suggestion;
+  final _ScoredSuggestion suggestion;
   final String query;
   final bool isDark;
   final VoidCallback onTap;
@@ -504,10 +542,40 @@ class _SuggestionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isArtist = suggestion.type == SuggestionType.artist;
+    final type = suggestion.type;
     final text = suggestion.text;
     final sub = isDark ? AppColors.darkSub : AppColors.inkMid;
     final accent = isDark ? AppColors.gold : AppColors.ink;
+    
+    // Icon and label based on suggestion type
+    IconData icon;
+    String typeLabel;
+    switch (type) {
+      case SuggestionType.artist:
+        icon = Icons.person_outline;
+        typeLabel = 'Artist';
+        break;
+      case SuggestionType.title:
+        icon = Icons.image_outlined;
+        typeLabel = 'Artwork';
+        break;
+      case SuggestionType.period:
+        icon = Icons.history;
+        typeLabel = 'Period';
+        break;
+      case SuggestionType.subject:
+        icon = Icons.category_outlined;
+        typeLabel = 'Subject';
+        break;
+      case SuggestionType.medium:
+        icon = Icons.brush_outlined;
+        typeLabel = 'Medium';
+        break;
+      case SuggestionType.keyword:
+        icon = Icons.label_outline;
+        typeLabel = 'Keyword';
+        break;
+    }
 
     return InkWell(
       onTap: onTap,
@@ -520,11 +588,7 @@ class _SuggestionTile extends StatelessWidget {
                   width: 0.4)),
         ),
         child: Row(children: [
-          Icon(
-            isArtist ? Icons.person_outline : Icons.image_outlined,
-            size: 16,
-            color: sub,
-          ),
+          Icon(icon, size: 16, color: sub),
           const SizedBox(width: 10),
           Expanded(
               child: _HighlightText(
@@ -541,7 +605,8 @@ class _SuggestionTile extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 color: accent),
           )),
-          if (isArtist)
+          // Show type label badge for non-artwork types
+          if (type != SuggestionType.title)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
@@ -549,7 +614,7 @@ class _SuggestionTile extends StatelessWidget {
                     .withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(3),
               ),
-              child: Text('Artist',
+              child: Text(typeLabel,
                   style: TextStyle(
                       fontFamily: 'Jost',
                       fontSize: 9,
