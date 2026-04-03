@@ -21,10 +21,7 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return android;
       case TargetPlatform.iOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for ios - '
@@ -52,13 +49,21 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static FirebaseOptions get web => const FirebaseOptions(
-        apiKey: 'AIzaSyCoBUU9mGWjnbqM3idEjL1znOJtCn5zZAI',
-        appId: '1:482100656439:web:da0710ef0a7324699042b2',
-        messagingSenderId: '482100656439',
-        projectId: 'renaart-ded29',
-        authDomain: 'renaart-ded29.firebaseapp.com',
-        storageBucket: 'renaart-ded29.firebasestorage.app',
-        measurementId: 'G-VSP6EB3YFV',
-      );
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCoBUU9mGWjnbqM3idEjL1znOJtCn5zZAI',
+    appId: '1:482100656439:web:da0710ef0a7324699042b2',
+    messagingSenderId: '482100656439',
+    projectId: 'renaart-ded29',
+    authDomain: 'renaart-ded29.firebaseapp.com',
+    storageBucket: 'renaart-ded29.firebasestorage.app',
+    measurementId: 'G-VSP6EB3YFV',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: 'AIzaSyAIRw4TXhX7uI1_xZGLKRFkSaulGgk3clA',
+    appId: '1:482100656439:android:5167cbe48906c2e69042b2',
+    messagingSenderId: '482100656439',
+    projectId: 'renaart-ded29',
+    storageBucket: 'renaart-ded29.firebasestorage.app',
+  );
 }

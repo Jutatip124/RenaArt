@@ -1,1 +1,1 @@
-{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"renaart-ded29","configurations":{"web":"1:482100656439:web:da0710ef0a7324699042b2"}}}}}}
+{"flutter":{"platforms":{"dart":{"lib/firebase_options.dart":{"projectId":"renaart-ded29","configurations":{"android":"1:482100656439:android:5167cbe48906c2e69042b2","web":"1:482100656439:web:da0710ef0a7324699042b2"}}},"android":{"default":{"projectId":"renaart-ded29","appId":"1:482100656439:android:5167cbe48906c2e69042b2","fileOutput":"android/app/google-services.json"}}}}}
