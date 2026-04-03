@@ -63,15 +63,18 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: AppRoutes.splash,
-        pageBuilder: (context, state) => const NoTransitionPage(child: SplashScreen()),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: SplashScreen()),
       ),
       GoRoute(
         path: AppRoutes.landing,
-        pageBuilder: (context, state) => const NoTransitionPage(child: LandingScreen()),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: LandingScreen()),
       ),
       GoRoute(
         path: AppRoutes.login,
-        pageBuilder: (context, state) => const NoTransitionPage(child: LoginScreen()),
+        pageBuilder: (context, state) =>
+            const NoTransitionPage(child: LoginScreen()),
       ),
       GoRoute(
         path: AppRoutes.register,
@@ -81,14 +84,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/artwork/:id',
         builder: (context, state) {
           final id = state.pathParameters['id']!;
-          final artwork = state.extra as Artwork?;
+          // Safe type check before cast
+          final artwork =
+              state.extra is Artwork ? state.extra as Artwork : null;
           return ArtworkDetailScreen(artworkId: id, preloadedArtwork: artwork);
         },
       ),
       GoRoute(
         path: AppRoutes.imageViewer,
         builder: (context, state) {
-          final extra = state.extra as Map<String, String>? ?? {};
+          // Safe type check before cast
+          final extra = state.extra is Map<String, String>
+              ? state.extra as Map<String, String>
+              : <String, String>{};
           return ImageViewerScreen(
             imageUrl: extra['imageUrl'] ?? '',
             title: extra['title'] ?? '',

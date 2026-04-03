@@ -88,10 +88,24 @@ class Artwork extends HiveObject {
   /// Instant load — no network. All images from Wikimedia Commons (public domain).
   factory Artwork.fromLocalJson(Map<String, dynamic> json) {
     final rawYear = json['year'];
-    final year = rawYear is num ? rawYear.toInt() : (int.tryParse('$rawYear') ?? 0);
+    final year =
+        rawYear is num ? rawYear.toInt() : (int.tryParse('$rawYear') ?? 0);
     final symbols = json['keySymbols'];
+
+    // Ensure HTTPS for all image URLs (security best practice)
+    String imageUrl = _str(json['imageUrl']);
+    if (imageUrl.startsWith('http://')) {
+      imageUrl = imageUrl.replaceFirst('http://', 'https://');
+    }
+    String thumbnailUrl = _str(json['thumbnailUrl']);
+    if (thumbnailUrl.startsWith('http://')) {
+      thumbnailUrl = thumbnailUrl.replaceFirst('http://', 'https://');
+    }
+
     return Artwork(
-      id: _str(json['id']).isNotEmpty ? _str(json['id']) : 'local_${json['title']}',
+      id: _str(json['id']).isNotEmpty
+          ? _str(json['id'])
+          : 'local_${json['title']}',
       title: _str(json['title'], 'Untitled'),
       artist: _str(json['artist'], 'Unknown Artist'),
       artistId: '',
@@ -100,16 +114,13 @@ class Artwork extends HiveObject {
       medium: _str(json['medium']),
       dimensions: _str(json['dimensions']),
       location: _str(json['origin']),
-      imageUrl: _str(json['imageUrl']),
-      thumbnailUrl: _str(json['thumbnailUrl']).isNotEmpty
-          ? _str(json['thumbnailUrl'])
-          : _str(json['imageUrl']),
+      imageUrl: imageUrl,
+      thumbnailUrl: thumbnailUrl.isNotEmpty ? thumbnailUrl : imageUrl,
       description: _str(json['description']),
       historicalContext: _str(json['historicalContext']),
       meaning: _str(json['meaning']),
-      keySymbols: symbols is List
-          ? symbols.map((e) => '$e').toList()
-          : const [],
+      keySymbols:
+          symbols is List ? symbols.map((e) => '$e').toList() : const [],
       relatedArtworkIds: const [],
       department: _str(json['type'], 'Painting'),
       isPublicDomain: json['isPublicDomain'] == true,
