@@ -16,6 +16,84 @@ class FirestoreUserService {
   CollectionReference<Map<String, dynamic>> get _reports =>
       FirebaseFirestore.instance.collection('reports');
 
+  // ─── Favorites Cloud Sync ───────────────────────────────────────────────────
+
+  /// Get user's favorites subcollection reference
+  CollectionReference<Map<String, dynamic>> _favoritesCol(String userId) =>
+      _col.doc(userId).collection('favorites');
+
+  /// Save a favorite to Firestore (add)
+  Future<void> addFavorite(String userId, String artworkId) async {
+    if (userId == 'guest') return; // Don't sync guest favorites
+    try {
+      await _favoritesCol(userId).doc(artworkId).set({
+        'artworkId': artworkId,
+        'favoritedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      debugPrint('FirestoreUserService.addFavorite failed: $e');
+    }
+  }
+
+  /// Remove a favorite from Firestore
+  Future<void> removeFavorite(String userId, String artworkId) async {
+    if (userId == 'guest') return;
+    try {
+      await _favoritesCol(userId).doc(artworkId).delete();
+    } catch (e) {
+      debugPrint('FirestoreUserService.removeFavorite failed: $e');
+    }
+  }
+
+  /// Load all favorites from Firestore
+  Future<List<String>> loadFavorites(String userId) async {
+    if (userId == 'guest') return [];
+    try {
+      final snapshot = await _favoritesCol(userId).get();
+      return snapshot.docs.map((doc) => doc.id).toList();
+    } catch (e) {
+      debugPrint('FirestoreUserService.loadFavorites failed: $e');
+      return [];
+    }
+  }
+
+  /// Sync local favorites to Firestore (merge)
+  Future<void> syncFavoritesToCloud(
+      String userId, List<String> localFavorites) async {
+    if (userId == 'guest') return;
+    try {
+      final batch = _firestore.batch();
+      for (final artworkId in localFavorites) {
+        batch.set(
+          _favoritesCol(userId).doc(artworkId),
+          {
+            'artworkId': artworkId,
+            'favoritedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true),
+        );
+      }
+      await batch.commit();
+    } catch (e) {
+      debugPrint('FirestoreUserService.syncFavoritesToCloud failed: $e');
+    }
+  }
+
+  /// Delete all user's favorites from Firestore
+  Future<void> deleteAllFavorites(String userId) async {
+    if (userId == 'guest') return;
+    try {
+      final snapshot = await _favoritesCol(userId).get();
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    } catch (e) {
+      debugPrint('FirestoreUserService.deleteAllFavorites failed: $e');
+    }
+  }
+
   Future<void> saveProfile(UserModel user) async {
     try {
       await _col.doc(user.userId).set({

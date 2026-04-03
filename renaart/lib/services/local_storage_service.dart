@@ -76,12 +76,16 @@ class LocalStorageService {
   // ─── Favorites (Week 3: Room.insert(UserArtworkState)) ───────────────────
 
   /// Toggle favorite — uses composite key `userId_artworkId` for per-user scoping
-  Future<void> toggleFavorite(String artworkId, String userId) async {
-    if (_favoritesBox == null) return;
+  /// Returns true if now favorited, false if unfavorited
+  Future<bool> toggleFavorite(String artworkId, String userId) async {
+    if (_favoritesBox == null) return false;
     final key = '${userId}_$artworkId';
     final existing = _favoritesBox!.get(key);
-    if (existing != null && existing.isFavorited) {
+    final wasLiked = existing != null && existing.isFavorited;
+
+    if (wasLiked) {
       await _favoritesBox!.delete(key);
+      return false; // Now unfavorited
     } else {
       await _favoritesBox!.put(
         key,
@@ -93,7 +97,27 @@ class LocalStorageService {
           viewCount: existing?.viewCount ?? 0,
         ),
       );
+      return true; // Now favorited
     }
+  }
+
+  /// Add favorite locally (used when syncing from cloud)
+  Future<void> addFavoriteLocally(String artworkId, String userId) async {
+    if (_favoritesBox == null) return;
+    final key = '${userId}_$artworkId';
+    final existing = _favoritesBox!.get(key);
+    if (existing != null && existing.isFavorited) return; // Already favorited
+
+    await _favoritesBox!.put(
+      key,
+      UserArtworkState(
+        artworkId: artworkId,
+        userId: userId,
+        isFavorited: true,
+        favoritedDate: DateTime.now().toIso8601String(),
+        viewCount: existing?.viewCount ?? 0,
+      ),
+    );
   }
 
   bool isFavorite(String artworkId, String userId) {

@@ -560,27 +560,71 @@ final isOnlineProvider = Provider<bool>((ref) {
 });
 
 // ══════════════════════════════════════════════════════════════════════════════
-// FAVORITES — Global State
+// FAVORITES — Global State with Firestore Sync
 // ══════════════════════════════════════════════════════════════════════════════
 final favoritesProvider =
     StateNotifierProvider<FavoritesNotifier, List<String>>(
   (ref) {
     final userId = ref.watch(authProvider)?.userId ?? 'guest';
-    return FavoritesNotifier(userId);
+    return FavoritesNotifier(userId, ref);
   },
 );
 
 class FavoritesNotifier extends StateNotifier<List<String>> {
   final String _userId;
-  FavoritesNotifier(this._userId)
-      : super(LocalStorageService.instance.getFavoriteIds(_userId));
+  bool _cloudSynced = false;
+
+  FavoritesNotifier(this._userId, Ref ref)
+      : super(LocalStorageService.instance.getFavoriteIds(_userId)) {
+    // Load favorites from cloud on init (for logged-in users)
+    _syncFromCloud();
+  }
+
+  /// Sync favorites from Firestore to local storage
+  Future<void> _syncFromCloud() async {
+    if (_userId == 'guest' || _cloudSynced) return;
+
+    try {
+      final cloudFavorites =
+          await FirestoreUserService.instance.loadFavorites(_userId);
+      if (cloudFavorites.isNotEmpty) {
+        // Merge cloud favorites with local
+        for (final artworkId in cloudFavorites) {
+          await LocalStorageService.instance
+              .addFavoriteLocally(artworkId, _userId);
+        }
+        // Update state
+        state = LocalStorageService.instance.getFavoriteIds(_userId);
+      }
+      _cloudSynced = true;
+    } catch (e) {
+      debugPrint('FavoritesNotifier._syncFromCloud failed: $e');
+    }
+  }
 
   Future<void> toggle(String artworkId) async {
-    await LocalStorageService.instance.toggleFavorite(artworkId, _userId);
+    // Toggle locally first (instant UI feedback)
+    final isNowFavorited =
+        await LocalStorageService.instance.toggleFavorite(artworkId, _userId);
     state = LocalStorageService.instance.getFavoriteIds(_userId);
+
+    // Sync to cloud (fire and forget for responsiveness)
+    if (_userId != 'guest') {
+      if (isNowFavorited) {
+        FirestoreUserService.instance.addFavorite(_userId, artworkId);
+      } else {
+        FirestoreUserService.instance.removeFavorite(_userId, artworkId);
+      }
+    }
   }
 
   bool isFavorite(String artworkId) => state.contains(artworkId);
+
+  /// Force refresh from cloud
+  Future<void> refreshFromCloud() async {
+    _cloudSynced = false;
+    await _syncFromCloud();
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
