@@ -52,11 +52,9 @@ android/key.properties
 .env
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# Firebase Configuration (NEVER commit to public repo)
+# Firebase Configuration
 # ═══════════════════════════════════════════════════════════════════════════════
-# Firebase options (contains API keys)
-lib/firebase_options.dart
-**/firebase_options.dart
+# NOTE: lib/firebase_options.dart is intentionally committed for CI builds.
 
 # Google Services (Android Firebase config)
 android/app/google-services.json
