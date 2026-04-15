@@ -129,6 +129,13 @@ jobs:
           print("google-services.json generated from committed firebase_options.dart")
           PY
 
+      - name: Create .env file
+        env:
+          DOT_ENV: ${{ secrets.DOT_ENV }}
+        run: |
+          mkdir -p renaart
+          printf '%s' "${DOT_ENV:-}" > renaart/.env
+
       - name: Get dependencies
         working-directory: renaart
         run: flutter pub get
@@ -146,7 +153,7 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON_KEY }}
-          packageName: com.yourname.renaart
+          packageName: com.renaart.app
           releaseFiles: renaart/build/app/outputs/bundle/release/*.aab
           track: internal  # เริ่มที่ internal testing ก่อน
           status: completed
