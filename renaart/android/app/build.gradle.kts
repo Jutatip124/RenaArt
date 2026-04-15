@@ -2,20 +2,21 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    // START: FlutterFire Configuration
     id("com.google.gms.google-services")
-    // END: FlutterFire Configuration
     id("kotlin-android")
-    // Flutter Gradle plugin must be applied after Android/Kotlin plugins
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// ── Release signing config (loaded from key.properties — never committed) ────
+// ── Release signing config (สร้างเพื่อรองรับการ Build ทั้งในเครื่องและบน Cloud) ────
 val keyProperties = Properties()
 val keyPropertiesFile = rootProject.file("key.properties")
 if (keyPropertiesFile.exists()) {
     keyPropertiesFile.inputStream().use { keyProperties.load(it) }
 }
+
+fun Properties.required(name: String): String =
+    getProperty(name)?.takeIf { it.isNotBlank() }
+        ?: error("Missing '$name' in android/key.properties")
 
 android {
     namespace = "com.renaart.app"
@@ -33,7 +34,6 @@ android {
 
     defaultConfig {
         applicationId = "com.renaart.app"
-        // Play Store requires minSdk ≥ 21 for most modern SDKs
         minSdk = 21
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -43,10 +43,16 @@ android {
     signingConfigs {
         create("release") {
             if (keyPropertiesFile.exists()) {
-                keyAlias     = keyProperties["keyAlias"]     as String
-                keyPassword  = keyProperties["keyPassword"]  as String
-                storeFile    = file(keyProperties["storeFile"] as String)
-                storePassword = keyProperties["storePassword"] as String
+                keyAlias = keyProperties.getProperty("keyAlias")?.takeIf { it.isNotBlank() } ?: "upload"
+                keyPassword = keyProperties.required("keyPassword")
+                // แก้ให้รองรับ Path ทั้งแบบรันในเครื่องและ GitHub Actions
+                val storeFilePath = keyProperties.required("storeFile")
+                storeFile = if (file(storeFilePath).exists()) {
+                    file(storeFilePath)
+                } else {
+                    file("../$storeFilePath")
+                }
+                storePassword = keyProperties.required("storePassword")
             }
         }
     }
@@ -57,7 +63,6 @@ android {
         }
         release {
             signingConfig = signingConfigs.getByName("release")
-            // Shrink unused code and resources for smaller APK/AAB
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
