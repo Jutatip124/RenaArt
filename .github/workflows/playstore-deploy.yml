@@ -28,7 +28,7 @@ jobs:
       - name: Prepare Signing Config
         run: |
           mkdir -p renaart/android/app
-          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=app/upload-keystore.jks\n' \
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=upload-keystore.jks\n' \
             '${{ secrets.KEYSTORE_PASSWORD }}' \
             '${{ secrets.KEY_PASSWORD }}' \
             '${{ secrets.KEY_ALIAS }}' \
