@@ -12,7 +12,7 @@ jobs:
 
     steps:
       # ── 1. Checkout source ─────────────────────────────────────────────────
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # ── 2. Setup Flutter (latest stable) ──────────────────────────────────
       - uses: subosito/flutter-action@v2
