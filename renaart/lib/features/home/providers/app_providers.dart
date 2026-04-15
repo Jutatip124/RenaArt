@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../models/artwork_model.dart';
 import '../../../models/user_model.dart';
@@ -9,6 +10,7 @@ import '../../../services/local_artwork_service.dart';
 import '../../../services/local_storage_service.dart';
 import '../../../services/firestore_user_service.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../firebase_options.dart';
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SERVICES
@@ -93,8 +95,6 @@ class AuthNotifier extends StateNotifier<UserModel?> {
 
   AuthNotifier(this._ref) : super(null) {
     _load();
-    // NOTE: _bindAuthStateChanges removed — it triggered repeated
-    // accounts:lookup calls that exhausted Firebase Auth quota.
   }
 
   FirebaseAuth? get _auth {
@@ -107,6 +107,20 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   final _db = FirestoreUserService.instance;
+
+  /// Ensure Firebase is initialized before auth operations.
+  Future<bool> _ensureFirebaseReady() async {
+    if (Firebase.apps.isNotEmpty) return true;
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      return true;
+    } catch (e) {
+      debugPrint('AuthNotifier._ensureFirebaseReady failed: $e');
+      return false;
+    }
+  }
 
   // ── Firestore helpers ─────────────────────────────────────────────────────
 
@@ -151,32 +165,68 @@ class AuthNotifier extends StateNotifier<UserModel?> {
 
   // ── Internal load ─────────────────────────────────────────────────────────
 
+  /// Load auth state from Firebase, then reconcile with local cache.
   Future<void> _load() async {
     try {
-      final auth = _auth;
-      if (auth == null) {
+      final firebaseReady = await _ensureFirebaseReady();
+      if (!firebaseReady) {
+        debugPrint(
+            'AuthNotifier._load: Firebase not ready, loading local user');
         state = await LocalStorageService.instance.loadUser();
         _syncThemeAndMarkLoaded();
         return;
       }
 
-      // Wait for Firebase Auth's internal IndexedDB operations to settle
-      await Future.delayed(const Duration(milliseconds: 500));
+      final auth = _auth;
+      if (auth == null) {
+        debugPrint('AuthNotifier._load: auth is null, loading local user');
+        state = await LocalStorageService.instance.loadUser();
+        _syncThemeAndMarkLoaded();
+        return;
+      }
 
-      final fbUser = auth.currentUser;
+      // ✅ วิธีที่ถูกต้อง: รอ authStateChanges emit ครั้งแรก
+      // ไม่ใช้ currentUser โดยตรง เพราะบน Web มันยัง null อยู่ระหว่างโหลด IndexedDB
+      debugPrint('AuthNotifier._load: Waiting for authStateChanges...');
+      final fbUser = await auth
+          .authStateChanges()
+          .first
+          .timeout(const Duration(seconds: 5), onTimeout: () {
+        debugPrint('AuthNotifier._load: Timeout waiting for auth state');
+        return null;
+      });
+
       if (fbUser != null) {
+        debugPrint('AuthNotifier._load: Firebase user found: ${fbUser.email}');
         await _handleFirebaseUser(fbUser);
         _syncThemeAndMarkLoaded();
         return;
       }
 
-      state = await LocalStorageService.instance.loadUser();
+      debugPrint('AuthNotifier._load: No Firebase user, loading local user');
+      final localUser = await LocalStorageService.instance.loadUser();
+      if (localUser != null && !localUser.isGuest) {
+        // Local session can be stale when Firebase auth on web has expired/cleared.
+        // Clear stale local auth snapshot to avoid unauthorized Firestore reads.
+        debugPrint('AuthNotifier._load: Clearing stale local user session');
+        await LocalStorageService.instance.clearUser();
+        state = null;
+      } else {
+        state = localUser;
+      }
     } catch (e) {
-      debugPrint('AuthNotifier._load Firestore sync failed: $e');
+      debugPrint('AuthNotifier._load failed: $e');
       try {
-        state = await LocalStorageService.instance.loadUser();
+        final localUser = await LocalStorageService.instance.loadUser();
+        if (localUser != null && !localUser.isGuest) {
+          await LocalStorageService.instance.clearUser();
+          state = null;
+        } else {
+          state = localUser;
+        }
       } catch (e2) {
         debugPrint('AuthNotifier._load local fallback failed: $e2');
+        state = null;
       }
     }
     _syncThemeAndMarkLoaded();
@@ -259,6 +309,9 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   // ── Public auth actions ───────────────────────────────────────────────────
 
   Future<void> signIn(String email, String password) async {
+    final firebaseReady = await _ensureFirebaseReady();
+    if (!firebaseReady) throw 'Service unavailable. Please try again later.';
+
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
@@ -288,6 +341,9 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   Future<void> signInWithGoogle() async {
+    final firebaseReady = await _ensureFirebaseReady();
+    if (!firebaseReady) throw 'Service unavailable. Please try again later.';
+
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
@@ -306,6 +362,9 @@ class AuthNotifier extends StateNotifier<UserModel?> {
 
   Future<void> register(
       String nickname, String username, String email, String password) async {
+    final firebaseReady = await _ensureFirebaseReady();
+    if (!firebaseReady) throw 'Service unavailable. Please try again later.';
+
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
@@ -362,6 +421,9 @@ class AuthNotifier extends StateNotifier<UserModel?> {
   }
 
   Future<void> resetPassword(String email) async {
+    final firebaseReady = await _ensureFirebaseReady();
+    if (!firebaseReady) throw 'Service unavailable. Please try again later.';
+
     final auth = _auth;
     if (auth == null) throw 'Service unavailable. Please try again later.';
     try {
@@ -535,6 +597,12 @@ class AuthNotifier extends StateNotifier<UserModel?> {
         return 'Please sign out and sign in again to update this.';
       case 'network-request-failed':
         return 'Network error. Check your connection.';
+      case 'invalid-api-key':
+        return 'App configuration error. Please refresh the page.';
+      case 'app-not-authorized':
+        return 'App not authorized. Please contact support.';
+      case 'operation-not-allowed':
+        return 'This sign-in method is not enabled.';
       default:
         return 'Authentication error. Please try again.';
     }
@@ -583,6 +651,13 @@ class FavoritesNotifier extends StateNotifier<List<String>> {
   /// Sync favorites from Firestore to local storage
   Future<void> _syncFromCloud() async {
     if (_userId == 'guest' || _cloudSynced) return;
+    String? authUid;
+    try {
+      authUid = FirebaseAuth.instance.currentUser?.uid;
+    } catch (_) {
+      authUid = null;
+    }
+    if (authUid == null || authUid != _userId) return;
 
     try {
       final cloudFavorites =
@@ -610,6 +685,14 @@ class FavoritesNotifier extends StateNotifier<List<String>> {
 
     // Sync to cloud (fire and forget for responsiveness)
     if (_userId != 'guest') {
+      String? authUid;
+      try {
+        authUid = FirebaseAuth.instance.currentUser?.uid;
+      } catch (_) {
+        authUid = null;
+      }
+      if (authUid != _userId) return;
+
       if (isNowFavorited) {
         FirestoreUserService.instance.addFavorite(_userId, artworkId);
       } else {

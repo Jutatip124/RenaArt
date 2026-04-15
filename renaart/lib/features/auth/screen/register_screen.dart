@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
 import '../../home/providers/app_providers.dart';
 import '../widgets/art_mosaic_bg.dart';
+import '../widgets/privacy_consent_dialog.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -46,6 +47,22 @@ class _RegState extends ConsumerState<RegisterScreen> {
     _confirm.dispose();
     super.dispose();
   }
+
+  Future<bool> _ensurePrivacyConsent() async {
+    final accepted = await PrivacyConsentDialog.hasAccepted();
+    if (accepted) return true;
+    if (!mounted) return false;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => PrivacyConsentDialog(onAccept: _noop),
+    );
+    if (!mounted) return false;
+    return PrivacyConsentDialog.hasAccepted();
+  }
+
+  static void _noop() {}
 
   void _onUsernameChanged() {
     _usernameTimer?.cancel();
@@ -108,6 +125,10 @@ class _RegState extends ConsumerState<RegisterScreen> {
       }
       return;
     }
+
+    final accepted = await _ensurePrivacyConsent();
+    if (!accepted) return;
+
     if (mounted) {
       setState(() {
         _loading = true;

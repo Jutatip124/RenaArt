@@ -6,7 +6,6 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../home/providers/app_providers.dart';
-import '../widgets/privacy_consent_dialog.dart';
 
 // Splash — Museum cinematic: full-dark, large serif, subtle gold rule
 class SplashScreen extends ConsumerStatefulWidget {
@@ -40,34 +39,12 @@ class _SplashState extends ConsumerState<SplashScreen>
   }
 
   bool _navigated = false;
-  bool _checkingPrivacy = false;
 
   Future<void> _tryNavigate() async {
-    if (_navigated || !mounted || _checkingPrivacy) return;
+    if (_navigated || !mounted) return;
     final loaded = ref.read(authLoadedProvider);
     if (!loaded) return;
 
-    _checkingPrivacy = true;
-
-    // Check if privacy policy has been accepted (PDPA compliance)
-    final hasAccepted = await PrivacyConsentDialog.hasAccepted();
-
-    if (!mounted) return;
-
-    if (!hasAccepted) {
-      // Show privacy consent dialog - must accept before continuing
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => PrivacyConsentDialog(
-          onAccept: () {
-            // Will be called when user accepts
-          },
-        ),
-      );
-    }
-
-    if (!mounted) return;
     _navigated = true;
 
     // Navigate after a brief delay for smooth transition

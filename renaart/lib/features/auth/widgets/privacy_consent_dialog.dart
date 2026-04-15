@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/theme/app_theme.dart';
 
-/// PDPA-compliant privacy consent dialog shown on first app launch.
-/// User must accept before using the app.
+/// PDPA-compliant privacy consent dialog shown on first Login/Register use.
 class PrivacyConsentDialog extends StatefulWidget {
   final VoidCallback onAccept;
 
@@ -72,80 +71,125 @@ class _PrivacyConsentDialogState extends State<PrivacyConsentDialog> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Privacy Policy & Terms',
+            Text('Privacy Policy',
                 style: TextStyle(
                     fontFamily: 'Cormorant',
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
                     color: text)),
             const SizedBox(height: 4),
-            Text('PDPA Compliance Notice',
+            Text('App: RenaArt  |  Last updated: 15 April 2026',
                 style: TextStyle(
                     fontFamily: 'Jost',
                     fontSize: 11,
-                    letterSpacing: 0.5,
                     color: faint)),
           ],
         ),
         content: SizedBox(
           width: double.maxFinite,
-          height: 350,
+          height: 420,
           child: SingleChildScrollView(
             controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  "This Privacy Policy explains how RenaArt collects, uses, stores, and protects personal data when you use the application. This policy is prepared in accordance with Thailand's Personal Data Protection Act B.E. 2562 (PDPA).",
+                  style: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 12,
+                      height: 1.45,
+                      color: faint),
+                ),
+                const SizedBox(height: 14),
                 _buildSection(
-                    'Data We Collect',
+                    '1. Personal Data We Collect',
                     [
-                      '• Email address (for authentication)',
-                      '• Username and display name',
-                      '• App preferences (theme, settings)',
-                      '• Favorite artworks and viewing history',
+                      '• Email address (for account authentication and security actions).',
+                      '• Name / nickname / username that you provide.',
+                      '• Account-related settings and preferences (for example theme mode and quality settings).',
+                      '• App usage data needed for core functionality (for example favorites, viewing history, and issue reports submitted by you).',
+                      'We do not collect phone number, postal address, contacts list, camera photos, or precise GPS location.',
                     ],
                     text,
                     faint),
                 _buildSection(
-                    'How We Use Your Data',
+                    '2. How We Use Your Data',
                     [
-                      'Your data is used solely to provide app functionality:',
-                      '• Authentication and account management',
-                      '• Syncing favorites across devices',
-                      '• Personalizing your experience',
-                      '',
-                      'We do NOT sell or share your personal information with third parties.',
+                      '• To create and manage your account.',
+                      '• To provide core app features such as favorites sync and profile settings.',
+                      '• To provide account security flows such as password reset and email verification.',
+                      '• To respond to support/issue reports sent from within the app.',
                     ],
                     text,
                     faint),
                 _buildSection(
-                    'Data Storage & Security',
+                    '3. Legal Basis (PDPA)',
                     [
-                      '• Account data is stored securely in Firebase (Google Cloud)',
-                      '• Sensitive data (email, username) uses encrypted storage',
-                      '• Viewing history is stored only on your device',
-                      '• All data transmission uses HTTPS encryption',
+                      '• Performance of contract: to provide the service you requested.',
+                      '• Consent: where consent is required by applicable law.',
+                      '• Legitimate interest: to maintain app security and service reliability.',
                     ],
                     text,
                     faint),
                 _buildSection(
-                    'Your Rights (PDPA)',
+                    '4. Data Sharing',
                     [
-                      '• Access: View your data in Profile settings',
-                      '• Rectification: Edit your profile information anytime',
-                      '• Deletion: Delete your account and ALL data permanently',
-                      '• Withdrawal: You may withdraw consent by deleting your account',
+                      'We do not sell your personal data. We use service providers only as necessary to operate the app (for example Firebase services for authentication, database, and hosting).',
                     ],
                     text,
                     faint),
                 _buildSection(
-                    'Data Retention',
+                    '5. Data Retention',
                     [
-                      '• Account data is retained while your account is active',
-                      '• Upon account deletion, all data is permanently removed',
-                      '• Local data can be cleared by uninstalling the app',
+                      'We keep personal data only for as long as necessary to provide the service and comply with legal obligations. If you delete your account, associated account data is deleted from active systems subject to technical and legal limits.',
                     ],
                     text,
                     faint),
+                _buildSection(
+                    '6. Security',
+                    [
+                      'We apply reasonable technical and organizational safeguards to protect personal data, including encrypted transport (HTTPS) and platform-provided secure storage mechanisms where applicable.',
+                    ],
+                    text,
+                    faint),
+                _buildSection(
+                    "7. Children's Privacy",
+                    [
+                      'This app is not intentionally directed to children under 13 years of age, and we do not knowingly collect personal data from children under 13.',
+                    ],
+                    text,
+                    faint),
+                _buildSection(
+                    '8. Your Rights Under PDPA',
+                    [
+                      'Subject to PDPA conditions, you may request access, correction, deletion, restriction, objection, or data portability. You may also withdraw consent where processing is based on consent.',
+                    ],
+                    text,
+                    faint),
+                _buildSection(
+                    '9. Contact',
+                    [
+                      'For privacy questions or data rights requests, contact:',
+                      '6631503124@lamduan.mfu.ac.th',
+                    ],
+                    text,
+                    faint),
+                _buildSection(
+                    '10. Policy Updates',
+                    [
+                      'We may update this policy from time to time. Material changes will be reflected on this page with an updated effective date.',
+                    ],
+                    text,
+                    faint),
+                Text(
+                  'This policy is intended for transparency and compliance with Thailand PDPA requirements for the RenaArt application.',
+                  style: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 12,
+                      height: 1.45,
+                      color: faint),
+                ),
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.all(12),

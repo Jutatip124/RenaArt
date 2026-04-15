@@ -6,6 +6,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
 import '../../home/providers/app_providers.dart';
 import '../widgets/art_mosaic_bg.dart';
+import '../widgets/privacy_consent_dialog.dart';
 
 // Login — Arts Gallery editorial style
 // Clean off-white, serif large headline, black CTA button
@@ -28,11 +29,30 @@ class _LoginState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
+  Future<bool> _ensurePrivacyConsent() async {
+    final accepted = await PrivacyConsentDialog.hasAccepted();
+    if (accepted) return true;
+    if (!mounted) return false;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => PrivacyConsentDialog(onAccept: _noop),
+    );
+    if (!mounted) return false;
+    return PrivacyConsentDialog.hasAccepted();
+  }
+
+  static void _noop() {}
+
   Future<void> _signIn() async {
     if (_email.text.trim().isEmpty || _pass.text.isEmpty) {
       if (mounted) setState(() => _err = 'Please fill in all fields.');
       return;
     }
+    final accepted = await _ensurePrivacyConsent();
+    if (!accepted) return;
+
     if (mounted) {
       setState(() {
         _loading = true;
@@ -96,6 +116,9 @@ class _LoginState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _signInWithGoogle() async {
+    final accepted = await _ensurePrivacyConsent();
+    if (!accepted) return;
+
     if (mounted) {
       setState(() {
         _loading = true;
