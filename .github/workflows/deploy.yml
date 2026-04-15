@@ -170,33 +170,65 @@ jobs:
       - name: Validate Play upload inputs
         env:
           PLAY_STORE_JSON_KEY: ${{ secrets.PLAY_STORE_JSON_KEY }}
+          GOOGLE_PLAY_JSON_KEY: ${{ secrets.GOOGLE_PLAY_JSON_KEY }}
+          PLAY_STORE_JSON_KEY_BASE64: ${{ secrets.PLAY_STORE_JSON_KEY_BASE64 }}
+          GOOGLE_PLAY_JSON_KEY_BASE64: ${{ secrets.GOOGLE_PLAY_JSON_KEY_BASE64 }}
         run: |
-          if [ -z "$PLAY_STORE_JSON_KEY" ]; then
-            echo "::error::Missing PLAY_STORE_JSON_KEY secret."
-            exit 1
-          fi
           python - <<'PY'
+          import base64
           import json
           import os
           import pathlib
           import sys
-
-          raw = os.getenv("PLAY_STORE_JSON_KEY", "").strip()
+          
+          plain_candidates = [
+              ("PLAY_STORE_JSON_KEY", os.getenv("PLAY_STORE_JSON_KEY", "").strip()),
+              ("GOOGLE_PLAY_JSON_KEY", os.getenv("GOOGLE_PLAY_JSON_KEY", "").strip()),
+          ]
+          b64_candidates = [
+              ("PLAY_STORE_JSON_KEY_BASE64", os.getenv("PLAY_STORE_JSON_KEY_BASE64", "").strip()),
+              ("GOOGLE_PLAY_JSON_KEY_BASE64", os.getenv("GOOGLE_PLAY_JSON_KEY_BASE64", "").strip()),
+          ]
+          
+          raw = None
+          source = None
+          for name, value in plain_candidates:
+            if value:
+              raw = value
+              source = name
+              break
+          
+          if raw is None:
+            for name, value in b64_candidates:
+              if not value:
+                continue
+              try:
+                raw = base64.b64decode(value).decode("utf-8")
+                source = name
+                break
+              except Exception as e:
+                print(f"::error::{name} is not valid base64: {e}")
+                sys.exit(1)
+          
+          if raw is None:
+            print("::error::Missing Play service account secret. Set one of: PLAY_STORE_JSON_KEY, GOOGLE_PLAY_JSON_KEY, PLAY_STORE_JSON_KEY_BASE64, GOOGLE_PLAY_JSON_KEY_BASE64.")
+            sys.exit(1)
+          
           try:
             data = json.loads(raw)
           except Exception as e:
-            print(f"::error::PLAY_STORE_JSON_KEY is not valid JSON: {e}")
+            print(f"::error::{source} is not valid JSON: {e}")
             sys.exit(1)
 
           required = ("type", "project_id", "private_key", "client_email")
           missing = [k for k in required if k not in data or not data[k]]
           if missing:
-            print(f"::error::PLAY_STORE_JSON_KEY missing required fields: {', '.join(missing)}")
+            print(f"::error::{source} missing required fields: {', '.join(missing)}")
             sys.exit(1)
 
           out = pathlib.Path("/tmp/play-store-service-account.json")
           out.write_text(json.dumps(data), encoding="utf-8")
-          print(f"Play service account prepared: {out}")
+          print(f"Play service account prepared from {source}: {out}")
           PY
 
           ls -lh renaart/build/app/outputs/bundle/release/*.aab
