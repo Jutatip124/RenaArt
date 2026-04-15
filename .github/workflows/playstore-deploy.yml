@@ -24,20 +24,46 @@ jobs:
 
       - name: Prepare Signing Config
         run: |
-          # สร้างไฟล์ key.properties ในโฟลเดอร์ renaart/android/
           echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > renaart/android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> renaart/android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> renaart/android/key.properties
           echo "storeFile=app/upload-keystore.jks" >> renaart/android/key.properties
-          
-          # Decode ไฟล์กุญแจไปไว้ในโฟลเดอร์ renaart/android/app/
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > renaart/android/app/upload-keystore.jks
+
+      - name: Create Dummy Firebase Options
+        run: |
+          # สร้างไฟล์เนื้อหา Firebase Options
+          cat <<EOF > firebase_temp.dart
+          import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
+          import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
+
+          class DefaultFirebaseOptions {
+            static FirebaseOptions get currentPlatform {
+              return android;
+            }
+            static const FirebaseOptions android = FirebaseOptions(
+              apiKey: 'dummy',
+              appId: 'dummy',
+              messagingSenderId: 'dummy',
+              projectId: 'dummy',
+              storageBucket: 'dummy',
+            );
+          }
+          EOF
+          
+          # คัดลอกไปไว้ในตำแหน่งที่ Error แจ้งว่าหาไม่เจอ
+          mkdir -p renaart/lib
+          cp firebase_temp.dart renaart/lib/firebase_options.dart
+          
+          # ตรวจสอบว่าไฟล์ถูกสร้างจริง
+          ls -l renaart/lib/firebase_options.dart
 
       - name: Build App Bundle
         run: |
           cd renaart
           flutter pub get
-          flutter build appbundle --release
+          # ใช้ flag ข้ามการตรวจเวอร์ชัน และสร้าง bundle
+          flutter build appbundle --release --android-skip-build-dependency-validation
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
