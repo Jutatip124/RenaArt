@@ -7,7 +7,6 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// ── Release signing config (สร้างเพื่อรองรับการ Build ทั้งในเครื่องและบน Cloud) ────
 val keyProperties = Properties()
 val keyPropertiesFile = rootProject.file("key.properties")
 if (keyPropertiesFile.exists()) {
@@ -43,24 +42,15 @@ android {
     signingConfigs {
         create("release") {
             if (keyPropertiesFile.exists()) {
-                keyAlias = keyProperties.getProperty("keyAlias")?.takeIf { it.isNotBlank() } ?: "upload"
+                keyAlias = keyProperties.getProperty("keyAlias") ?: "upload"
                 keyPassword = keyProperties.required("keyPassword")
-                // แก้ให้รองรับ Path ทั้งแบบรันในเครื่องและ GitHub Actions
-                val storeFilePath = keyProperties.required("storeFile")
-                storeFile = if (file(storeFilePath).exists()) {
-                    file(storeFilePath)
-                } else {
-                    file("../$storeFilePath")
-                }
+                storeFile = file(keyProperties.required("storeFile"))
                 storePassword = keyProperties.required("storePassword")
             }
         }
     }
 
     buildTypes {
-        debug {
-            signingConfig = signingConfigs.getByName("debug")
-        }
         release {
             signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true

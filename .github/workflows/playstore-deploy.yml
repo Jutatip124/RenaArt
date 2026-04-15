@@ -2,8 +2,8 @@ name: Play Store Build
 
 on:
   push:
-    branches: [ main ] # สั่งให้ Build ทุกครั้งที่ Push โค้ดลง branch main
-  workflow_dispatch: # ปุ่มกดสั่ง Build เองได้จากหน้าเว็บ GitHub
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,17 +24,18 @@ jobs:
 
       - name: Prepare Signing Config
         run: |
-          # สร้างไฟล์ key.properties (ใช้ Path ตรงตามที่ Gradle ต้องการ)
-          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=app/upload-keystore.jks" >> android/key.properties
+          # สร้างไฟล์ key.properties ในโฟลเดอร์ renaart/android/
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > renaart/android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> renaart/android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> renaart/android/key.properties
+          echo "storeFile=app/upload-keystore.jks" >> renaart/android/key.properties
           
-          # แปลง Base64 กลับเป็นไฟล์กุญแจจริง
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+          # Decode ไฟล์กุญแจไปไว้ในโฟลเดอร์ renaart/android/app/
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > renaart/android/app/upload-keystore.jks
 
       - name: Build App Bundle
         run: |
+          cd renaart
           flutter pub get
           flutter build appbundle --release
 
@@ -42,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-bundle
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: renaart/build/app/outputs/bundle/release/app-release.aab
