@@ -3,6 +3,7 @@
 A Flutter web application that curates 300 Renaissance artworks (c. 1300–1600) with detailed historical backgrounds, meanings, and symbolism. Built with Firebase Authentication, Cloud Firestore, and deployed on Firebase Hosting.
 
 **Live App:** https://renaart-ded29.web.app
+**Privacy Policy (PDPA):** https://renaart-ded29.web.app/privacy-policy
 
 ---
 
