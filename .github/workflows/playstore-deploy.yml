@@ -24,25 +24,18 @@ jobs:
 
       - name: Prepare Signing Config
         run: |
-          # 1. สร้างโฟลเดอร์ให้ชัวร์
           mkdir -p renaart/android/app
-          
-          # 2. สร้างไฟล์ key.properties ไว้ข้างใน renaart/android/ โดยตรง
-          # สำคัญ: ห้ามมีช่องว่างหลัง = และห้ามมีบรรทัดว่างที่ไม่ได้ตั้งใจ
-          cat <<EOF > renaart/android/key.properties
-          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword=${{ secrets.KEY_PASSWORD }}
-          keyAlias=${{ secrets.KEY_ALIAS }}
-          storeFile=app/upload-keystore.jks
-          EOF
-          
-          # 3. Decode ไฟล์กุญแจ .jks ไปไว้ใน renaart/android/app/
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=app/upload-keystore.jks\n' \
+            '${{ secrets.KEYSTORE_PASSWORD }}' \
+            '${{ secrets.KEY_PASSWORD }}' \
+            '${{ secrets.KEY_ALIAS }}' \
+            > renaart/android/key.properties
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > renaart/android/app/upload-keystore.jks
 
       - name: Create Dummy Firebase Options
         run: |
           mkdir -p renaart/lib
-          cat <<EOF > renaart/lib/firebase_options.dart
+          cat <<'EOF' > renaart/lib/firebase_options.dart
           import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
           import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
           class DefaultFirebaseOptions {
@@ -57,7 +50,6 @@ jobs:
         run: |
           cd renaart
           flutter pub get
-          # เพิ่ม flag --android-skip-build-dependency-validation เพื่อข้าม Warning เรื่อง AGP/Kotlin
           flutter build appbundle --release --android-skip-build-dependency-validation
 
       - name: Upload Artifact

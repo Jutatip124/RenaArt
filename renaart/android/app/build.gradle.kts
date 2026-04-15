@@ -7,16 +7,11 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// ── Keystore: local file หรือ CI env vars ────────────────────────────────────
 val keyProperties = Properties()
 val keyPropertiesFile = rootProject.file("key.properties")
 if (keyPropertiesFile.exists()) {
     keyPropertiesFile.inputStream().use { keyProperties.load(it) }
 }
-
-fun Properties.required(name: String): String =
-    getProperty(name)?.takeIf { it.isNotBlank() }
-        ?: error("Missing '$name' in android/key.properties")
 
 android {
     namespace = "com.renaart.app"
@@ -43,25 +38,20 @@ android {
 
     signingConfigs {
         create("release") {
-            when {
-                // Local build — ใช้ key.properties
-                keyPropertiesFile.exists() -> {
-                    keyAlias = keyProperties.getProperty("keyAlias") ?: "upload"
-                    keyPassword = keyProperties.required("keyPassword")
-                    storeFile = file(keyProperties.required("storeFile"))
-                    storePassword = keyProperties.required("storePassword")
-                }
-                // CI/CD — ใช้ environment variables
-                System.getenv("KEYSTORE_PATH") != null -> {
-                    keyAlias = System.getenv("KEY_ALIAS") ?: error("KEY_ALIAS not set")
-                    keyPassword = System.getenv("KEY_PASSWORD") ?: error("KEY_PASSWORD not set")
-                    storeFile = file(System.getenv("KEYSTORE_PATH")!!)
-                    storePassword = System.getenv("STORE_PASSWORD") ?: error("STORE_PASSWORD not set")
-                }
-                else -> {
-                    // Debug fallback — ป้องกัน build crash
-                }
-            }
+            storeFile = file(
+                keyProperties.getProperty("storeFile")
+                    ?: System.getenv("KEYSTORE_PATH")
+                    ?: error("storeFile not found in key.properties and KEYSTORE_PATH env var not set")
+            )
+            storePassword = keyProperties.getProperty("storePassword")
+                ?: System.getenv("STORE_PASSWORD")
+                ?: error("storePassword not found in key.properties and STORE_PASSWORD env var not set")
+            keyAlias = keyProperties.getProperty("keyAlias")
+                ?: System.getenv("KEY_ALIAS")
+                ?: error("keyAlias not found in key.properties and KEY_ALIAS env var not set")
+            keyPassword = keyProperties.getProperty("keyPassword")
+                ?: System.getenv("KEY_PASSWORD")
+                ?: error("keyPassword not found in key.properties and KEY_PASSWORD env var not set")
         }
     }
 
