@@ -28,12 +28,6 @@ jobs:
           flutter-version: '3.41.6'
           channel: 'stable'
 
-      # สร้าง firebase_options.dart จาก Secret
-      - name: Create firebase_options.dart
-        run: |
-          mkdir -p renaart/lib
-          echo '${{ secrets.FIREBASE_OPTIONS }}' > renaart/lib/firebase_options.dart
-
       # decode keystore จาก base64
       - name: Decode Keystore
         run: |
@@ -57,16 +51,83 @@ jobs:
           FIREBASE_ANDROID_GOOGLE_SERVICES_JSON: ${{ secrets.FIREBASE_ANDROID_GOOGLE_SERVICES_JSON }}
         run: |
           mkdir -p renaart/android/app
-          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
-            printf '%s' "$GOOGLE_SERVICES_JSON" > renaart/android/app/google-services.json
-          elif [ -n "$FIREBASE_ANDROID_GOOGLE_SERVICES_JSON" ]; then
-            printf '%s' "$FIREBASE_ANDROID_GOOGLE_SERVICES_JSON" > renaart/android/app/google-services.json
-          elif [ -n "$GOOGLE_SERVICES_JSON_BASE64" ]; then
-            printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | base64 --decode > renaart/android/app/google-services.json
-          else
-            echo "::error::Missing Android Firebase config secret (GOOGLE_SERVICES_JSON or GOOGLE_SERVICES_JSON_BASE64)."
-            exit 1
-          fi
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import pathlib
+          import re
+          import sys
+
+          out = pathlib.Path("renaart/android/app/google-services.json")
+
+          plain = os.getenv("GOOGLE_SERVICES_JSON", "").strip()
+          alt_plain = os.getenv("FIREBASE_ANDROID_GOOGLE_SERVICES_JSON", "").strip()
+          b64 = os.getenv("GOOGLE_SERVICES_JSON_BASE64", "").strip()
+
+          if plain:
+            out.write_text(plain, encoding="utf-8")
+            print("google-services.json created from GOOGLE_SERVICES_JSON")
+            sys.exit(0)
+          if alt_plain:
+            out.write_text(alt_plain, encoding="utf-8")
+            print("google-services.json created from FIREBASE_ANDROID_GOOGLE_SERVICES_JSON")
+            sys.exit(0)
+          if b64:
+            out.write_bytes(base64.b64decode(b64))
+            print("google-services.json created from GOOGLE_SERVICES_JSON_BASE64")
+            sys.exit(0)
+
+          # Fallback: generate from committed firebase_options.dart
+          options_file = pathlib.Path("renaart/lib/firebase_options.dart")
+          if not options_file.exists():
+            print("::error::Missing Android Firebase config secret and renaart/lib/firebase_options.dart not found.")
+            sys.exit(1)
+
+          text = options_file.read_text(encoding="utf-8")
+          block_match = re.search(
+              r"static const FirebaseOptions android = FirebaseOptions\((.*?)\);\s*$",
+              text,
+              re.S | re.M,
+          )
+          if not block_match:
+            print("::error::Cannot find Android FirebaseOptions block in firebase_options.dart")
+            sys.exit(1)
+          block = block_match.group(1)
+
+          def field(name: str) -> str:
+            m = re.search(rf"{name}:\s*'([^']+)'", block)
+            if not m:
+              print(f"::error::Missing '{name}' in Android FirebaseOptions.")
+              sys.exit(1)
+            return m.group(1)
+
+          api_key = field("apiKey")
+          app_id = field("appId")
+          sender_id = field("messagingSenderId")
+          project_id = field("projectId")
+          storage_bucket = field("storageBucket")
+
+          data = {
+              "project_info": {
+                  "project_number": sender_id,
+                  "project_id": project_id,
+                  "storage_bucket": storage_bucket,
+              },
+              "client": [
+                  {
+                      "client_info": {
+                          "mobilesdk_app_id": app_id,
+                          "android_client_info": {"package_name": "com.renaart.app"},
+                      },
+                      "api_key": [{"current_key": api_key}],
+                  }
+              ],
+              "configuration_version": "1",
+          }
+          out.write_text(json.dumps(data, indent=2), encoding="utf-8")
+          print("google-services.json generated from committed firebase_options.dart")
+          PY
 
       - name: Get dependencies
         working-directory: renaart
