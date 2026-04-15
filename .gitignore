@@ -75,4 +75,3 @@ node_modules/
 *.keystore
 *.jks
 renaart/android/key.properties
-node_modules/

@@ -3,6 +3,7 @@
 Flutter web app for exploring Renaissance artworks with authentication, per-user favorites, offline saving, and PDPA-aligned privacy consent.
 
 - **Live App:** https://renaart-ded29.web.app
+- **Landing Page:** https://renaart-ded29.web.app/#/landing
 - **Privacy Policy:** https://renaart-ded29.web.app/privacy-policy
 - **Delete Account:** https://renaart-ded29.web.app/delete-account
 
@@ -18,6 +19,7 @@ Flutter web app for exploring Renaissance artworks with authentication, per-user
 - Dark/Light mode + High Fidelity image toggle
 - In-app report issue flow (`reports` collection)
 - Account deletion flow with re-authentication
+- Responsive app grids (Home/Search/Collection): desktop auto-shows more cards, mobile stays 2-column
 
 ---
 
@@ -104,16 +106,10 @@ flutter run -d chrome
 
 ## Build & Deploy
 
-### 1) Build Flutter web
+Deploy uses root `firebase.json` predeploy hooks, so build runs automatically.
 
 ```bash
-flutter build web --release
-```
-
-### 2) Deploy from repository root
-
-```bash
-cd ..
+cd RenaArt
 firebase deploy --only hosting
 ```
 
@@ -121,7 +117,10 @@ Important:
 - Deploy from **repo root** (project root), not `renaart/`.
 - Root `firebase.json` contains Hosting rewrites.
 - `renaart/firebase.json` is FlutterFire metadata and does not define hosting targets.
-- If `renaart/web/privacy-policy.html` or `renaart/web/delete-account.html` changes, rebuild web before deploy.
+- `predeploy` runs:
+  - `flutter pub get`
+  - `flutter build web --release`
+  - copy `privacy-policy.html` and `delete-account.html` into `build/web`
 
 ---
 
@@ -130,13 +129,29 @@ Important:
 ```json
 {
   "hosting": {
+    "predeploy": [
+      "cd renaart && flutter pub get && flutter build web --release",
+      "cp renaart/web/privacy-policy.html renaart/build/web/privacy-policy.html",
+      "cp renaart/web/delete-account.html renaart/build/web/delete-account.html"
+    ],
     "public": "renaart/build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
       { "source": "/delete-account", "destination": "/delete-account.html" },
       { "source": "/delete-account/**", "destination": "/delete-account.html" },
       { "source": "/privacy-policy", "destination": "/privacy-policy.html" },
       { "source": "/privacy-policy/**", "destination": "/privacy-policy.html" },
       { "source": "**", "destination": "/index.html" }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|html|css|json)",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+      }
     ]
   }
 }

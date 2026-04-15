@@ -19,6 +19,8 @@ class HomeScreen extends ConsumerWidget {
     final isDark    = Theme.of(context).brightness == Brightness.dark;
     final bg        = isDark ? AppColors.darkCanvas : AppColors.canvas;
     final text      = isDark ? AppColors.darkText   : AppColors.ink;
+    final columns   =
+        AppConstants.masonryColumnsForWidth(MediaQuery.sizeOf(context).width);
 
     return Scaffold(
       backgroundColor: bg,
@@ -67,7 +69,9 @@ class HomeScreen extends ConsumerWidget {
             return SliverPadding(
               padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
               sliver: SliverMasonryGrid.count(
-                crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10,
+                crossAxisCount: columns,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
                 childCount: artworks.length,
                 itemBuilder: (_, i) => ArtworkCard(artwork: artworks[i]),
               ),
@@ -158,12 +162,16 @@ class _SkeletonGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final columns =
+        AppConstants.masonryColumnsForWidth(MediaQuery.sizeOf(context).width);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: MasonryGridView.count(
         shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10,
-        itemCount: 8,
+        crossAxisCount: columns,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+        itemCount: columns * 4,
         itemBuilder: (_, i) => Container(
           height: i.isEven ? 200.0 : 155.0,
           decoration: BoxDecoration(

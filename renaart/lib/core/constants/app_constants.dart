@@ -58,6 +58,15 @@ class AppConstants {
   static const int searchMaxCount = 300;
   static const int searchAvailableArtistsLimit = 8;
   static const int maxDescriptionLength = 2000;
+
+  // ─── Responsive Grid Breakpoints ───────────────────────────────────────────
+  static int masonryColumnsForWidth(double width) {
+    if (width >= 1700) return 6;
+    if (width >= 1450) return 5;
+    if (width >= 1180) return 4;
+    if (width >= 860) return 3;
+    return 2;
+  }
 }
 
 class AppStrings {

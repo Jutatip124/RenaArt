@@ -46,6 +46,8 @@ class _SearchState extends ConsumerState<SearchScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? AppColors.darkCanvas : AppColors.canvas;
     final faint = isDark ? AppColors.darkFaint : AppColors.inkLight;
+    final columns =
+        AppConstants.masonryColumnsForWidth(MediaQuery.sizeOf(context).width);
 
     final hasFilters = ref.watch(searchArtistFilterProvider) != null ||
         ref.watch(searchPeriodFilterProvider) != null ||
@@ -232,7 +234,7 @@ class _SearchState extends ConsumerState<SearchScreen> {
             }
             return MasonryGridView.count(
               padding: const EdgeInsets.fromLTRB(14, 6, 14, 24),
-              crossAxisCount: 2,
+              crossAxisCount: columns,
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
               itemCount: list.length,

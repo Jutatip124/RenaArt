@@ -1,5 +1,10 @@
 {
   "hosting": {
+    "predeploy": [
+      "cd renaart && flutter pub get && flutter build web --release",
+      "cp renaart/web/privacy-policy.html renaart/build/web/privacy-policy.html",
+      "cp renaart/web/delete-account.html renaart/build/web/delete-account.html"
+    ],
     "public": "renaart/build/web",
     "ignore": [
       "firebase.json",

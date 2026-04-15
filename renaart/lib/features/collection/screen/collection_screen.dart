@@ -35,6 +35,8 @@ class _CollState extends ConsumerState<CollectionScreen>
     final bg      = isDark ? AppColors.darkCanvas : AppColors.canvas;
     final text    = isDark ? AppColors.darkText   : AppColors.ink;
     final faint   = isDark ? AppColors.darkFaint  : AppColors.inkLight;
+    final columns =
+        AppConstants.masonryColumnsForWidth(MediaQuery.sizeOf(context).width);
 
     return Scaffold(
       backgroundColor: bg,
@@ -84,7 +86,9 @@ class _CollState extends ConsumerState<CollectionScreen>
                   body: 'Tap the heart on any artwork.', isDark: isDark)
               : MasonryGridView.count(
                   padding: const EdgeInsets.fromLTRB(14, 0, 14, 24),
-                  crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10,
+                  crossAxisCount: columns,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
                   itemCount: favs.length,
                   itemBuilder: (_, i) => ArtworkCard(artwork: favs[i])),
           // Offline
@@ -95,7 +99,9 @@ class _CollState extends ConsumerState<CollectionScreen>
               : Column(children: [
                   Expanded(child: MasonryGridView.count(
                     padding: const EdgeInsets.fromLTRB(14, 0, 14, 8),
-                    crossAxisCount: 2, mainAxisSpacing: 10, crossAxisSpacing: 10,
+                    crossAxisCount: columns,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
                     itemCount: offline.length,
                     itemBuilder: (_, i) => GestureDetector(
                       onLongPress: () => _removeDialog(context, ref,
