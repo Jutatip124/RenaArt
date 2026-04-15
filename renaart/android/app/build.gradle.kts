@@ -7,6 +7,7 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// ── Keystore: local file หรือ CI env vars ────────────────────────────────────
 val keyProperties = Properties()
 val keyPropertiesFile = rootProject.file("key.properties")
 if (keyPropertiesFile.exists()) {
@@ -37,15 +38,29 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true
     }
 
     signingConfigs {
         create("release") {
-            if (keyPropertiesFile.exists()) {
-                keyAlias = keyProperties.getProperty("keyAlias") ?: "upload"
-                keyPassword = keyProperties.required("keyPassword")
-                storeFile = file(keyProperties.required("storeFile"))
-                storePassword = keyProperties.required("storePassword")
+            when {
+                // Local build — ใช้ key.properties
+                keyPropertiesFile.exists() -> {
+                    keyAlias = keyProperties.getProperty("keyAlias") ?: "upload"
+                    keyPassword = keyProperties.required("keyPassword")
+                    storeFile = file(keyProperties.required("storeFile"))
+                    storePassword = keyProperties.required("storePassword")
+                }
+                // CI/CD — ใช้ environment variables
+                System.getenv("KEYSTORE_PATH") != null -> {
+                    keyAlias = System.getenv("KEY_ALIAS") ?: error("KEY_ALIAS not set")
+                    keyPassword = System.getenv("KEY_PASSWORD") ?: error("KEY_PASSWORD not set")
+                    storeFile = file(System.getenv("KEYSTORE_PATH")!!)
+                    storePassword = System.getenv("STORE_PASSWORD") ?: error("STORE_PASSWORD not set")
+                }
+                else -> {
+                    // Debug fallback — ป้องกัน build crash
+                }
             }
         }
     }
@@ -59,6 +74,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }

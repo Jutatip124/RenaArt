@@ -1,0 +1,70 @@
+name: Deploy to Play Store
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: 'stable'
+
+      # สร้าง firebase_options.dart จาก Secret
+      - name: Create firebase_options.dart
+        run: |
+          mkdir -p renaart/lib
+          echo '${{ secrets.FIREBASE_OPTIONS }}' > renaart/lib/firebase_options.dart
+
+      # decode keystore จาก base64
+      - name: Decode Keystore
+        run: |
+          echo '${{ secrets.KEYSTORE_BASE64 }}' | base64 --decode \
+            > renaart/android/app/renaart-release.keystore
+
+      # สร้าง key.properties
+      - name: Create key.properties
+        run: |
+          cat > renaart/android/key.properties << EOF
+          storePassword=${{ secrets.STORE_PASSWORD }}
+          keyPassword=${{ secrets.KEY_PASSWORD }}
+          keyAlias=${{ secrets.KEY_ALIAS }}
+          storeFile=renaart-release.keystore
+          EOF
+
+      - name: Get dependencies
+        working-directory: renaart
+        run: flutter pub get
+
+      # Build AAB (ต้องใช้ AAB สำหรับ Play Store)
+      - name: Build App Bundle
+        working-directory: renaart
+        run: |
+          flutter build appbundle --release \
+            --obfuscate \
+            --split-debug-info=build/debug-info
+
+      # Upload ขึ้น Play Store
+      - name: Upload to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON_KEY }}
+          packageName: com.yourname.renaart
+          releaseFiles: renaart/build/app/outputs/bundle/release/*.aab
+          track: internal  # เริ่มที่ internal testing ก่อน
+          status: completed
