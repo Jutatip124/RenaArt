@@ -5,9 +5,6 @@ on:
     branches: [main]
   workflow_dispatch:
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -170,10 +167,44 @@ jobs:
             --split-debug-info=build/debug-info
 
       # Upload ขึ้น Play Store
+      - name: Validate Play upload inputs
+        env:
+          PLAY_STORE_JSON_KEY: ${{ secrets.PLAY_STORE_JSON_KEY }}
+        run: |
+          if [ -z "$PLAY_STORE_JSON_KEY" ]; then
+            echo "::error::Missing PLAY_STORE_JSON_KEY secret."
+            exit 1
+          fi
+          python - <<'PY'
+          import json
+          import os
+          import pathlib
+          import sys
+
+          raw = os.getenv("PLAY_STORE_JSON_KEY", "").strip()
+          try:
+            data = json.loads(raw)
+          except Exception as e:
+            print(f"::error::PLAY_STORE_JSON_KEY is not valid JSON: {e}")
+            sys.exit(1)
+
+          required = ("type", "project_id", "private_key", "client_email")
+          missing = [k for k in required if k not in data or not data[k]]
+          if missing:
+            print(f"::error::PLAY_STORE_JSON_KEY missing required fields: {', '.join(missing)}")
+            sys.exit(1)
+
+          out = pathlib.Path("/tmp/play-store-service-account.json")
+          out.write_text(json.dumps(data), encoding="utf-8")
+          print(f"Play service account prepared: {out}")
+          PY
+
+          ls -lh renaart/build/app/outputs/bundle/release/*.aab
+
       - name: Upload to Play Store
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_JSON_KEY }}
+          serviceAccountJson: /tmp/play-store-service-account.json
           packageName: com.renaart.app
           releaseFiles: renaart/build/app/outputs/bundle/release/*.aab
           track: internal  # เริ่มที่ internal testing ก่อน
