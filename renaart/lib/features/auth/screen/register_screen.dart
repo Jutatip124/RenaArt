@@ -56,7 +56,7 @@ class _RegState extends ConsumerState<RegisterScreen> {
     await showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => PrivacyConsentDialog(onAccept: _noop),
+      builder: (_) => const PrivacyConsentDialog(onAccept: _noop),
     );
     if (!mounted) return false;
     return PrivacyConsentDialog.hasAccepted();

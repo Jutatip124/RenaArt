@@ -37,7 +37,7 @@ class _LoginState extends ConsumerState<LoginScreen> {
     await showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => PrivacyConsentDialog(onAccept: _noop),
+      builder: (_) => const PrivacyConsentDialog(onAccept: _noop),
     );
     if (!mounted) return false;
     return PrivacyConsentDialog.hasAccepted();

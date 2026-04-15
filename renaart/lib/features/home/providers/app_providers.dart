@@ -556,6 +556,11 @@ class AuthNotifier extends StateNotifier<UserModel?> {
           }
         }
         try {
+          await _db.deleteAllFavorites(fbUser.uid);
+        } catch (e) {
+          debugPrint('deleteAccount deleteAllFavorites failed: $e');
+        }
+        try {
           await _db.deleteProfile(fbUser.uid);
         } catch (e) {
           debugPrint('deleteAccount deleteProfile failed: $e');
