@@ -46,6 +46,9 @@ jobs:
           }
           EOF
 
+      - name: Create .env file
+        run: touch renaart/.env
+
       - name: Build App Bundle
         run: |
           cd renaart
