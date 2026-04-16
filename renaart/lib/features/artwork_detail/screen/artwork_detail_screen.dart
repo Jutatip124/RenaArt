@@ -326,7 +326,7 @@ class _Body extends ConsumerWidget {
               _SectionTitle('More to Explore', isDark),
               const SizedBox(height: 14),
               SizedBox(
-                height: 190,
+                height: 210,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: related.length,

@@ -254,99 +254,182 @@ class _FilterPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final media = MediaQuery.of(context);
     final artistF = ref.watch(searchArtistFilterProvider);
     final periodF = ref.watch(searchPeriodFilterProvider);
     final mediumF = ref.watch(searchMediumFilterProvider);
     final subjectF = ref.watch(searchSubjectFilterProvider);
     final regionF = ref.watch(searchRegionFilterProvider);
     final faint = isDark ? AppColors.darkFaint : AppColors.inkLight;
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.45,
-      ),
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkCard : AppColors.canvasCard,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-              color: isDark ? AppColors.darkBorder : AppColors.inkHair,
-              width: isDark ? 0.5 : 0.8),
-        ),
-        child: SingleChildScrollView(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _FilterGroup(
-              'ARTIST',
-              faint,
-              AppStrings.popularArtists
-                  .map((a) => _Chip(
-                      a,
-                      artistF == a,
-                      isDark,
-                      () => ref
-                          .read(searchArtistFilterProvider.notifier)
-                          .state = artistF == a ? null : a))
-                  .toList()),
-          const SizedBox(height: 12),
-          _FilterGroup(
-              'PERIOD',
-              faint,
-              AppStrings.periods
-                  .skip(1)
-                  .map((p) => _Chip(
-                      p,
-                      periodF == p,
-                      isDark,
-                      () => ref
-                          .read(searchPeriodFilterProvider.notifier)
-                          .state = periodF == p ? null : p))
-                  .toList()),
-          const SizedBox(height: 12),
-          _FilterGroup(
-              'ART FORM',
-              faint,
-              AppStrings.artForms
-                  .map((m) => _Chip(
-                      m,
-                      mediumF == m,
-                      isDark,
-                      () => ref
-                          .read(searchMediumFilterProvider.notifier)
-                          .state = mediumF == m ? null : m))
-                  .toList()),
-          const SizedBox(height: 12),
-          _FilterGroup(
-              'SUBJECT',
-              faint,
-              AppStrings.subjects
-                  .map((s) => _Chip(
-                      s,
-                      subjectF == s,
-                      isDark,
-                      () => ref
-                          .read(searchSubjectFilterProvider.notifier)
-                          .state = subjectF == s ? null : s))
-                  .toList()),
-          const SizedBox(height: 12),
-          _FilterGroup(
-              'REGION',
-              faint,
-              AppStrings.regions
-                  .map((r) => _Chip(
-                      r,
-                      regionF == r,
-                      isDark,
-                      () => ref
-                          .read(searchRegionFilterProvider.notifier)
-                          .state = regionF == r ? null : r))
-                  .toList()),
-        ])),
-      ),
+    final availableHeight = media.size.height - media.viewInsets.bottom;
+    const chipPadding = EdgeInsets.symmetric(horizontal: 12, vertical: 5);
+    const chipSpacing = 6.0;
+    const chipRunSpacing = 6.0;
+    const labelSpacing = 8.0;
+    const panelPadding = 16.0;
+    const panelMargin = 16.0;
+    const labelMeasureStyle = TextStyle(
+      fontFamily: 'Jost',
+      fontSize: 9,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 1.4,
     );
+    const chipMeasureStyle = TextStyle(
+      fontFamily: 'Jost',
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+    );
+
+    return LayoutBuilder(builder: (context, constraints) {
+      final innerWidth =
+          (constraints.maxWidth - (panelMargin * 2) - (panelPadding * 2))
+              .clamp(0.0, constraints.maxWidth)
+              .toDouble();
+      final artistGroupHeight = _estimateFilterGroupHeight(
+        label: 'ARTIST',
+        labels: AppStrings.popularArtists,
+        maxWidth: innerWidth,
+        labelStyle: labelMeasureStyle,
+        chipStyle: chipMeasureStyle,
+        chipPadding: chipPadding,
+        spacing: chipSpacing,
+        runSpacing: chipRunSpacing,
+        labelSpacing: labelSpacing,
+      );
+      final targetHeight = (artistGroupHeight + (panelPadding * 2))
+          .clamp(0.0, availableHeight * 0.45)
+          .toDouble();
+
+      return SizedBox(
+        height: targetHeight,
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(panelMargin, 10, panelMargin, 0),
+          padding: const EdgeInsets.all(panelPadding),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkCard : AppColors.canvasCard,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+                color: isDark ? AppColors.darkBorder : AppColors.inkHair,
+                width: isDark ? 0.5 : 0.8),
+          ),
+          child: SingleChildScrollView(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                _FilterGroup(
+                    'ARTIST',
+                    faint,
+                    AppStrings.popularArtists
+                        .map((a) => _Chip(
+                            a,
+                            artistF == a,
+                            isDark,
+                            () => ref
+                                .read(searchArtistFilterProvider.notifier)
+                                .state = artistF == a ? null : a))
+                        .toList()),
+                const SizedBox(height: 12),
+                _FilterGroup(
+                    'PERIOD',
+                    faint,
+                    AppStrings.periods
+                        .skip(1)
+                        .map((p) => _Chip(
+                            p,
+                            periodF == p,
+                            isDark,
+                            () => ref
+                                .read(searchPeriodFilterProvider.notifier)
+                                .state = periodF == p ? null : p))
+                        .toList()),
+                const SizedBox(height: 12),
+                _FilterGroup(
+                    'ART FORM',
+                    faint,
+                    AppStrings.artForms
+                        .map((m) => _Chip(
+                            m,
+                            mediumF == m,
+                            isDark,
+                            () => ref
+                                .read(searchMediumFilterProvider.notifier)
+                                .state = mediumF == m ? null : m))
+                        .toList()),
+                const SizedBox(height: 12),
+                _FilterGroup(
+                    'SUBJECT',
+                    faint,
+                    AppStrings.subjects
+                        .map((s) => _Chip(
+                            s,
+                            subjectF == s,
+                            isDark,
+                            () => ref
+                                .read(searchSubjectFilterProvider.notifier)
+                                .state = subjectF == s ? null : s))
+                        .toList()),
+                const SizedBox(height: 12),
+                _FilterGroup(
+                    'REGION',
+                    faint,
+                    AppStrings.regions
+                        .map((r) => _Chip(
+                            r,
+                            regionF == r,
+                            isDark,
+                            () => ref
+                                .read(searchRegionFilterProvider.notifier)
+                                .state = regionF == r ? null : r))
+                        .toList()),
+              ])),
+        ),
+      );
+    });
   }
+}
+
+double _estimateFilterGroupHeight({
+  required String label,
+  required List<String> labels,
+  required double maxWidth,
+  required TextStyle labelStyle,
+  required TextStyle chipStyle,
+  required EdgeInsets chipPadding,
+  required double spacing,
+  required double runSpacing,
+  required double labelSpacing,
+}) {
+  if (labels.isEmpty || maxWidth <= 0) return 0;
+  final labelPainter = TextPainter(
+    text: TextSpan(text: label, style: labelStyle),
+    textDirection: TextDirection.ltr,
+  )..layout();
+
+  final chipPainter = TextPainter(textDirection: TextDirection.ltr);
+  chipPainter.text = TextSpan(text: 'Ay', style: chipStyle);
+  chipPainter.layout();
+  final chipHeight = chipPainter.height + chipPadding.vertical;
+
+  var rowWidth = 0.0;
+  var rows = 1;
+  for (final item in labels) {
+    chipPainter.text = TextSpan(text: item, style: chipStyle);
+    chipPainter.layout();
+    final chipWidth = chipPainter.width + chipPadding.horizontal;
+    if (rowWidth == 0) {
+      rowWidth = chipWidth;
+      continue;
+    }
+    if (rowWidth + spacing + chipWidth <= maxWidth) {
+      rowWidth += spacing + chipWidth;
+    } else {
+      rows += 1;
+      rowWidth = chipWidth;
+    }
+  }
+
+  final wrapHeight = (rows * chipHeight) + ((rows - 1) * runSpacing);
+  return labelPainter.height + labelSpacing + wrapHeight;
 }
 
 class _FilterGroup extends StatelessWidget {
