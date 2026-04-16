@@ -759,70 +759,78 @@ class _JourneySection extends StatelessWidget {
       ],
     );
 
-    final right = Stack(
-      clipBehavior: Clip.none,
+    final right = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
+          padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            color: const Color(0xFF1B1B1B),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(color: outline.withValues(alpha: 0.4)),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: _HoverTapScale(
-              onTap: () => _showImagePreviewDialog(
-                context,
-                _journeyImage,
-                title: 'A Curated Journey Through Time',
-              ),
-              borderRadius: BorderRadius.circular(16),
-              child: _buildAdaptiveImage(
-                _journeyImage,
-                height: 420,
-                width: double.infinity,
-                fit: BoxFit.cover,
-                fallbackColor: const Color(0xFF242424),
-              ),
-            ),
-          ),
+          child: isDesktop
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    _PhoneMockup(
+                      imageUrl: _featureMockupSearch,
+                      width: 230,
+                    ),
+                    SizedBox(width: 20),
+                    _PhoneMockup(
+                      imageUrl: _featureMockupDetail,
+                      width: 230,
+                    ),
+                  ],
+                )
+              : Column(
+                  children: const [
+                    _PhoneMockup(
+                      imageUrl: _featureMockupSearch,
+                      width: 220,
+                    ),
+                    SizedBox(height: 18),
+                    _PhoneMockup(
+                      imageUrl: _featureMockupDetail,
+                      width: 220,
+                    ),
+                  ],
+                ),
         ),
-        Positioned(
-          left: isDesktop ? -24 : 14,
-          right: 14,
-          bottom: -40,
-          child: Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1B1B1B),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: outline.withValues(alpha: 0.4)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '"Art is the queen of all sciences communicating knowledge to all generations."',
-                  style: TextStyle(
-                    color: onSurface,
-                    fontFamily: 'Cormorant',
-                    fontSize: 28,
-                    fontStyle: FontStyle.italic,
-                    height: 1.2,
-                  ),
+        const SizedBox(height: 18),
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1B1B1B),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: outline.withValues(alpha: 0.4)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '"Art is the queen of all sciences communicating knowledge to all generations."',
+                style: TextStyle(
+                  color: onSurface,
+                  fontFamily: 'Cormorant',
+                  fontSize: 28,
+                  fontStyle: FontStyle.italic,
+                  height: 1.2,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  '— LEONARDO DA VINCI',
-                  style: TextStyle(
-                    color: gold,
-                    fontFamily: 'Jost',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1.4,
-                  ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '— LEONARDO DA VINCI',
+                style: TextStyle(
+                  color: gold,
+                  fontFamily: 'Jost',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.4,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
@@ -874,6 +882,17 @@ class _MobileSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mockupWidth = isDesktop ? 230.0 : 220.0;
+    final mockups = Wrap(
+      alignment: WrapAlignment.center,
+      spacing: 18,
+      runSpacing: 18,
+      children: [
+        _PhoneMockup(imageUrl: _mobileUiImage, width: mockupWidth),
+        _PhoneMockup(imageUrl: _featureMockupCollection, width: mockupWidth),
+      ],
+    );
+
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(side, 72, side, 72),
@@ -898,7 +917,10 @@ class _MobileSection extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 34),
-                      const _PhoneMockup(),
+                      SizedBox(
+                        width: 520,
+                        child: Center(child: mockups),
+                      ),
                     ],
                   )
                 : Column(
@@ -911,9 +933,7 @@ class _MobileSection extends StatelessWidget {
                         onEnter: onEnter,
                       ),
                       const SizedBox(height: 20),
-                      const Center(
-                        child: _PhoneMockup(),
-                      ),
+                      Center(child: mockups),
                     ],
                   ),
           ],
@@ -1070,12 +1090,18 @@ class _StoreButton extends StatelessWidget {
 }
 
 class _PhoneMockup extends StatelessWidget {
-  const _PhoneMockup();
+  final String imageUrl;
+  final double width;
+
+  const _PhoneMockup({
+    required this.imageUrl,
+    this.width = 320,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 320,
+      width: width,
       child: AspectRatio(
         aspectRatio: 9 / 19,
         child: Container(
@@ -1088,7 +1114,7 @@ class _PhoneMockup extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(36),
             child: _buildAdaptiveImage(
-              _mobileUiImage,
+              imageUrl,
               fit: BoxFit.cover,
               fallbackColor: const Color(0xFF242424),
             ),
@@ -1353,8 +1379,12 @@ const String _artSideTwo =
 const String _artMainTwo =
     'assets/images/the_school_of_athens.png';
 
-const String _journeyImage =
-    'assets/images/curated_journey_through_time.png';
-
 const String _mobileUiImage =
     'assets/images/landing_mobile_ui.png';
+
+const String _featureMockupSearch =
+    'assets/images/landing_feature_search.png';
+const String _featureMockupDetail =
+    'assets/images/landing_feature_detail.png';
+const String _featureMockupCollection =
+    'assets/images/landing_feature_collection.png';
