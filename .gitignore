@@ -75,3 +75,5 @@ node_modules/
 *.keystore
 *.jks
 renaart/android/key.properties
+
+serviceAccountKey.json
