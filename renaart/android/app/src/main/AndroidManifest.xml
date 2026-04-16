@@ -9,7 +9,6 @@
         android:label="RenaArt"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
-        android:roundIcon="@mipmap/launcher_icon_round"
         android:usesCleartextTraffic="false">
         
         <activity
