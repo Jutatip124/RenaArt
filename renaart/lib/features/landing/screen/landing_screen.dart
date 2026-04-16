@@ -458,143 +458,161 @@ class _MasterpieceSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final mockupWidth =
+        (screenWidth * 0.28).clamp(260.0, 420.0).toDouble();
+    final mockup = _PhoneMockup(
+      imageUrl: _featureMockupMasterpieces,
+      width: mockupWidth,
+    );
+
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(side, 72, side, 72),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: EdgeInsets.fromLTRB(side, 72, side, isDesktop ? 240 : 72),
+      child: Stack(
         children: [
-          Text(
-            'HIGHLIGHTS',
-            style: TextStyle(
-              color: gold,
-              fontFamily: 'Jost',
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.3,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  '300 Curated Masterpieces',
-                  style: TextStyle(
-                    color: onSurface,
-                    fontFamily: 'Cormorant',
-                    fontSize: isDesktop ? 64 : 42,
-                    fontWeight: FontWeight.w700,
-                    height: 1.05,
-                  ),
+              Text(
+                'HIGHLIGHTS',
+                style: TextStyle(
+                  color: gold,
+                  fontFamily: 'Jost',
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.3,
                 ),
               ),
-              if (isDesktop)
-                SizedBox(
-                  width: 360,
-                  child: Text(
-                    'Explore paintings, sculptures, and frescoes with rich context, symbolism, and provenance.',
-                    style: TextStyle(
-                      color: onSurfaceVariant,
-                      fontFamily: 'Jost',
-                      fontSize: 14,
-                      height: 1.5,
+              const SizedBox(height: 8),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Text(
+                      '300 Curated Masterpieces',
+                      style: TextStyle(
+                        color: onSurface,
+                        fontFamily: 'Cormorant',
+                        fontSize: isDesktop ? 64 : 42,
+                        fontWeight: FontWeight.w700,
+                        height: 1.05,
+                      ),
                     ),
                   ),
+                  if (isDesktop)
+                    SizedBox(
+                      width: 360,
+                      child: Text(
+                        'Explore paintings, sculptures, and frescoes with rich context, symbolism, and provenance.',
+                        style: TextStyle(
+                          color: onSurfaceVariant,
+                          fontFamily: 'Jost',
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              if (!isDesktop) ...[
+                const SizedBox(height: 10),
+                Text(
+                  'Explore paintings, sculptures, and frescoes with rich context, symbolism, and provenance.',
+                  style: TextStyle(
+                    color: onSurfaceVariant,
+                    fontFamily: 'Jost',
+                    fontSize: 14,
+                    height: 1.5,
+                  ),
                 ),
+              ],
+              const SizedBox(height: 24),
+              if (isDesktop) ...[
+                const Row(
+                  children: [
+                    Expanded(
+                      flex: 8,
+                      child: _ArtCard(
+                        title: 'Madonna of the Goldfinch',
+                        subtitle: 'Raphael, 1506',
+                        imageUrl: _artMainOne,
+                        aspectRatio: 16 / 9,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      flex: 4,
+                      child: _ArtCard(
+                        title: 'The Creation of Adam',
+                        subtitle: 'Michelangelo, 1512',
+                        imageUrl: _artSideOne,
+                        aspectRatio: 4 / 5,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: _ArtCard(
+                        title: 'Lady with an Ermine',
+                        subtitle: 'Da Vinci, 1489',
+                        imageUrl: _artSideTwo,
+                        aspectRatio: 4 / 5,
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      flex: 8,
+                      child: _ArtCard(
+                        title: 'The School of Athens',
+                        subtitle: 'Raphael, 1511',
+                        imageUrl: _artMainTwo,
+                        aspectRatio: 16 / 9,
+                      ),
+                    ),
+                  ],
+                ),
+              ] else ...[
+                const _ArtCard(
+                  title: 'Madonna of the Goldfinch',
+                  subtitle: 'Raphael, 1506',
+                  imageUrl: _artMainOne,
+                  aspectRatio: 16 / 9,
+                ),
+                const SizedBox(height: 12),
+                const _ArtCard(
+                  title: 'The Creation of Adam',
+                  subtitle: 'Michelangelo, 1512',
+                  imageUrl: _artSideOne,
+                  aspectRatio: 4 / 5,
+                ),
+                const SizedBox(height: 12),
+                const _ArtCard(
+                  title: 'Lady with an Ermine',
+                  subtitle: 'Da Vinci, 1489',
+                  imageUrl: _artSideTwo,
+                  aspectRatio: 4 / 5,
+                ),
+                const SizedBox(height: 12),
+                const _ArtCard(
+                  title: 'The School of Athens',
+                  subtitle: 'Raphael, 1511',
+                  imageUrl: _artMainTwo,
+                  aspectRatio: 16 / 9,
+                ),
+              ],
             ],
           ),
-          if (!isDesktop) ...[
-            const SizedBox(height: 10),
-            Text(
-              'Explore paintings, sculptures, and frescoes with rich context, symbolism, and provenance.',
-              style: TextStyle(
-                color: onSurfaceVariant,
-                fontFamily: 'Jost',
-                fontSize: 14,
-                height: 1.5,
-              ),
+          if (isDesktop)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: mockup,
             ),
-          ],
-          const SizedBox(height: 24),
-          if (isDesktop) ...[
-            const Row(
-              children: [
-                Expanded(
-                  flex: 8,
-                  child: _ArtCard(
-                    title: 'Madonna of the Goldfinch',
-                    subtitle: 'Raphael, 1506',
-                    imageUrl: _artMainOne,
-                    aspectRatio: 16 / 9,
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  flex: 4,
-                  child: _ArtCard(
-                    title: 'The Creation of Adam',
-                    subtitle: 'Michelangelo, 1512',
-                    imageUrl: _artSideOne,
-                    aspectRatio: 4 / 5,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            const Row(
-              children: [
-                Expanded(
-                  flex: 4,
-                  child: _ArtCard(
-                    title: 'Lady with an Ermine',
-                    subtitle: 'Da Vinci, 1489',
-                    imageUrl: _artSideTwo,
-                    aspectRatio: 4 / 5,
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  flex: 8,
-                  child: _ArtCard(
-                    title: 'The School of Athens',
-                    subtitle: 'Raphael, 1511',
-                    imageUrl: _artMainTwo,
-                    aspectRatio: 16 / 9,
-                  ),
-                ),
-              ],
-            ),
-          ] else ...[
-            const _ArtCard(
-              title: 'Madonna of the Goldfinch',
-              subtitle: 'Raphael, 1506',
-              imageUrl: _artMainOne,
-              aspectRatio: 16 / 9,
-            ),
-            const SizedBox(height: 12),
-            const _ArtCard(
-              title: 'The Creation of Adam',
-              subtitle: 'Michelangelo, 1512',
-              imageUrl: _artSideOne,
-              aspectRatio: 4 / 5,
-            ),
-            const SizedBox(height: 12),
-            const _ArtCard(
-              title: 'Lady with an Ermine',
-              subtitle: 'Da Vinci, 1489',
-              imageUrl: _artSideTwo,
-              aspectRatio: 4 / 5,
-            ),
-            const SizedBox(height: 12),
-            const _ArtCard(
-              title: 'The School of Athens',
-              subtitle: 'Raphael, 1511',
-              imageUrl: _artMainTwo,
-              aspectRatio: 16 / 9,
-            ),
-          ],
         ],
       ),
     );
@@ -1388,3 +1406,5 @@ const String _featureMockupDetail =
     'assets/images/landing_feature_detail.png';
 const String _featureMockupCollection =
     'assets/images/landing_feature_collection.png';
+const String _featureMockupMasterpieces =
+    'assets/images/landing_feature_masterpieces.png';
