@@ -2,8 +2,6 @@
 // actions, and dark-mode gradient scrim.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/router/app_router.dart';
@@ -46,20 +44,22 @@ class ArtworkCard extends ConsumerWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
           // ── Image ──────────────────────────────────────────────────
           Stack(children: [
-            CachedNetworkImage(
-              imageUrl:    artwork.thumbnailUrl,
-              fit:         BoxFit.cover,
-              width:       double.infinity,
-              fadeInDuration: const Duration(milliseconds: 200),
-              memCacheWidth: 400,
-              httpHeaders: const {'User-Agent': 'RenaArtApp/1.0 (Flutter; educational)'},
-              placeholder: (_, __) => Shimmer.fromColors(
-                baseColor:      isDark ? AppColors.darkRaised : AppColors.canvasTone,
-                highlightColor: isDark ? AppColors.darkCard   : AppColors.canvasCard,
-                child: Container(height: 150, color: AppColors.canvasTone),
-              ),
-              errorWidget: (_, url, ___) => _RetryImage(
-                url: url, isDark: isDark, height: 150,
+            Image.asset(
+              artwork.thumbnailUrl.isNotEmpty
+                  ? artwork.thumbnailUrl
+                  : artwork.imageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              errorBuilder: (_, __, ___) => Container(
+                height: 150,
+                color: isDark ? AppColors.darkRaised : AppColors.canvasTone,
+                child: Center(
+                  child: Icon(
+                    Icons.image_outlined,
+                    color: isDark ? AppColors.darkFaint : AppColors.inkLight,
+                    size: 26,
+                  ),
+                ),
               ),
             ),
             // Dark mode: bottom gradient scrim
@@ -178,73 +178,4 @@ class _SaveBtn extends StatelessWidget {
       ),
     ),
   );
-}
-
-/// Auto-retry image widget — retries loading after a delay when the initial
-/// CachedNetworkImage fails (typically due to Wikimedia 429 rate limiting).
-class _RetryImage extends StatefulWidget {
-  final String url;
-  final bool isDark;
-  final double height;
-  const _RetryImage({required this.url, required this.isDark, required this.height});
-
-  @override
-  State<_RetryImage> createState() => _RetryImageState();
-}
-
-class _RetryImageState extends State<_RetryImage> {
-  int _attempt = 0;
-  static const _maxRetries = 2;
-
-  @override
-  void initState() {
-    super.initState();
-    _scheduleRetry();
-  }
-
-  void _scheduleRetry() {
-    if (_attempt >= _maxRetries) return;
-    Future.delayed(Duration(seconds: 2 + _attempt * 2), () {
-      if (mounted) setState(() => _attempt++);
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_attempt == 0) {
-      return Container(
-        height: widget.height,
-        color: widget.isDark ? AppColors.darkRaised : AppColors.canvasTone,
-        child: Center(child: SizedBox(width: 18, height: 18,
-          child: CircularProgressIndicator(strokeWidth: 1.5,
-            color: widget.isDark ? AppColors.darkFaint : AppColors.inkLight))),
-      );
-    }
-    return CachedNetworkImage(
-      imageUrl: widget.url,
-      fit: BoxFit.cover,
-      width: double.infinity,
-      memCacheWidth: 400,
-      fadeInDuration: const Duration(milliseconds: 200),
-      httpHeaders: const {'User-Agent': 'RenaArtApp/1.0 (Flutter; educational)'},
-      // Use unique cache key per attempt to bypass cached error
-      cacheKey: '${widget.url}#retry$_attempt',
-      placeholder: (_, __) => Container(
-        height: widget.height,
-        color: widget.isDark ? AppColors.darkRaised : AppColors.canvasTone,
-        child: Center(child: SizedBox(width: 18, height: 18,
-          child: CircularProgressIndicator(strokeWidth: 1.5,
-            color: widget.isDark ? AppColors.darkFaint : AppColors.inkLight))),
-      ),
-      errorWidget: (_, __, ___) {
-        if (_attempt < _maxRetries) _scheduleRetry();
-        return Container(
-          height: widget.height,
-          color: widget.isDark ? AppColors.darkRaised : AppColors.canvasTone,
-          child: Center(child: Icon(Icons.image_outlined,
-              color: widget.isDark ? AppColors.darkFaint : AppColors.inkLight, size: 26)),
-        );
-      },
-    );
-  }
 }

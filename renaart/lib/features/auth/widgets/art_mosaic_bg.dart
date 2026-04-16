@@ -1,6 +1,5 @@
 // Animated artwork mosaic background used on login and register screens.
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../home/providers/app_providers.dart';
 import '../../../core/theme/app_theme.dart';
@@ -54,12 +53,11 @@ class ArtMosaicBackground extends ConsumerWidget {
             itemCount: urls.length,
             itemBuilder: (_, i) => ClipRRect(
               borderRadius: BorderRadius.circular(6),
-              child: CachedNetworkImage(
-                imageUrl: urls[i],
+              child: Image.asset(
+                urls[i],
                 fit: BoxFit.cover,
-                httpHeaders: const {'User-Agent': 'RenaArtApp/1.0 (Flutter; educational)'},
-                placeholder: (_, __) => Container(color: bg.withValues(alpha: 0.3)),
-                errorWidget: (_, __, ___) => Container(color: bg.withValues(alpha: 0.3)),
+                errorBuilder: (_, __, ___) =>
+                    Container(color: bg.withValues(alpha: 0.3)),
               ),
             ),
           ),

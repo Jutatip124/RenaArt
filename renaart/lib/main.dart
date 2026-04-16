@@ -9,8 +9,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'firebase_options.dart';
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
+import 'core/constants/app_constants.dart';
 import 'features/home/providers/app_providers.dart';
 import 'services/local_storage_service.dart';
+import 'services/local_artwork_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +44,21 @@ Future<void> main() async {
     await LocalStorageService.instance.init();
   } catch (e) {
     debugPrint('Hive init failed: $e');
+  }
+
+  // Keep artwork cache in sync with bundled JSON to avoid stale mapping.
+  if (AppConstants.activeSource == ApiSource.localAsset) {
+    final storage = LocalStorageService.instance;
+    try {
+      await storage.clearArtworksCache();
+      final artworks =
+          await LocalArtworkService.instance.searchArtworks('', maxCount: 400);
+      if (artworks.isNotEmpty) {
+        await storage.cacheArtworks(artworks);
+      }
+    } catch (e) {
+      debugPrint('Local cache seed failed: $e');
+    }
   }
 
   // Configure image cache limits to prevent excessive memory usage

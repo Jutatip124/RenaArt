@@ -73,6 +73,11 @@ class LocalStorageService {
 
   List<Artwork> getAllCachedArtworks() => _artworksCache?.values.toList() ?? [];
 
+  Future<void> clearArtworksCache() async {
+    if (_artworksCache == null) return;
+    await _artworksCache!.clear();
+  }
+
   // ─── Favorites (Week 3: Room.insert(UserArtworkState)) ───────────────────
 
   /// Toggle favorite — uses composite key `userId_artworkId` for per-user scoping

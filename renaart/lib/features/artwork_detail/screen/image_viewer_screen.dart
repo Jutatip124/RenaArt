@@ -1,5 +1,4 @@
 // Full-screen image viewer with zoom and pan via InteractiveViewer.
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -79,21 +78,10 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
               clipBehavior: Clip.none,
               child: Center(
                 child: widget.imageUrl.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: widget.imageUrl,
+                    ? Image.asset(
+                        widget.imageUrl,
                         fit: BoxFit.contain,
-                        httpHeaders: const {'User-Agent': 'RenaArtApp/1.0 (Flutter; educational)'},
-                        placeholder: (_, __) => const Center(
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.5,
-                              color: Colors.white38,
-                            ),
-                          ),
-                        ),
-                        errorWidget: (_, __, ___) => const Icon(
+                        errorBuilder: (_, __, ___) => const Icon(
                           Icons.broken_image_outlined,
                           color: Colors.white24,
                           size: 52,

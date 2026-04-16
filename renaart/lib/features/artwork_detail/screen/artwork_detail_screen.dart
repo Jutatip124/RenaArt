@@ -1,7 +1,6 @@
 // Full artwork detail view — image, metadata, description, favorite/offline actions.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
@@ -124,25 +123,18 @@ class _Body extends ConsumerWidget {
                   'artist': artwork.artist,
                 }),
                 child: artwork.imageUrl.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: artwork.imageUrl,
+                    ? Image.asset(
+                        artwork.imageUrl,
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
-                        httpHeaders: const {
-                          'User-Agent': 'RenaArtApp/1.0 (Flutter; educational)'
-                        },
-                        placeholder: (_, __) => Container(
-                            color: isDark
-                                ? AppColors.darkCard
-                                : AppColors.canvasTone),
-                        errorWidget: (_, __, ___) => Container(
-                            color: isDark
-                                ? AppColors.darkCard
-                                : AppColors.canvasTone,
-                            child: Center(
-                                child: Icon(Icons.image_outlined,
-                                    color: faint, size: 36))))
+                        errorBuilder: (_, __, ___) => Container(
+                          color: isDark ? AppColors.darkCard : AppColors.canvasTone,
+                          child: Center(
+                            child: Icon(Icons.image_outlined, color: faint, size: 36),
+                          ),
+                        ),
+                      )
                     : Container(
                         color:
                             isDark ? AppColors.darkCard : AppColors.canvasTone),
