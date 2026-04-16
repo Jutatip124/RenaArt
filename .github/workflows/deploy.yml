@@ -241,3 +241,4 @@ jobs:
           releaseFiles: renaart/build/app/outputs/bundle/release/*.aab
           track: internal  # เริ่มที่ internal testing ก่อน
           status: completed
+          changesNotSentForReview: true
