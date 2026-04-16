@@ -49,11 +49,13 @@ Future<void> main() async {
   PaintingBinding.instance.imageCache.maximumSizeBytes =
       50 * 1024 * 1024; // 50MB
 
-  // Status bar
+  // Status bar and navigation bar
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 
