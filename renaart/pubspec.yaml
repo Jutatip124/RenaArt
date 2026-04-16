@@ -54,10 +54,10 @@ dev_dependencies:
 # ✅ ตั้งค่าการสร้างไอคอนแอป
 flutter_launcher_icons:
   android: "launcher_icon"
-  ios: true
-  image_path: "assets/images/RenaArtLogo-1.png"
+  ios: false  
+  image_path: "assets/images/launcher_icon.png" 
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/RenaArtLogo-1.png"
+  adaptive_icon_foreground: "assets/images/launcher_icon.png"
 
 flutter:
   uses-material-design: true
