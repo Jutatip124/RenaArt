@@ -2,16 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.renaart.app">
 
-    <!-- Network access for API calls and Firebase -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Connectivity check for offline mode detection -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:label="RenaArt"
         android:name="${applicationName}"
-        android:icon="@android:drawable/sym_def_app_icon"
+        android:icon="@mipmap/launcher_icon"
+        android:roundIcon="@mipmap/launcher_icon_round"
         android:usesCleartextTraffic="false">
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
