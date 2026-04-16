@@ -229,12 +229,12 @@ class _TopNav extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _TopNavLink(label: 'Select Works', onTap: onSelectWorks),
+                      _TopNavLink(label: 'Highlights', onTap: onSelectWorks),
                       const SizedBox(width: 6),
-                      _TopNavLink(label: 'Our Vision', onTap: onOurVision),
+                      _TopNavLink(label: 'Features', onTap: onOurVision),
                       const SizedBox(width: 6),
                       _TopNavLink(
-                        label: 'RenaArt Anywhere',
+                        label: 'Mobile App',
                         onTap: onRenaartAnywhere,
                       ),
                     ],
@@ -370,7 +370,7 @@ class _HeroSection extends StatelessWidget {
                     children: [
                       Text.rich(
                         TextSpan(
-                          text: 'The Soul of the Renaissance,\n',
+                          text: 'Renaissance masterpieces,\n',
                           style: TextStyle(
                             color: onSurface,
                             fontFamily: 'Cormorant',
@@ -380,13 +380,13 @@ class _HeroSection extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                              text: 'Curated',
+                              text: 'explained',
                               style: TextStyle(
                                 color: gold,
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
-                            const TextSpan(text: ' for the Modern Age.'),
+                            const TextSpan(text: ' for modern explorers.'),
                           ],
                         ),
                       ),
@@ -422,7 +422,7 @@ class _HeroSection extends StatelessWidget {
                       ),
                       const SizedBox(height: 14),
                       Text(
-                        'A cinematic digital museum experience with Renaissance masterpieces.',
+                        'Browse 300 curated artworks, learn the stories behind each piece, and save your favorites for offline access.',
                         style: TextStyle(
                           color: onSurfaceVariant,
                           fontFamily: 'Jost',
@@ -465,7 +465,7 @@ class _MasterpieceSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'SELECTED WORKS',
+            'HIGHLIGHTS',
             style: TextStyle(
               color: gold,
               fontFamily: 'Jost',
@@ -480,7 +480,7 @@ class _MasterpieceSection extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'The Masterpiece Collection',
+                  '300 Curated Masterpieces',
                   style: TextStyle(
                     color: onSurface,
                     fontFamily: 'Cormorant',
@@ -494,7 +494,7 @@ class _MasterpieceSection extends StatelessWidget {
                 SizedBox(
                   width: 360,
                   child: Text(
-                    'A digital preservation of the period\'s most influential strokes, curated with archival precision.',
+                    'Explore paintings, sculptures, and frescoes with rich context, symbolism, and provenance.',
                     style: TextStyle(
                       color: onSurfaceVariant,
                       fontFamily: 'Jost',
@@ -508,7 +508,7 @@ class _MasterpieceSection extends StatelessWidget {
           if (!isDesktop) ...[
             const SizedBox(height: 10),
             Text(
-              'A digital preservation of the period\'s most influential strokes, curated with archival precision.',
+              'Explore paintings, sculptures, and frescoes with rich context, symbolism, and provenance.',
               style: TextStyle(
                 color: onSurfaceVariant,
                 fontFamily: 'Jost',
@@ -714,7 +714,7 @@ class _JourneySection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'OUR VISION',
+          'FEATURES',
           style: TextStyle(
             color: gold,
             fontFamily: 'Jost',
@@ -725,7 +725,7 @@ class _JourneySection extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'A Curated Journey Through Time',
+          'Discover, Understand, Collect',
           style: TextStyle(
             color: onSurface,
             fontFamily: 'Cormorant',
@@ -738,8 +738,7 @@ class _JourneySection extends StatelessWidget {
         Container(width: 54, height: 2, color: gold),
         const SizedBox(height: 16),
         Text(
-          'RenaArt is more than a digital gallery; it is a bridge between centuries. '
-          'We believe the wisdom of Renaissance masters belongs in the palm of every modern seeker.',
+          'Search by title, artist, period, medium, or subject with smart filters that surface exactly what you want to see.',
           style: TextStyle(
             color: onSurfaceVariant,
             fontFamily: 'Jost',
@@ -749,7 +748,7 @@ class _JourneySection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          'Through high-definition curation, we provide an immersive experience that feels like a private viewing room.',
+          'Dive into full artwork details, meaning & symbols, and related works—then zoom in fullscreen to study every brushstroke.',
           style: TextStyle(
             color: onSurfaceVariant,
             fontFamily: 'Jost',
@@ -954,7 +953,7 @@ class _MobileCopy extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'The Mobile Experience',
+          'Built for Mobile Learning',
           style: TextStyle(
             color: onSurface,
             fontFamily: 'Cormorant',
@@ -965,7 +964,7 @@ class _MobileCopy extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         Text(
-          'Carry the history of the Renaissance in your pocket. Designed for seamless browsing, offline access, and beautiful typography.',
+          'Save favorites to My Collection, access up to 10 works offline, and sync across devices with Firebase sign-in.',
           style: TextStyle(
             color: onSurfaceVariant,
             fontFamily: 'Jost',
