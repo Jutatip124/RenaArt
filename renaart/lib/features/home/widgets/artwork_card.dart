@@ -50,6 +50,8 @@ class ArtworkCard extends ConsumerWidget {
                   : artwork.imageUrl,
               fit: BoxFit.cover,
               width: double.infinity,
+              cacheWidth: 600,
+              filterQuality: FilterQuality.low,
               errorBuilder: (_, __, ___) => Container(
                 height: 150,
                 color: isDark ? AppColors.darkRaised : AppColors.canvasTone,

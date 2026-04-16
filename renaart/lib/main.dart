@@ -62,9 +62,9 @@ Future<void> main() async {
   }
 
   // Configure image cache limits to prevent excessive memory usage
-  PaintingBinding.instance.imageCache.maximumSize = 100; // Max 100 images
+  PaintingBinding.instance.imageCache.maximumSize = 60; // Max 60 images
   PaintingBinding.instance.imageCache.maximumSizeBytes =
-      50 * 1024 * 1024; // 50MB
+      25 * 1024 * 1024; // 25MB
 
   // Status bar and navigation bar
   SystemChrome.setSystemUIOverlayStyle(

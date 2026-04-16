@@ -128,6 +128,8 @@ class _Body extends ConsumerWidget {
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
+                        cacheWidth: 1400,
+                        filterQuality: FilterQuality.low,
                         errorBuilder: (_, __, ___) => Container(
                           color: isDark ? AppColors.darkCard : AppColors.canvasTone,
                           child: Center(

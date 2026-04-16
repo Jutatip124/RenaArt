@@ -56,6 +56,8 @@ class ArtMosaicBackground extends ConsumerWidget {
               child: Image.asset(
                 urls[i],
                 fit: BoxFit.cover,
+                cacheWidth: 320,
+                filterQuality: FilterQuality.low,
                 errorBuilder: (_, __, ___) =>
                     Container(color: bg.withValues(alpha: 0.3)),
               ),

@@ -1,7 +1,7 @@
 name: renaart
 description: "RenaArt - The Digital Museum of the Renaissance"
 publish_to: 'none'
-version: 1.0.0+3
+version: 1.0.0+4
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -18,8 +18,6 @@ dependencies:
 
   # UI Components
   flutter_staggered_grid_view: ^0.7.0
-  cached_network_image: ^3.3.1
-  shimmer: ^3.0.0
 
   # Local Storage
   hive: ^2.2.3
@@ -65,6 +63,8 @@ flutter:
     - .env
     - assets/data/
     - assets/images/
+    - assets/images/artworks/
+    - assets/images/artworks/thumbs/
   fonts:
     - family: Cormorant
       fonts:

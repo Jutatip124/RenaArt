@@ -81,6 +81,8 @@ class _ImageViewerScreenState extends State<ImageViewerScreen>
                     ? Image.asset(
                         widget.imageUrl,
                         fit: BoxFit.contain,
+                        cacheWidth: 1800,
+                        filterQuality: FilterQuality.low,
                         errorBuilder: (_, __, ___) => const Icon(
                           Icons.broken_image_outlined,
                           color: Colors.white24,
